@@ -5299,3 +5299,4 @@ DEBUG 2025-05-28 17:42:39,602 views Rendered form HTML: <p>
       
     
   </p>
+INFO 2025-05-28 21:03:11,544 views Contact form email sent from name@mail.com to cratoscms@gmail.com
