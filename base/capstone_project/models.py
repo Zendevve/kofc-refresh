@@ -53,6 +53,13 @@ class User(AbstractUser):
         ('Catholic', 'Catholic'),
         ('Other', 'Other'),
     ]
+    MARITAL_STATUS_CHOICES = [
+        ('Single', 'Single'),
+        ('Married', 'Married'),
+        ('Widowed', 'Widowed'),
+        ('Divorced', 'Divorced'),
+        ('Separated', 'Separated'),
+    ]
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='pending')
     council = models.ForeignKey('Council', on_delete=models.SET_NULL, null=True, blank=True)
     age = models.PositiveIntegerField(null=True, blank=True)
@@ -64,6 +71,7 @@ class User(AbstractUser):
     barangay = models.CharField(max_length=100, null=True, blank=True)
     city = models.CharField(max_length=100, null=True, blank=True)
     province = models.CharField(max_length=100, null=True, blank=True)
+    zip_code = models.CharField(max_length=10, null=True, blank=True)
     birthday = models.DateField(null=True, blank=True)
     contact_number = models.CharField(max_length=15, null=True, blank=True)
     current_degree = models.CharField(max_length=10, choices=DEGREE_CHOICES, null=True, blank=True)
@@ -71,6 +79,13 @@ class User(AbstractUser):
     profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, null=True, blank=True)
     religion = models.CharField(max_length=20, choices=RELIGION_CHOICES, null=True, blank=True)
+    practical_catholic = models.BooleanField(default=True)
+    marital_status = models.CharField(max_length=20, choices=MARITAL_STATUS_CHOICES, null=True, blank=True)
+    occupation = models.CharField(max_length=100, null=True, blank=True)
+    recruiter_name = models.CharField(max_length=200, null=True, blank=True)
+    voluntary_join = models.BooleanField(default=False)
+    e_signature = models.ImageField(upload_to='e_signatures/', null=True, blank=True)
+    join_reason = models.TextField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if self.username == 'Mr_Admin' and self.role != 'admin':
@@ -92,45 +107,32 @@ class User(AbstractUser):
 
 
 class Event(models.Model):
-    STATUS_CHOICES = [
-        ('pending', 'Pending Approval'),
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
         ('approved', 'Approved'),
         ('rejected', 'Rejected'),
-    ]
+    )
     
-    CATEGORY_CHOICES = [
-        ('Seminar', 'Seminar'),
-        ('Meeting', 'Meeting'),
-        ('Trip', 'Trip'),
-    ]
-    
-    name = models.CharField(max_length=200)
-    council = models.ForeignKey(Council, on_delete=models.CASCADE, null=True, blank=True)
-    is_global = models.BooleanField(default=False, help_text="If checked, this event applies to all councils")
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    category = models.CharField(max_length=100)
+    council = models.ForeignKey('Council', on_delete=models.CASCADE, null=True, blank=True)
+    is_global = models.BooleanField(default=False)
+    street = models.CharField(max_length=255)
+    barangay = models.CharField(max_length=255)
+    city = models.CharField(max_length=255)
+    province = models.CharField(max_length=255)
     date_from = models.DateField()
     date_until = models.DateField(null=True, blank=True)
-    description = models.TextField()
-    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='Meeting')
-    
-    # Location details
-    street = models.CharField(max_length=255, null=True, blank=True)
-    barangay = models.CharField(max_length=100, null=True, blank=True)
-    city = models.CharField(max_length=100, null=True, blank=True)
-    province = models.CharField(max_length=100, null=True, blank=True)
-    
-    # Event status and tracking
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
-    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='created_events')
-    approved_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='approved_events')
+    created_by = models.ForeignKey('User', on_delete=models.SET_NULL, null=True, related_name='created_events')
+    approved_by = models.ForeignKey('User', on_delete=models.SET_NULL, null=True, blank=True, related_name='approved_events')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        council_name = self.council.name if self.council else "All Councils"
-        return f"{self.name} - {council_name} ({self.get_status_display()})"
+    rejection_reason = models.TextField(blank=True, null=True)
     
-    class Meta:
-        ordering = ['-date_from']
+    def __str__(self):
+        return self.name
 
 class EventAttendance(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='attendances')
@@ -195,12 +197,16 @@ class Analytics(models.Model):
     
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
-    message = models.ForeignKey(ForumMessage, on_delete=models.CASCADE)
+    message = models.ForeignKey(ForumMessage, on_delete=models.CASCADE, null=True, blank=True)
+    title = models.CharField(max_length=255, null=True, blank=True)
+    content = models.TextField(null=True, blank=True)
     is_read = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f"Notification for {self.user.username} - {self.timestamp.strftime('%Y-%m-%d %H:%M')}"
+        if self.message:
+            return f"Forum notification for {self.user.username} - {self.timestamp.strftime('%Y-%m-%d %H:%M')}"
+        return f"Notification for {self.user.username}: {self.title} - {self.timestamp.strftime('%Y-%m-%d %H:%M')}"
     
     class Meta:
         ordering = ['-timestamp']
@@ -516,3 +522,17 @@ def receipt_upload_path(instance, filename):
     ext = filename.split('.')[-1]
     new_filename = f"{instance.transaction_id}.{ext}"
     return os.path.join('donation_receipts', new_filename)
+
+class Recruitment(models.Model):
+    """Model to track recruitments and relationships between recruiters and recruits"""
+    recruiter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recruitments')
+    recruited = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recruited_by')
+    date_recruited = models.DateField(default=timezone.now)
+    is_manual = models.BooleanField(default=False)  # True if manually added by admin
+    added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='added_recruitments')
+    
+    class Meta:
+        unique_together = ('recruiter', 'recruited')
+        
+    def __str__(self):
+        return f"{self.recruiter.username} recruited {self.recruited.username} on {self.date_recruited}"
