@@ -16365,3 +16365,60 @@ DEBUG 2025-12-10 06:02:16,536 views User Mr_Admin (role=admin, council=Council 3
 DEBUG 2025-12-10 06:02:16,543 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
 DEBUG 2025-12-10 06:08:40,479 views User Mr_Admin (role=admin, council=Council 3469): Found 1 pending manual donations
 DEBUG 2025-12-10 06:08:40,483 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-10 06:16:17,410 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-10 06:16:17,437 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 06:16:24,092 views Fetching blockchain data
+INFO 2025-12-10 06:16:24,103 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 06:16:31,041 views User Mr_Admin (role=admin, council=Council 3469): Found 1 pending manual donations
+DEBUG 2025-12-10 06:16:31,046 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-10 06:39:58,581 views User Mr_Admin (role=admin, council=Council 3469): Found 1 pending manual donations
+DEBUG 2025-12-10 06:39:58,637 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-10 06:40:01,733 views Fetching blockchain data
+INFO 2025-12-10 06:40:01,737 views Blockchain data retrieved: 10 blocks, 0 pending transactions
