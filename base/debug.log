@@ -16194,3 +16194,7 @@ DEBUG 2025-12-10 05:08:06,516 views Donation sources data: [{'payment_method': '
 DEBUG 2025-12-10 05:08:06,523 views Active members: 4, Total members: 14
 DEBUG 2025-12-10 05:08:06,524 views Member activity data: [{'category': 'Active Members', 'count': 4}, {'category': 'Inactive Members', 'count': 10}]
 DEBUG 2025-12-10 05:08:06,527 views Summary stats: {'total_events': 24.0, 'total_donations': 8533.0, 'total_members': 14.0, 'total_officers': 10.0, 'avg_donation': 948.111111111111}
+DEBUG 2025-12-10 05:41:37,971 views User Mr_Admin (role=admin, council=Council 3469): Found 1 pending manual donations
+DEBUG 2025-12-10 05:41:37,972 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-10 05:41:42,667 views User Mr_Admin (role=admin, council=Council 3469): Found 1 pending manual donations
+DEBUG 2025-12-10 05:41:42,669 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469

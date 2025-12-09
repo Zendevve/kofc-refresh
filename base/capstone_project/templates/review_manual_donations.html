@@ -1,107 +1,744 @@
-{% extends 'base.html' %}
+{% extends 'dashboard_base.html' %}
 {% load static %}
 
-{% block title %}
-Knights of Columbus - Review Manual Donations
+{% block title %}Review Manual Donations - Knights of Columbus{% endblock %}
+
+{% block page_title %}Review Manual Donations{% endblock %}
+{% block page_subtitle %}Approve or reject pending donation submissions{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'donations' %}" class="btn btn--ghost">
+  <i class="fas fa-hand-holding-heart"></i>
+  <span>All Donations</span>
+</a>
 {% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/review_manual_donations.css' %}">
+<style>
+  /* Stats Row */
+  .donations-stats {
+    display: flex;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+
+  .donation-stat {
+    background: white;
+    padding: var(--space-4) var(--space-6);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--neutral-200);
+    text-align: center;
+    flex: 1;
+    max-width: 200px;
+  }
+
+  .donation-stat-value {
+    font-size: var(--text-3xl);
+    font-weight: var(--font-bold);
+    color: var(--warning-600);
+  }
+
+  .donation-stat-label {
+    font-size: var(--text-sm);
+    color: var(--neutral-500);
+  }
+
+  /* Filters */
+  .donations-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+    align-items: center;
+  }
+
+  .donations-search {
+    flex: 1;
+    min-width: 250px;
+    position: relative;
+  }
+
+  .donations-search i {
+    position: absolute;
+    left: var(--space-3);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--neutral-400);
+  }
+
+  .donations-search input {
+    width: 100%;
+    padding: var(--space-3) var(--space-4) var(--space-3) var(--space-10);
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+  }
+
+  .donations-search input:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  }
+
+  .sort-select {
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    background: white;
+    cursor: pointer;
+  }
+
+  .view-toggle {
+    display: flex;
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .view-toggle-btn {
+    padding: var(--space-2) var(--space-3);
+    background: white;
+    border: none;
+    color: var(--neutral-500);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .view-toggle-btn:hover {
+    background: var(--neutral-50);
+  }
+
+  .view-toggle-btn.active {
+    background: var(--primary-700);
+    color: white;
+  }
+
+  /* Donations Container */
+  .donations-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .donations-container.list-view {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+
+  /* Donation Card */
+  .donation-card {
+    background: white;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--neutral-200);
+    border-left: 4px solid var(--warning-500);
+    padding: var(--space-5);
+    transition: all var(--transition-base);
+  }
+
+  .donation-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  .donation-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+  }
+
+  .donor-info {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .donor-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, var(--primary-100), var(--primary-200));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-600);
+    font-size: var(--text-lg);
+    flex-shrink: 0;
+  }
+
+  .donor-name {
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-900);
+    margin-bottom: var(--space-1);
+  }
+
+  .donor-email {
+    font-size: var(--text-sm);
+    color: var(--neutral-500);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .donation-amount {
+    text-align: right;
+  }
+
+  .amount-value {
+    font-size: var(--text-xl);
+    font-weight: var(--font-bold);
+    color: var(--success-600);
+  }
+
+  .amount-label {
+    font-size: var(--text-xs);
+    color: var(--neutral-500);
+  }
+
+  .donation-card-body {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+  }
+
+  .donation-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--text-xs);
+    color: var(--neutral-500);
+    background: var(--neutral-100);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-md);
+  }
+
+  .pending-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    color: #92400e;
+  }
+
+  /* Action Buttons */
+  .donation-card-actions {
+    display: flex;
+    gap: var(--space-2);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--neutral-100);
+  }
+
+  .action-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+    cursor: pointer;
+    border: none;
+  }
+
+  .approve-btn {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
+  }
+
+  .approve-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+  }
+
+  .reject-btn {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+  }
+
+  .reject-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+  }
+
+  /* List View */
+  .list-view .donation-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-lg);
+  }
+
+  .list-view .donation-card:hover {
+    transform: none;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .list-view .donation-card-header {
+    margin-bottom: 0;
+    flex-shrink: 0;
+    min-width: 280px;
+  }
+
+  .list-view .donor-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: var(--text-base);
+  }
+
+  .list-view .donor-name {
+    font-size: var(--text-sm);
+  }
+
+  .list-view .donor-email {
+    font-size: var(--text-xs);
+  }
+
+  .list-view .donation-card-body {
+    flex: 1;
+    margin-bottom: 0;
+    justify-content: flex-start;
+  }
+
+  .list-view .donation-card-actions {
+    padding-top: 0;
+    border-top: none;
+    flex-shrink: 0;
+  }
+
+  .list-view .action-btn {
+    flex: initial;
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--text-xs);
+  }
+
+  /* Modal */
+  .modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4);
+  }
+
+  .modal.show {
+    display: flex;
+  }
+
+  .modal-content {
+    background: white;
+    border-radius: var(--radius-xl);
+    max-width: 500px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-2xl);
+    animation: modalSlideIn 0.3s var(--ease-out);
+  }
+
+  @keyframes modalSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-5) var(--space-6);
+    border-bottom: 1px solid var(--neutral-200);
+  }
+
+  .modal-header h3 {
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    margin: 0;
+  }
+
+  .modal-close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full);
+    border: none;
+    background: var(--neutral-100);
+    color: var(--neutral-600);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .modal-close:hover {
+    background: var(--neutral-200);
+    color: var(--neutral-900);
+  }
+
+  .modal-body {
+    padding: var(--space-6);
+  }
+
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-6);
+    border-top: 1px solid var(--neutral-200);
+    background: var(--neutral-50);
+  }
+
+  .form-group {
+    margin-bottom: var(--space-4);
+  }
+
+  .form-group label {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--neutral-700);
+    margin-bottom: var(--space-2);
+  }
+
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    padding: var(--space-3);
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+  }
+
+  .form-group input:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  }
+
+  /* Empty State */
+  .empty-state {
+    text-align: center;
+    padding: var(--space-12);
+    color: var(--neutral-500);
+    background: white;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--neutral-200);
+  }
+
+  .empty-state i {
+    font-size: var(--text-4xl);
+    margin-bottom: var(--space-4);
+    color: var(--success-500);
+  }
+
+  /* Pagination */
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--space-6);
+  }
+
+  .pagination {
+    display: flex;
+    gap: var(--space-1);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .pagination .page-item .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 var(--space-3);
+    border-radius: var(--radius-lg);
+    background: white;
+    border: 1px solid var(--neutral-200);
+    color: var(--neutral-700);
+    font-size: var(--text-sm);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  .pagination .page-item .page-link:hover {
+    background: var(--primary-50);
+    border-color: var(--primary-300);
+    color: var(--primary-700);
+  }
+
+  .pagination .page-item.disabled .page-link {
+    background: var(--neutral-100);
+    color: var(--neutral-400);
+    cursor: default;
+  }
+
+  @media (max-width: 768px) {
+    .donations-filters {
+      flex-direction: column;
+    }
+
+    .donations-search {
+      min-width: 100%;
+    }
+
+    .donations-container {
+      grid-template-columns: 1fr;
+    }
+
+    .donation-card-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-3);
+    }
+
+    .donation-amount {
+      text-align: left;
+    }
+  }
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>Review Manual Donations</h1>
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endfor %}
-    {% endif %}
-    {% if page_obj %}
-        <div class="table-responsive">
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>Transaction ID</th>
-                        <th>Donor</th>
-                        <th>Email</th>
-                        <th>Amount</th>
-                        <th>Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for donation in page_obj %}
-                        <tr>
-                            <td>{{ donation.transaction_id }}</td>
-                            <td>{{ donation.first_name }} {{ donation.middle_initial|default:'' }}. {{ donation.last_name }}</td>
-                            <td>{{ donation.email|default:'N/A' }}</td>
-                            <td>₱{{ donation.amount }}</td>
-                            <td>{{ donation.donation_date|date:'F d, Y' }}</td>
-                            <td>
-                                <form method="post" class="form-actions">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="donation_id" value="{{ donation.id }}">
-                                    <button type="submit" name="action" value="approve" class="btn btn-success">Approve</button>
-                                </form>
-                                <!-- Modal for Rejection Reason -->
-                                <div class="modal fade" id="rejectModal{{ donation.id }}" tabindex="-1" aria-labelledby="rejectModalLabel{{ donation.id }}" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-body">
-                                                <form method="post">
-                                                    {% csrf_token %}
-                                                    <input type="hidden" name="donation_id" value="{{ donation.id }}">
-                                                    <input type="hidden" name="action" value="reject">
-                                                    <div class="mb-3">
-                                                        <label for="rejection_reason_{{ donation.id }}" class="form-label">Rejection Reason</label>
-                                                        <input type="text" name="rejection_reason" id="rejection_reason_{{ donation.id }}" class="form-control" placeholder="Enter reason" required>
-                                                    </div>
-                                                    <button type="submit" class="btn btn-danger">Submit Rejection</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center">
-                {% if page_obj.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page=1">« First</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
-                    </li>
-                {% endif %}
-                <li class="page-item disabled">
-                    <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
-                </li>
-                {% if page_obj.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last »</a>
-                    </li>
-                {% endif %}
-            </ul>
-        </nav>
-    {% else %}
-        <p class="text-center text-muted">No pending manual donations to review.</p>
-    {% endif %}
-    <div class="back-btn-container">
-        <a href="{% url 'donations' %}" class="btn btn-primary">Back to Donations</a>
-    </div>
+<!-- Stats Row -->
+<div class="donations-stats">
+  <div class="donation-stat">
+    <div class="donation-stat-value">{{ page_obj.paginator.count|default:0 }}</div>
+    <div class="donation-stat-label">Pending Donations</div>
+  </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Filters -->
+<div class="donations-filters">
+  <div class="donations-search">
+    <i class="fas fa-search"></i>
+    <input type="text" id="donationSearch" placeholder="Search by name, email, or transaction ID...">
+  </div>
+  <select id="sortSelect" class="sort-select">
+    <option value="newest">Newest First</option>
+    <option value="oldest">Oldest First</option>
+    <option value="highest">Highest Amount</option>
+    <option value="lowest">Lowest Amount</option>
+  </select>
+  <div class="view-toggle">
+    <button class="view-toggle-btn active" data-view="grid" title="Grid View"><i class="fas fa-th-large"></i></button>
+    <button class="view-toggle-btn" data-view="list" title="List View"><i class="fas fa-list"></i></button>
+  </div>
+</div>
+
+<!-- Donations Container -->
+{% if page_obj %}
+<div class="donations-container" id="donationsContainer">
+  {% for donation in page_obj %}
+  <div class="donation-card" data-name="{{ donation.first_name }} {{ donation.last_name }}"
+    data-date="{{ donation.donation_date|date:'Y-m-d' }}" data-amount="{{ donation.amount }}">
+    <div class="donation-card-header">
+      <div class="donor-info">
+        <div class="donor-avatar">
+          <i class="fas fa-user"></i>
+        </div>
+        <div>
+          <div class="donor-name">{{ donation.first_name }} {{ donation.middle_initial|default:'' }}{% if donation.middle_initial %}.{% endif %} {{ donation.last_name }}</div>
+          <div class="donor-email">{{ donation.email|default:'No email provided' }}</div>
+        </div>
+      </div>
+      <div class="donation-amount">
+        <div class="amount-value">₱{{ donation.amount|floatformat:2 }}</div>
+        <div class="amount-label">Donation</div>
+      </div>
+    </div>
+    <div class="donation-card-body">
+      <span class="pending-badge"><i class="fas fa-clock"></i> Pending</span>
+      <span class="donation-meta"><i class="fas fa-receipt"></i> {{ donation.transaction_id }}</span>
+      <span class="donation-meta"><i class="fas fa-calendar"></i> {{ donation.donation_date|date:"M j, Y" }}</span>
+    </div>
+    <div class="donation-card-actions">
+      <form method="post" style="flex: 1; display: flex;">
+        {% csrf_token %}
+        <input type="hidden" name="donation_id" value="{{ donation.id }}">
+        <button type="submit" name="action" value="approve" class="action-btn approve-btn" style="flex: 1;">
+          <i class="fas fa-check"></i> Approve
+        </button>
+      </form>
+      <button type="button" class="action-btn reject-btn"
+        onclick="openRejectModal('{{ donation.id }}', '{{ donation.first_name }} {{ donation.last_name }}')">
+        <i class="fas fa-times"></i> Reject
+      </button>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Pagination -->
+{% if page_obj.paginator.num_pages > 1 %}
+<nav class="pagination-container" aria-label="Page navigation">
+  <ul class="pagination">
+    {% if page_obj.has_previous %}
+    <li class="page-item">
+      <a class="page-link" href="?page=1"><i class="fas fa-angle-double-left"></i></a>
+    </li>
+    <li class="page-item">
+      <a class="page-link" href="?page={{ page_obj.previous_page_number }}"><i class="fas fa-angle-left"></i></a>
+    </li>
+    {% endif %}
+    <li class="page-item disabled">
+      <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+    </li>
+    {% if page_obj.has_next %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ page_obj.next_page_number }}"><i class="fas fa-angle-right"></i></a>
+    </li>
+    <li class="page-item">
+      <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}"><i class="fas fa-angle-double-right"></i></a>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+
+{% else %}
+<div class="empty-state">
+  <i class="fas fa-check-circle"></i>
+  <h3>All caught up!</h3>
+  <p>No pending manual donations to review.</p>
+</div>
+{% endif %}
+
+<!-- Rejection Modal -->
+<div id="rejectModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Reject Donation</h3>
+      <button class="modal-close" onclick="closeRejectModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <form method="post" id="rejectForm">
+      {% csrf_token %}
+      <div class="modal-body">
+        <p style="margin-bottom: var(--space-4); color: var(--neutral-600);">
+          You are about to reject the donation from <strong id="rejectDonorName"></strong>.
+        </p>
+        <input type="hidden" name="donation_id" id="rejectDonationId">
+        <input type="hidden" name="action" value="reject">
+        <div class="form-group">
+          <label for="rejection_reason">Reason for Rejection</label>
+          <textarea name="rejection_reason" id="rejection_reason" rows="3"
+            placeholder="Please provide a reason for rejecting this donation..." required></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn--ghost" onclick="closeRejectModal()">Cancel</button>
+        <button type="submit" class="action-btn reject-btn"><i class="fas fa-times"></i> Confirm Rejection</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const cards = document.querySelectorAll('.donation-card');
+    const container = document.getElementById('donationsContainer');
+    const searchInput = document.getElementById('donationSearch');
+    const sortSelect = document.getElementById('sortSelect');
+
+    // Search
+    if (searchInput) {
+      searchInput.addEventListener('input', function () {
+        const term = this.value.toLowerCase();
+        cards.forEach(card => {
+          const text = card.textContent.toLowerCase();
+          card.style.display = text.includes(term) ? '' : 'none';
+        });
+      });
+    }
+
+    // Sort
+    function sortCards() {
+      if (!container) return;
+      const cardsArr = Array.from(cards);
+      cardsArr.sort((a, b) => {
+        switch (sortSelect.value) {
+          case 'newest':
+            return new Date(b.dataset.date) - new Date(a.dataset.date);
+          case 'oldest':
+            return new Date(a.dataset.date) - new Date(b.dataset.date);
+          case 'highest':
+            return parseFloat(b.dataset.amount) - parseFloat(a.dataset.amount);
+          case 'lowest':
+            return parseFloat(a.dataset.amount) - parseFloat(b.dataset.amount);
+        }
+      });
+      cardsArr.forEach(card => container.appendChild(card));
+    }
+
+    sortSelect?.addEventListener('change', sortCards);
+    sortCards();
+
+    // View toggle
+    const viewToggleBtns = document.querySelectorAll('.view-toggle-btn');
+    viewToggleBtns.forEach(btn => {
+      btn.addEventListener('click', function () {
+        viewToggleBtns.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        if (container) {
+          container.classList.toggle('list-view', this.dataset.view === 'list');
+        }
+        localStorage.setItem('donationsView', this.dataset.view);
+      });
+    });
+
+    // Restore view preference
+    const savedView = localStorage.getItem('donationsView');
+    if (savedView === 'list') {
+      document.querySelector('.view-toggle-btn[data-view="list"]')?.click();
+    }
+  });
+
+  // Reject Modal
+  function openRejectModal(donationId, donorName) {
+    document.getElementById('rejectDonationId').value = donationId;
+    document.getElementById('rejectDonorName').textContent = donorName;
+    document.getElementById('rejection_reason').value = '';
+    document.getElementById('rejectModal').classList.add('show');
+  }
+
+  function closeRejectModal() {
+    document.getElementById('rejectModal').classList.remove('show');
+  }
+
+  // Close modal on backdrop click
+  document.getElementById('rejectModal')?.addEventListener('click', function (e) {
+    if (e.target === this) closeRejectModal();
+  });
+
+  // Close modal on Escape key
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeRejectModal();
+  });
+</script>
 {% endblock %}
