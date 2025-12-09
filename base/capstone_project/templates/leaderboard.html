@@ -1,455 +1,781 @@
-{% extends 'base.html' %}
+{% extends 'dashboard_base.html' %}
 {% load static %}
-{% block title %}
-Knights of Columbus - Leaderboard
+
+{% block title %}Recruitment Leaderboard - Knights of Columbus{% endblock %}
+
+{% block page_title %}Recruitment Leaderboard{% endblock %}
+{% block page_subtitle %}Track recruitment performance across councils{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'my_recruits' %}" class="btn btn--primary">
+  <i class="fas fa-users"></i> My Recruits
+</a>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Stats Cards */
+  .leaderboard-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+
+  .stat-card {
+    background: white;
+    padding: var(--space-5);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--neutral-200);
+    text-align: center;
+    transition: all var(--transition-normal);
+  }
+
+  .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .stat-card.highlight {
+    background: linear-gradient(135deg, var(--primary-700), var(--primary-600));
+    border-color: transparent;
+    color: white;
+  }
+
+  .stat-card.highlight .stat-value,
+  .stat-card.highlight .stat-label {
+    color: white;
+  }
+
+  .stat-card.highlight .stat-label {
+    opacity: 0.9;
+  }
+
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-full);
+    background: var(--primary-100);
+    color: var(--primary-700);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-3);
+    font-size: var(--text-xl);
+  }
+
+  .stat-card.highlight .stat-icon {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+  }
+
+  .stat-value {
+    font-size: var(--text-3xl);
+    font-weight: var(--font-bold);
+    color: var(--primary-700);
+    line-height: 1;
+    margin-bottom: var(--space-1);
+  }
+
+  .stat-label {
+    font-size: var(--text-sm);
+    color: var(--neutral-500);
+    font-weight: var(--font-medium);
+  }
+
+  /* Inspiration Quote */
+  .inspiration-quote {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    border-radius: var(--radius-xl);
+    padding: var(--space-4) var(--space-6);
+    margin-bottom: var(--space-6);
+    color: #1a1a1a;
+    text-align: center;
+  }
+
+  .inspiration-quote p {
+    font-style: italic;
+    margin: 0;
+    font-size: var(--text-sm);
+  }
+
+  .inspiration-quote cite {
+    font-size: var(--text-xs);
+    opacity: 0.8;
+    display: block;
+    margin-top: var(--space-1);
+  }
+
+  /* Filter Row */
+  .filter-row {
+    display: flex;
+    gap: var(--space-3);
+    align-items: center;
+    margin-bottom: var(--space-5);
+    flex-wrap: wrap;
+  }
+
+  .council-filter {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .council-filter label {
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--neutral-600);
+    white-space: nowrap;
+  }
+
+  .council-select {
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    background: white;
+    min-width: 180px;
+    cursor: pointer;
+  }
+
+  .council-select:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  }
+
+  /* Main Grid Layout */
+  .leaderboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--space-6);
+    margin-bottom: var(--space-6);
+  }
+
+  @media (max-width: 1024px) {
+    .leaderboard-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Cards */
+  .card {
+    background: white;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--neutral-200);
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: var(--space-4) var(--space-5);
+    border-bottom: 1px solid var(--neutral-200);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .card-header h3 {
+    margin: 0;
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-900);
+  }
+
+  .card-header i {
+    color: var(--primary-600);
+  }
+
+  .card-body {
+    padding: var(--space-4) var(--space-5);
+  }
+
+  /* Leaderboard Table */
+  .leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .leaderboard-table thead th {
+    text-align: left;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: var(--neutral-50);
+    border-bottom: 1px solid var(--neutral-200);
+  }
+
+  .leaderboard-table tbody tr {
+    border-bottom: 1px solid var(--neutral-100);
+    transition: background var(--transition-fast);
+  }
+
+  .leaderboard-table tbody tr:hover {
+    background: var(--neutral-50);
+  }
+
+  .leaderboard-table tbody tr.current-user {
+    background: rgba(59, 130, 246, 0.08);
+  }
+
+  .leaderboard-table td {
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--neutral-700);
+  }
+
+  /* Rank Styles */
+  .rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-full);
+    font-weight: var(--font-bold);
+    font-size: var(--text-xs);
+  }
+
+  .rank-badge.gold {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #1a1a1a;
+  }
+
+  .rank-badge.silver {
+    background: linear-gradient(135deg, #d1d5db, #9ca3af);
+    color: #1a1a1a;
+  }
+
+  .rank-badge.bronze {
+    background: linear-gradient(135deg, #d97706, #b45309);
+    color: white;
+  }
+
+  .rank-badge.normal {
+    background: var(--neutral-100);
+    color: var(--neutral-600);
+  }
+
+  /* Recruiter Info */
+  .recruiter-info {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .recruiter-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    background: var(--neutral-200);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .recruiter-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .recruiter-avatar i {
+    font-size: var(--text-sm);
+    color: var(--neutral-400);
+  }
+
+  .recruiter-name {
+    font-weight: var(--font-medium);
+    color: var(--neutral-900);
+  }
+
+  .council-tag {
+    display: inline-block;
+    padding: var(--space-1) var(--space-2);
+    background: var(--neutral-100);
+    border-radius: var(--radius-md);
+    font-size: var(--text-xs);
+    color: var(--neutral-600);
+  }
+
+  .recruit-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 28px;
+    background: var(--success-100);
+    color: var(--success-700);
+    font-weight: var(--font-bold);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    padding: 0 var(--space-2);
+  }
+
+  /* Right Column Cards */
+  .user-rank-card {
+    margin-bottom: var(--space-4);
+  }
+
+  .user-rank-display {
+    text-align: center;
+    padding: var(--space-4) 0;
+  }
+
+  .rank-large {
+    font-size: 3rem;
+    font-weight: var(--font-bold);
+    color: var(--primary-700);
+    line-height: 1;
+  }
+
+  .rank-large-label {
+    font-size: var(--text-sm);
+    color: var(--neutral-500);
+    margin-top: var(--space-2);
+  }
+
+  .user-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--neutral-200);
+  }
+
+  .user-stat {
+    text-align: center;
+  }
+
+  .user-stat-value {
+    font-size: var(--text-xl);
+    font-weight: var(--font-bold);
+    color: var(--neutral-900);
+  }
+
+  .user-stat-label {
+    font-size: var(--text-xs);
+    color: var(--neutral-500);
+  }
+
+  /* Top Recruiter Highlight */
+  .top-recruiter-highlight {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    margin-top: var(--space-3);
+  }
+
+  .top-recruiter-name {
+    font-weight: var(--font-bold);
+    color: #1a1a1a;
+    font-size: var(--text-lg);
+  }
+
+  .top-recruiter-label {
+    font-size: var(--text-xs);
+    color: rgba(0, 0, 0, 0.6);
+    margin-top: var(--space-1);
+  }
+
+  /* Recent Activity Card */
+  .recent-activity-card .card-body {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--neutral-100);
+  }
+
+  .activity-item:last-child {
+    border-bottom: none;
+  }
+
+  .activity-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    background: var(--success-100);
+    color: var(--success-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: var(--text-sm);
+  }
+
+  .activity-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .activity-text {
+    font-size: var(--text-sm);
+    color: var(--neutral-700);
+    line-height: 1.4;
+  }
+
+  .activity-text strong {
+    color: var(--neutral-900);
+    font-weight: var(--font-semibold);
+  }
+
+  .activity-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-1);
+  }
+
+  .activity-council {
+    font-size: var(--text-xs);
+    color: var(--neutral-500);
+  }
+
+  .activity-time {
+    font-size: var(--text-xs);
+    color: var(--neutral-400);
+  }
+
+  /* Empty State */
+  .empty-state {
+    text-align: center;
+    padding: var(--space-8);
+    color: var(--neutral-400);
+  }
+
+  .empty-state i {
+    font-size: 2.5rem;
+    margin-bottom: var(--space-3);
+  }
+
+  .empty-state p {
+    margin: 0;
+    font-size: var(--text-sm);
+  }
+
+  /* Scrollbar Styling */
+  .card-body::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .card-body::-webkit-scrollbar-track {
+    background: var(--neutral-100);
+    border-radius: 3px;
+  }
+
+  .card-body::-webkit-scrollbar-thumb {
+    background: var(--neutral-300);
+    border-radius: 3px;
+  }
+
+  .card-body::-webkit-scrollbar-thumb:hover {
+    background: var(--neutral-400);
+  }
+</style>
 {% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/dashboard_shared.css' %}?v={% now 'U' %}">
-<link rel="stylesheet" href="{% static 'css/leaderboard.css' %}?v={% now 'U' %}">
-
-<div class="leaderboard-container">
-    <div class="leaderboard-header">
-        <div class="header-content">
-            <h1><i class="fas fa-trophy"></i> Recruitment Leaderboard</h1>
-            <p class="header-subtitle">Ranks are just numbers. True faith with God makes you a true Knight of Columbus. <br>"In the same way, faith by itself, if it is not accompanied by action, is dead." (James 2:17)</p>
-        </div>
-        <div class="council-filter">
-            <label for="councilSelect" class="filter-label">
-                <i class="fas fa-filter"></i> Filter by Council:
-            </label>
-            <select id="councilSelect" class="council-dropdown" onchange="filterByCouncil()">
-                <option value="all">All Councils</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="leaderboard-layout">
-        <!-- Top Recruiters Card (Left) -->
-        <div class="top-recruiters-card">
-            <div class="card-header">
-                <h3>Top Recruiters</h3>
-            </div>
-            <div class="recruiters-table-container scrollable-table">
-                {% if top_recruiters %}
-                <table class="recruiters-table">
-                    <thead>
-                        <tr>
-                            <th>Rank</th>
-                            <th>Name</th>
-                            <th>Council</th>
-                            <th>Recruits</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for recruiter in top_recruiters %}
-                        <tr class="recruiter-row {% if recruiter == user %}current-user{% endif %}">
-                            <td>
-                                {% if forloop.counter == 1 %}
-                                    <i class="fas fa-crown rank-icon gold"></i>
-                                {% elif forloop.counter == 2 %}
-                                    <i class="fas fa-medal rank-icon silver"></i>
-                                {% elif forloop.counter == 3 %}
-                                    <i class="fas fa-award rank-icon bronze"></i>
-                                {% else %}
-                                    <span class="rank-number">#{{ forloop.counter }}</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                <div class="recruiter-info">
-                                    <div class="recruiter-avatar">
-                                        {% if recruiter.profile_picture %}
-                                            <img src="{{ recruiter.profile_picture.url }}" alt="Avatar">
-                                        {% else %}
-                                            <i class="fas fa-user"></i>
-                                        {% endif %}
-                                    </div>
-                                    <span class="recruiter-name">{{ recruiter.first_name }} {{ recruiter.last_name }}</span>
-                                </div>
-                            </td>
-                            <td>
-                                <span class="council-name">{{ recruiter.council.name|default:"No Council" }}</span>
-                            </td>
-                            <td>
-                                <span class="recruit-count">{{ recruiter.recruitment_count }}</span>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                {% else %}
-                <div class="empty-recruiters">
-                    <i class="fas fa-users-slash"></i>
-                    <p>No recruiters found</p>
-                </div>
-                {% endif %}
-            </div>
-        </div>
-
-        <!-- Right Column -->
-        <div class="right-column">
-            <!-- User Stats Card -->
-            <div class="user-stats-card">
-                <div class="council-header">
-                    <i class="fas fa-shield-alt council-icon"></i>
-                    <span class="stats-title">Recruits</span>
-                </div>
-                
-                <div class="user-stats">
-                    <div class="stat-item">
-                        <div class="stat-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="stat-value">{{ user_recruitment_count }}</div>
-                        <div class="stat-label">Your Recruits</div>
-                    </div>
-                    
-                    <div class="rank-section">
-                        <div class="rank-display">
-                            {% if user_rank %}
-                                <span class="rank-hash">#</span><span class="rank-value">{{ user_rank }}</span>
-                            {% else %}
-                                <span class="rank-value no-rank">None</span>
-                            {% endif %}
-                        </div>
-                        <div class="rank-label">Your Rank</div>
-                    </div>
-                    
-                    {% if council_stats %}
-                    <div class="stat-item">
-                        <div class="stat-icon">
-                            <i class="fas fa-chart-bar"></i>
-                        </div>
-                        <div class="stat-value" id="councilTotalStat">{{ council_stats.total_recruitments }}</div>
-                        <div class="stat-label">Global Total</div>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Council Statistics Card -->
-            {% if council_stats %}
-            <div class="council-stats-card">
-                <div class="council-stats-header">
-                    <i class="fas fa-trophy stats-icon"></i>
-                    <span class="stats-title">Global Statistics</span>
-                </div>
-                
-                <div class="council-stats-content">
-                    <div class="large-stat">
-                        <div class="large-number" id="activeRecruitersCount">{{ council_stats.total_recruiters }}</div>
-                        <div class="large-label">Active Recruiters</div>
-                    </div>
-                    
-                    <div class="council-stat">
-                        <div class="stat-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="stat-value" id="totalRecruitmentsCount">{{ council_stats.total_recruitments }}</div>
-                        <div class="stat-label">Total Recruitments</div>
-                    </div>
-                    
-                    {% if council_stats.top_recruiter %}
-                    <div class="top-recruiter">
-                        <div class="top-recruiter-name">{{ council_stats.top_recruiter.first_name }} {{ council_stats.top_recruiter.last_name }}</div>
-                        <div class="top-recruiter-title">Top Recruiter</div>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- Recent Recruitment Section (Bottom) -->
-    <div class="recent-recruitment-card">
-        <div class="card-header">
-            <h3>Recent Recruitment</h3>
-        </div>
-        
-        <div class="recent-content scrollable-recent">
-            {% for recruitment in recent_recruitments %}
-                <div class="recruitment-entry">
-                    <span class="recruiter-name">{{ recruitment.recruiter.first_name }} {{ recruitment.recruiter.last_name }}</span>
-                    <span class="action-text">recruited</span>
-                    <span class="recruited-name">{{ recruitment.recruited.first_name }} {{ recruitment.recruited.last_name }}</span>
-                    <span class="council-info">({{ recruitment.recruiter.council.name|default:"No Council" }})</span>
-                    <span class="time-ago">{{ recruitment.date_recruited|timesince }} ago</span>
-                </div>
-            {% empty %}
-                <div class="empty-recent">
-                    <i class="fas fa-history"></i>
-                    <p>No recent recruitment activity</p>
-                </div>
-            {% endfor %}
-        </div>
-    </div>
-
-    <!-- Action Buttons -->
-    <div class="action-section">
-        <a href="{% url 'my_recruits' %}" class="action-btn primary">
-            <i class="fas fa-users"></i>
-            View My Recruits
-        </a>
-        <a href="{% url 'dashboard' %}" class="action-btn secondary">
-            <i class="fas fa-arrow-left"></i>
-            Back to Dashboard
-        </a>
-    </div>
-
-    <script>
-        // Animate elements on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            // Animate cards with staggered entrance
-            const cards = document.querySelectorAll('.top-recruiters-card, .user-stats-card, .council-stats-card, .recent-recruitment-card');
-            cards.forEach((card, index) => {
-                setTimeout(() => {
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, 200 + (index * 150));
-            });
-
-            // Animate table rows
-            const rows = document.querySelectorAll('.recruiter-row');
-            rows.forEach((row, index) => {
-                setTimeout(() => {
-                    row.style.opacity = '1';
-                    row.style.transform = 'translateX(0)';
-                }, 500 + (index * 100));
-            });
-
-            // Animate stat items
-            const statItems = document.querySelectorAll('.stat-item, .rank-section, .large-stat, .council-stat');
-            statItems.forEach((item, index) => {
-                setTimeout(() => {
-                    item.style.opacity = '1';
-                    item.style.transform = 'translateY(0)';
-                }, 600 + (index * 80));
-            });
-
-            // Animate recruitment entries
-            const entries = document.querySelectorAll('.recruitment-entry');
-            entries.forEach((entry, index) => {
-                setTimeout(() => {
-                    entry.style.opacity = '1';
-                    entry.style.transform = 'translateX(0)';
-                }, 800 + (index * 100));
-            });
-
-            // Animate counters
-            const counters = document.querySelectorAll('.stat-value, .large-number, .recruit-count');
-            counters.forEach(counter => {
-                const target = parseInt(counter.textContent);
-                if (isNaN(target)) return;
-                
-                let current = 0;
-                const increment = target / 30;
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= target) {
-                        counter.textContent = target;
-                        clearInterval(timer);
-                    } else {
-                        counter.textContent = Math.floor(current);
-                    }
-                }, 50);
-            });
-
-            // Handle rank value separately (don't animate "None")
-            const rankValues = document.querySelectorAll('.rank-value:not(.no-rank)');
-            rankValues.forEach(counter => {
-                const target = parseInt(counter.textContent);
-                if (isNaN(target)) return;
-                
-                let current = 0;
-                const increment = target / 30;
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= target) {
-                        counter.textContent = target;
-                        clearInterval(timer);
-                    } else {
-                        counter.textContent = Math.floor(current);
-                    }
-                }, 50);
-            });
-        });
-
-        // Council filtering functionality
-        let allCouncils = new Set();
-        let filteredStats = {};
-        let threeMonthsAgo = new Date('{{ three_months_ago }}');
-        let allCouncilsStats = JSON.parse('{{ all_councils_stats|safe }}');
-        let globalStats = JSON.parse('{{ global_stats|safe }}');
-
-        // Populate council dropdown and collect stats
-        document.addEventListener('DOMContentLoaded', function() {
-            const councilSelect = document.getElementById('councilSelect');
-            
-            // Use backend-provided council stats to populate dropdown
-            console.log('Available councils from backend:', Object.keys(allCouncilsStats));
-            
-            // Populate dropdown with councils from backend stats
-            const sortedCouncils = Object.keys(allCouncilsStats).sort();
-            sortedCouncils.forEach(council => {
-                const option = document.createElement('option');
-                option.value = council;
-                option.textContent = council;
-                councilSelect.appendChild(option);
-                console.log(`Added council option: ${council}`);
-            });
-
-            // Also collect councils from table rows for additional validation
-            const rows = document.querySelectorAll('.recruiter-row');
-            rows.forEach((row, index) => {
-                const councilCell = row.querySelector('td:nth-child(3)');
-                if (councilCell) {
-                    const councilSpan = councilCell.querySelector('.council-name');
-                    const councilName = councilSpan ? 
-                        councilSpan.textContent.trim() : 
-                        councilCell.textContent.trim();
-                    if (councilName && councilName !== '' && councilName !== 'No Council') {
-                        allCouncils.add(councilName);
-                        // Add to dropdown if not already present
-                        if (!sortedCouncils.includes(councilName)) {
-                            const option = document.createElement('option');
-                            option.value = councilName;
-                            option.textContent = councilName;
-                            councilSelect.appendChild(option);
-                            console.log(`Added additional council option: ${councilName}`);
-                        }
-                    }
-                }
-            });
-
-            // Use backend-provided stats
-            filteredStats = allCouncilsStats;
-            
-            // Initialize stats display
-            updateCouncilStats('all');
-        });
-
-        // This function is no longer needed as we use backend-provided stats
-        function calculateCouncilStats() {
-            // Stats are now provided by the backend with proper 3-month active recruiter logic
-            filteredStats = allCouncilsStats;
-        }
-
-        function filterByCouncil() {
-            const select = document.getElementById('councilSelect');
-            const selectedCouncil = select.value;
-            const rows = document.querySelectorAll('.recruiter-row');
-            const recruitmentEntries = document.querySelectorAll('.recruitment-entry');
-            
-            // Filter leaderboard table
-            let visibleCount = 0;
-            rows.forEach(row => {
-                const councilCell = row.querySelector('td:nth-child(3)');
-                let councilName = 'No Council';
-                
-                if (councilCell) {
-                    const councilSpan = councilCell.querySelector('.council-name');
-                    councilName = councilSpan ? 
-                        councilSpan.textContent.trim() : 
-                        councilCell.textContent.trim();
-                }
-                
-                if (selectedCouncil === 'all' || councilName === selectedCouncil) {
-                    row.style.display = '';
-                    visibleCount++;
-                    // Update rank numbers
-                    const rankCell = row.querySelector('td:first-child');
-                    if (rankCell && !rankCell.querySelector('.rank-icon')) {
-                        rankCell.innerHTML = `<span class="rank-number">#${visibleCount}</span>`;
-                    }
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-
-            // Filter recent recruitment entries
-            recruitmentEntries.forEach(entry => {
-                const councilInfo = entry.querySelector('.council-info');
-                if (councilInfo) {
-                    const councilText = councilInfo.textContent.trim();
-                    // Extract council name from "(Council Name)" format
-                    const councilMatch = councilText.match(/\(([^)]+)\)/);
-                    const councilName = councilMatch ? councilMatch[1] : 'No Council';
-                    
-                    if (selectedCouncil === 'all' || councilName === selectedCouncil) {
-                        entry.style.display = '';
-                    } else {
-                        entry.style.display = 'none';
-                    }
-                }
-            });
-            
-            // Update council statistics based on filter
-            updateCouncilStats(selectedCouncil);
-        }
-
-        function updateCouncilStats(selectedCouncil) {
-            let totalRecruits = 0;
-            let activeRecruiters = 0;
-            let topRecruiter = null;
-            
-            if (selectedCouncil === 'all') {
-                // Use global stats from backend
-                totalRecruits = globalStats.total_recruitments;
-                activeRecruiters = globalStats.total_recruiters;
-                topRecruiter = globalStats.top_recruiter ? 
-                    `${globalStats.top_recruiter.first_name} ${globalStats.top_recruiter.last_name}` : 
-                    null;
-            } else {
-                // Use council-specific stats from backend
-                if (filteredStats[selectedCouncil]) {
-                    totalRecruits = filteredStats[selectedCouncil].total_recruitments;
-                    activeRecruiters = filteredStats[selectedCouncil].total_recruiters;
-                    topRecruiter = filteredStats[selectedCouncil].top_recruiter ? 
-                        `${filteredStats[selectedCouncil].top_recruiter.first_name} ${filteredStats[selectedCouncil].top_recruiter.last_name}` : 
-                        null;
-                }
-            }
-            
-            // Update the UI elements with animation
-            animateCounter('councilTotalStat', totalRecruits);
-            animateCounter('activeRecruitersCount', activeRecruiters);
-            animateCounter('totalRecruitmentsCount', totalRecruits);
-            
-            // Update top recruiter name
-            const topRecruiterElement = document.querySelector('.top-recruiter-name');
-            if (topRecruiterElement) {
-                if (topRecruiter) {
-                    topRecruiterElement.textContent = topRecruiter;
-                } else {
-                    topRecruiterElement.textContent = 'No recruiter';
-                }
-            }
-        }
-
-        function animateCounter(elementId, targetValue) {
-            const element = document.getElementById(elementId);
-            if (!element) return;
-            
-            const startValue = parseInt(element.textContent) || 0;
-            const duration = 500;
-            const startTime = performance.now();
-            
-            function updateCounter(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                
-                const currentValue = Math.floor(startValue + (targetValue - startValue) * progress);
-                element.textContent = currentValue;
-                
-                if (progress < 1) {
-                    requestAnimationFrame(updateCounter);
-                }
-            }
-            
-            requestAnimationFrame(updateCounter);
-        }
-
-    </script>
+<!-- Inspiration Quote -->
+<div class="inspiration-quote">
+  <p>"In the same way, faith by itself, if it is not accompanied by action, is dead."</p>
+  <cite>— James 2:17</cite>
 </div>
+
+<!-- Stats Row -->
+<div class="leaderboard-stats">
+  <div class="stat-card highlight">
+    <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+    <div class="stat-value" id="userRankStat">{% if user_rank %}#{{ user_rank }}{% else %}—{% endif %}</div>
+    <div class="stat-label">Your Rank</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon"><i class="fas fa-user-plus"></i></div>
+    <div class="stat-value">{{ user_recruitment_count }}</div>
+    <div class="stat-label">Your Recruits</div>
+  </div>
+  {% if council_stats %}
+  <div class="stat-card">
+    <div class="stat-icon"><i class="fas fa-users"></i></div>
+    <div class="stat-value" id="activeRecruitersCount">{{ council_stats.total_recruiters }}</div>
+    <div class="stat-label">Active Recruiters</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+    <div class="stat-value" id="totalRecruitmentsCount">{{ council_stats.total_recruitments }}</div>
+    <div class="stat-label">Total Recruitments</div>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Filter Row -->
+<div class="filter-row">
+  <div class="council-filter">
+    <label for="councilSelect"><i class="fas fa-filter"></i> Council:</label>
+    <select id="councilSelect" class="council-select" onchange="filterByCouncil()">
+      <option value="all">All Councils</option>
+    </select>
+  </div>
+</div>
+
+<!-- Main Grid -->
+<div class="leaderboard-grid">
+  <!-- Left: Top Recruiters Table -->
+  <div class="card">
+    <div class="card-header">
+      <i class="fas fa-medal"></i>
+      <h3>Top Recruiters</h3>
+    </div>
+    <div class="card-body" style="padding: 0;">
+      {% if top_recruiters %}
+      <table class="leaderboard-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Recruiter</th>
+            <th>Council</th>
+            <th>Recruits</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for recruiter in top_recruiters %}
+          <tr class="recruiter-row {% if recruiter == user %}current-user{% endif %}">
+            <td>
+              {% if forloop.counter == 1 %}
+              <span class="rank-badge gold"><i class="fas fa-crown"></i></span>
+              {% elif forloop.counter == 2 %}
+              <span class="rank-badge silver">2</span>
+              {% elif forloop.counter == 3 %}
+              <span class="rank-badge bronze">3</span>
+              {% else %}
+              <span class="rank-badge normal">{{ forloop.counter }}</span>
+              {% endif %}
+            </td>
+            <td>
+              <div class="recruiter-info">
+                <div class="recruiter-avatar">
+                  {% if recruiter.profile_picture %}
+                  <img src="{{ recruiter.profile_picture.url }}" alt="">
+                  {% else %}
+                  <i class="fas fa-user"></i>
+                  {% endif %}
+                </div>
+                <span class="recruiter-name">{{ recruiter.first_name }} {{ recruiter.last_name }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="council-tag">{{ recruiter.council.name|default:"No Council" }}</span>
+            </td>
+            <td>
+              <span class="recruit-count">{{ recruiter.recruitment_count }}</span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state">
+        <i class="fas fa-users-slash"></i>
+        <p>No recruiters found</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Right Column -->
+  <div class="right-column">
+    <!-- Your Stats Card -->
+    <div class="card user-rank-card">
+      <div class="card-header">
+        <i class="fas fa-user"></i>
+        <h3>Your Performance</h3>
+      </div>
+      <div class="card-body">
+        <div class="user-rank-display">
+          <div class="rank-large">{% if user_rank %}#{{ user_rank }}{% else %}—{% endif %}</div>
+          <div class="rank-large-label">Your Current Rank</div>
+        </div>
+        <div class="user-stats-grid">
+          <div class="user-stat">
+            <div class="user-stat-value">{{ user_recruitment_count }}</div>
+            <div class="user-stat-label">Your Recruits</div>
+          </div>
+          <div class="user-stat">
+            <div class="user-stat-value" id="councilTotalStat">{% if council_stats %}{{ council_stats.total_recruitments }}{% else %}0{% endif %}</div>
+            <div class="user-stat-label">Global Total</div>
+          </div>
+        </div>
+        {% if council_stats.top_recruiter %}
+        <div class="top-recruiter-highlight">
+          <div class="top-recruiter-name">{{ council_stats.top_recruiter.first_name }} {{ council_stats.top_recruiter.last_name }}</div>
+          <div class="top-recruiter-label"><i class="fas fa-crown"></i> Top Recruiter</div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="card recent-activity-card">
+  <div class="card-header">
+    <i class="fas fa-history"></i>
+    <h3>Recent Activity</h3>
+  </div>
+  <div class="card-body">
+    {% for recruitment in recent_recruitments %}
+    <div class="activity-item">
+      <div class="activity-icon"><i class="fas fa-user-plus"></i></div>
+      <div class="activity-content">
+        <div class="activity-text">
+          <strong>{{ recruitment.recruiter.first_name }} {{ recruitment.recruiter.last_name }}</strong>
+          recruited
+          <strong>{{ recruitment.recruited.first_name }} {{ recruitment.recruited.last_name }}</strong>
+        </div>
+        <div class="activity-meta">
+          <span class="activity-council">{{ recruitment.recruiter.council.name|default:"No Council" }}</span>
+          <span class="activity-time">{{ recruitment.date_recruited|timesince }} ago</span>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="empty-state">
+      <i class="fas fa-history"></i>
+      <p>No recent activity</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  let allCouncilsStats = JSON.parse('{{ all_councils_stats|safe }}');
+  let globalStats = JSON.parse('{{ global_stats|safe }}');
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const councilSelect = document.getElementById('councilSelect');
+
+    // Populate dropdown with councils
+    const sortedCouncils = Object.keys(allCouncilsStats).sort();
+    sortedCouncils.forEach(council => {
+      const option = document.createElement('option');
+      option.value = council;
+      option.textContent = council;
+      councilSelect.appendChild(option);
+    });
+
+    // Also collect councils from table rows
+    const rows = document.querySelectorAll('.recruiter-row');
+    rows.forEach(row => {
+      const tag = row.querySelector('.council-tag');
+      if (tag) {
+        const councilName = tag.textContent.trim();
+        if (councilName && councilName !== 'No Council' && !sortedCouncils.includes(councilName)) {
+          const option = document.createElement('option');
+          option.value = councilName;
+          option.textContent = councilName;
+          councilSelect.appendChild(option);
+        }
+      }
+    });
+  });
+
+  function filterByCouncil() {
+    const select = document.getElementById('councilSelect');
+    const selectedCouncil = select.value;
+    const rows = document.querySelectorAll('.recruiter-row');
+    const activityItems = document.querySelectorAll('.activity-item');
+
+    // Filter table rows
+    let visibleCount = 0;
+    rows.forEach(row => {
+      const tag = row.querySelector('.council-tag');
+      const councilName = tag ? tag.textContent.trim() : 'No Council';
+
+      if (selectedCouncil === 'all' || councilName === selectedCouncil) {
+        row.style.display = '';
+        visibleCount++;
+        const rankBadge = row.querySelector('.rank-badge');
+        if (rankBadge && !rankBadge.classList.contains('gold') && !rankBadge.classList.contains('silver') && !rankBadge.classList.contains('bronze')) {
+          rankBadge.textContent = visibleCount;
+        }
+      } else {
+        row.style.display = 'none';
+      }
+    });
+
+    // Filter activity items
+    activityItems.forEach(item => {
+      const councilSpan = item.querySelector('.activity-council');
+      if (councilSpan) {
+        const councilName = councilSpan.textContent.trim();
+        item.style.display = (selectedCouncil === 'all' || councilName === selectedCouncil) ? '' : 'none';
+      }
+    });
+
+    // Update stats
+    updateCouncilStats(selectedCouncil);
+  }
+
+  function updateCouncilStats(selectedCouncil) {
+    let totalRecruits = 0;
+    let activeRecruiters = 0;
+    let topRecruiter = null;
+
+    if (selectedCouncil === 'all') {
+      totalRecruits = globalStats.total_recruitments;
+      activeRecruiters = globalStats.total_recruiters;
+      topRecruiter = globalStats.top_recruiter ?
+        `${globalStats.top_recruiter.first_name} ${globalStats.top_recruiter.last_name}` : null;
+    } else if (allCouncilsStats[selectedCouncil]) {
+      const stats = allCouncilsStats[selectedCouncil];
+      totalRecruits = stats.total_recruitments;
+      activeRecruiters = stats.total_recruiters;
+      topRecruiter = stats.top_recruiter ?
+        `${stats.top_recruiter.first_name} ${stats.top_recruiter.last_name}` : null;
+    }
+
+    animateCounter('councilTotalStat', totalRecruits);
+    animateCounter('activeRecruitersCount', activeRecruiters);
+    animateCounter('totalRecruitmentsCount', totalRecruits);
+
+    const topRecruiterEl = document.querySelector('.top-recruiter-name');
+    if (topRecruiterEl) {
+      topRecruiterEl.textContent = topRecruiter || 'No recruiter';
+    }
+  }
+
+  function animateCounter(elementId, targetValue) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+
+    const startValue = parseInt(element.textContent) || 0;
+    const duration = 400;
+    const startTime = performance.now();
+
+    function update(currentTime) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const currentValue = Math.floor(startValue + (targetValue - startValue) * progress);
+      element.textContent = currentValue;
+
+      if (progress < 1) {
+        requestAnimationFrame(update);
+      }
+    }
+
+    requestAnimationFrame(update);
+  }
+</script>
 {% endblock %}
