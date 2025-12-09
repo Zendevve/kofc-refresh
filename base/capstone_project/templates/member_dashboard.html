@@ -1,231 +1,211 @@
-{% extends 'base.html' %}
+{% extends 'dashboard_base.html' %}
 {% load static %}
-{% block title %}
-Knights of Columbus - Member Dashboard
-{% endblock %}
+
+{% block page_title %}Member Dashboard{% endblock %}
+{% block page_subtitle %}Welcome, {{ user.first_name }} {{ user.last_name }}{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/dashboard_shared.css' %}?v={% now 'U' %}">
-
-<div class="dashboard-container">
-    <div class="dashboard-title">
-        <div class="title-section">
-            <h1>Member Dashboard</h1>
-            <h2>Welcome, {{ user.first_name }} {{ user.last_name }}</h2>
-        </div>
-        <div class="bible-verse-section">
-            <div class="verse-header">
-                <i class="fas fa-book-open"></i>
-                <span>Daily Inspiration</span>
-            </div>
-            <blockquote class="bible-verse-inline">
-                <p>"{{ daily_verse.verse }}"</p>
-                <cite>- {{ daily_verse.reference }}</cite>
-            </blockquote>
-        </div>
+<!-- Stats Row -->
+<div class="dashboard-stats">
+  <div class="stat-card">
+    <div class="stat-icon stat-icon--primary">
+      <i class="fas fa-tasks"></i>
     </div>
-
-    <div class="dashboard-grid">
-        <!-- Profile Card -->
-        <div class="dashboard-card" style="animation-delay: 0.1s;">
-            <div class="card-header">
-                <h3>Profile Information</h3>
-            </div>
-            <div class="card-content">
-                <div class="profile-info">
-                    <div class="profile-pic{% if user.is_inactive_member %} inactive{% endif %}">
-                        {% if user.profile_picture %}
-                            <img src="{{ user.profile_picture.url }}" alt="Profile Picture">
-                        {% else %}
-                            <i class="fas fa-user" style="font-size: 3rem; color: #0D3471;"></i>
-                        {% endif %}
-                    </div>
-                    <h4>{{ user.first_name }} {{ user.last_name }}</h4>
-                    <p>Degree: <span class="degree-badge degree-{{ user.current_degree|default:'1st' }}">{{ user.get_current_degree_display }}</span></p>
-                    <p>{{ user.council.name|default:"No council assigned" }}</p>
-                </div>
-            </div>
-            <div class="action-buttons">
-                <a href="{% url 'edit_profile' %}" class="dashboard-btn">
-                    <i class="fas fa-user-edit"></i>Edit Profile
-                </a>
-            </div>
-        </div>
-
-        <!-- My Recruits Card -->
-        <div class="dashboard-card" style="animation-delay: 0.2s;">
-            <div class="card-header">
-                <h3>My Recruits</h3>
-            </div>
-            <div class="card-content">
-                <p>Track your recruitment progress.</p>
-                <div class="stat-grid">
-                    <div class="stat-card">
-                        <div class="stat-value" data-target="{{ user_recruitment_count|default:0 }}">0</div>
-                        <div class="stat-label">Your Recruits</div>
-                    </div>
-                </div>
-            </div>
-            <div class="action-buttons">
-                <a href="{% url 'my_recruits' %}" class="dashboard-btn">
-                    <i class="fas fa-users"></i>View My Recruits
-                </a>
-            </div>
-        </div>
-
-        <!-- Upcoming Events Card -->
-        <div class="dashboard-card" style="animation-delay: 0.3s;">
-            <div class="card-header">
-                <h3>Upcoming Events</h3>
-            </div>
-            <div class="card-content">
-                <p>Find events to attend.</p>
-                <div class="stat-grid">
-                    <div class="stat-card">
-                        <div class="stat-value" data-target="{{ approved_events_count }}">0</div>
-                        <div class="stat-label">Available Events</div>
-                    </div>
-                </div>
-            </div>
-            <div class="action-buttons">
-                <a href="{% url 'event_list' %}" class="dashboard-btn"><i class="fas fa-list"></i>View All Events</a>
-                <a href="{% url 'archived_events' %}" class="dashboard-btn"><i class="fas fa-archive"></i>Archived Events</a>
-            </div>
-        </div>
-
-        <!-- My Activities Card -->
-        <div class="dashboard-card" style="animation-delay: 0.4s;">
-            <div class="card-header">
-                <h3>My Activities</h3>
-            </div>
-            <div class="card-content">
-                <p>Track your completed activities.</p>
-                <div class="stat-grid">
-                    <div class="stat-card">
-                        <div class="stat-value" data-target="{{ activities_count }}">0</div>
-                        <div class="stat-label">Completed</div>
-                    </div>
-                </div>
-            </div>
-            <div class="action-buttons">
-                <a href="{% url 'member_activities' %}" class="dashboard-btn">
-                    <i class="fas fa-tasks"></i>View Activities
-                </a>
-            </div>
-        </div>
-
-        <!-- Council Updates Card -->
-        <div class="dashboard-card" style="animation-delay: 0.5s;">
-            <div class="card-header">
-                <h3>Council Updates</h3>
-            </div>
-            <div class="card-content">
-                <p>Stay informed with the latest announcements.</p>
-            </div>
-            <div class="action-buttons">
-                <a href="#" class="dashboard-btn">
-                    <i class="fas fa-bullhorn"></i>View Updates
-                </a>
-            </div>
-        </div>
-
-        <!-- Leaderboard Card -->
-        <div class="dashboard-card" style="animation-delay: 0.6s;">
-            <div class="card-header">
-                <h3>Leaderboard</h3>
-            </div>
-            <div class="card-content">
-                <p>See top recruiters and your rank.</p>
-            </div>
-            <div class="action-buttons">
-                <a href="{% url 'leaderboard' %}" class="dashboard-btn">
-                    <i class="fas fa-trophy"></i>View Leaderboard
-                </a>
-            </div>
-        </div>
-
-        <!-- Community Chat Button -->
-        <div class="dashboard-card" style="animation-delay: 0.7s;">
-            <div class="card-header">
-                <h3>Community Chat</h3>
-            </div>
-            <div class="card-content">
-                <p>Join our community chat to connect with other members.</p>
-            </div>
-            <div class="action-buttons">
-                <a href="{% url 'forum' %}" class="dashboard-btn">
-                    <i class="fas fa-comments"></i>Community Chat
-                </a>
-            </div>
-        </div>
+    <div class="stat-content">
+      <div class="stat-value" data-target="{{ activities_count|default:0 }}">0</div>
+      <div class="stat-label">Completed Activities</div>
     </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon stat-icon--accent">
+      <i class="fas fa-calendar-check"></i>
+    </div>
+    <div class="stat-content">
+      <div class="stat-value" data-target="{{ approved_events_count|default:0 }}">0</div>
+      <div class="stat-label">Available Events</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon stat-icon--success">
+      <i class="fas fa-user-plus"></i>
+    </div>
+    <div class="stat-content">
+      <div class="stat-value" data-target="{{ user_recruitment_count|default:0 }}">0</div>
+      <div class="stat-label">Your Recruits</div>
+    </div>
+  </div>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Animate cards with staggered entrance
-    const cards = document.querySelectorAll('.dashboard-card');
-    cards.forEach((card, index) => {
-        setTimeout(() => {
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-        }, 100 + (index * 100));
-    });
+<!-- Main Content Grid -->
+<div class="dashboard-grid">
+  <!-- Left Column -->
+  <div class="flex flex-col gap-6">
+    <!-- Daily Inspiration -->
+    <div class="verse-card animate-fadeInUp">
+      <div class="verse-header">
+        <i class="fas fa-book-open"></i>
+        <span>Daily Inspiration</span>
+      </div>
+      <p class="verse-text">"{{ daily_verse.verse }}"</p>
+      <div class="verse-reference">— {{ daily_verse.reference }}</div>
+    </div>
 
-    // Animate counters
-    const counters = document.querySelectorAll('.stat-value');
-    counters.forEach(counter => {
-        const target = parseInt(counter.getAttribute('data-target'));
-        if (isNaN(target)) return;
+    <!-- Upcoming Events List -->
+    <div class="dashboard-card">
+      <div class="dashboard-card-header">
+        <h3><i class="fas fa-calendar-alt"></i> Upcoming Events</h3>
+        <a href="{% url 'event_list' %}" class="btn btn--ghost btn--sm">View All</a>
+      </div>
+      <div class="dashboard-card-body p-0">
+        {% if events %}
+        <div class="table-responsive">
+          <table class="table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="text-align: left; background: var(--neutral-50); border-bottom: 1px solid var(--neutral-200);">
+                <th style="padding: 12px 24px; font-size: 0.85rem; color: var(--neutral-500);">Event</th>
+                <th style="padding: 12px 24px; font-size: 0.85rem; color: var(--neutral-500);">Date</th>
+                <th style="padding: 12px 24px; font-size: 0.85rem; color: var(--neutral-500);">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for event in events|slice:":5" %}
+              <tr style="border-bottom: 1px solid var(--neutral-100);">
+                <td style="padding: 16px 24px;">
+                  <div style="font-weight: 500; color: var(--neutral-900);">{{ event.name }}</div>
+                  <div style="font-size: 0.85rem; color: var(--neutral-500);">{{ event.venue }}</div>
+                </td>
+                <td style="padding: 16px 24px; color: var(--neutral-700);">
+                  {{ event.date_from|date:"M d, Y" }}
+                </td>
+                <td style="padding: 16px 24px;">
+                  <span class="badge badge--success"
+                    style="padding: 4px 8px; border-radius: 99px; background: var(--success-50); color: var(--success-700); font-size: 0.75rem; font-weight: 600;">
+                    {{ event.status|title }}
+                  </span>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div style="padding: 24px; text-align: center; color: var(--neutral-500);">
+          No upcoming events scheduled.
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
 
-        let current = 0;
-        const duration = 1500; // 1.5 seconds
-        const stepTime = 20; // update every 20ms
-        const totalSteps = duration / stepTime;
-        const increment = target / totalSteps;
-
-        const timer = setInterval(() => {
-            current += increment;
-            if (current >= target) {
-                counter.textContent = target;
-                clearInterval(timer);
-            } else {
-                counter.textContent = Math.floor(current);
-            }
-        }, stepTime);
-    });
-});
-
-// Function to close inactive warning popup
-function closeInactiveWarning() {
-    const overlay = document.getElementById('inactiveWarningOverlay');
-    if (overlay) {
-        overlay.style.animation = 'fadeOut 0.3s ease-out';
-        setTimeout(() => {
-            overlay.remove();
-        }, 300);
-    }
-}
-</script>
+  <!-- Right Column -->
+  <div class="flex flex-col gap-6">
+    <!-- Profile Card -->
+    <div class="dashboard-card">
+      <div class="dashboard-card-body profile-card">
+        <div class="profile-avatar">
+          {% if user.profile_picture %}
+          <img src="{{ user.profile_picture.url }}" alt="Profile"
+            style="width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-full);">
+          {% else %}
+          <i class="fas fa-user"></i>
+          {% endif %}
+        </div>
+        <h4 class="profile-name">{{ user.first_name }} {{ user.last_name }}</h4>
+        <p class="profile-council">{{ user.council.name|default:"No council assigned" }}</p>
+        <div class="profile-degree">
+          <i class="fas fa-medal"></i>
+          {{ user.get_current_degree_display|default:"1st Degree" }}
+        </div>
+        <div style="margin-top: var(--space-5);">
+          <a href="{% url 'edit_profile' %}" class="btn btn--ghost btn--sm w-full">
+            <i class="fas fa-user-edit"></i> Edit Profile
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Inactive Warning Popup -->
 {% if show_inactive_warning %}
-<div class="inactive-warning-overlay" id="inactiveWarningOverlay">
-    <div class="inactive-warning-popup">
-        <div class="warning-icon">
-            <i class="fas fa-exclamation-triangle"></i>
-        </div>
-        <h3>Activity Warning</h3>
-        <p>Your account has been inactive for more than 30 days. To maintain your active status, please participate in council events or recruitment activities.</p>
-        <button class="warning-btn" onclick="closeInactiveWarning()">I Understand</button>
+<div class="inactive-warning-overlay" id="inactiveWarningOverlay" style="
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+">
+  <div style="
+        background: white;
+        padding: var(--space-8);
+        border-radius: var(--radius-2xl);
+        max-width: 400px;
+        text-align: center;
+        box-shadow: var(--shadow-2xl);
+        animation: scaleIn 0.3s ease;
+    ">
+    <div style="
+            width: 64px;
+            height: 64px;
+            background: var(--warning-50);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-4);
+        ">
+      <i class="fas fa-exclamation-triangle" style="font-size: var(--text-2xl); color: var(--warning-500);"></i>
     </div>
+    <h3 style="margin-bottom: var(--space-3); color: var(--neutral-900);">Activity Warning</h3>
+    <p style="color: var(--neutral-600); margin-bottom: var(--space-6);">
+      Your account has been inactive for more than 30 days. Please participate in council events or recruitment
+      activities to maintain your active status.
+    </p>
+    <button onclick="closeInactiveWarning()" class="btn btn--primary">I Understand</button>
+  </div>
 </div>
 {% endif %}
+{% endblock %}
 
-<style>
-@keyframes fadeOut {
-    from { opacity: 1; }
-    to { opacity: 0; }
-}
-</style>
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Animate counters
+    const counters = document.querySelectorAll('.stat-value');
+    counters.forEach(counter => {
+      const target = parseInt(counter.getAttribute('data-target'));
+      if (isNaN(target)) return;
+
+      let current = 0;
+      const duration = 1200;
+      const stepTime = 16;
+      const totalSteps = duration / stepTime;
+      const increment = target / totalSteps;
+
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+          counter.textContent = target;
+          clearInterval(timer);
+        } else {
+          counter.textContent = Math.floor(current);
+        }
+      }, stepTime);
+    });
+  });
+
+  function closeInactiveWarning() {
+    const overlay = document.getElementById('inactiveWarningOverlay');
+    if (overlay) {
+      overlay.style.opacity = '0';
+      setTimeout(() => overlay.remove(), 300);
+    }
+  }
+</script>
 {% endblock %}

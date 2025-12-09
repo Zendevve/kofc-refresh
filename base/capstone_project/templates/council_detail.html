@@ -258,6 +258,28 @@ Knights of Columbus - {{ council.name }}
     border-radius: 12px;
     border: 2px dashed #e2e8f0;
   }
+
+  /* ============================================
+     NAVBAR FIX FOR THIS PAGE
+     ============================================ */
+  .navbar {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 9999;
+  }
+
+  /* Add padding to body to prevent content from being hidden behind fixed navbar */
+  body {
+    padding-top: 72px !important;
+  }
+
+  @media (max-width: 900px) {
+    body {
+      padding-top: 64px !important;
+    }
+  }
 </style>
 
 <div class="council-detail-page">

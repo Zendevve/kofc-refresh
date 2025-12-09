@@ -1,86 +1,110 @@
 {% extends 'base.html' %}
 {% load static %}
 
+
+
 {% block title %}
 Knights of Columbus - Sign In
 {% endblock %}
 
 {% block content %}
 <style>
-  /* Modern Sign In Page */
-  .signin-container {
-    min-height: 100vh;
+  /* =========================================
+     MODERN SPLIT LAYOUT AUTH PAGE
+     ========================================= */
+  .auth-container {
+    height: calc(100vh - 72px);
     display: grid;
     grid-template-columns: 1fr 1fr;
-    background: var(--neutral-100);
+    background: white;
+    overflow: hidden;
+  }
+
+  @media (max-width: 1100px) {
+    .auth-container {
+      grid-template-columns: 350px 1fr;
+    }
   }
 
   @media (max-width: 968px) {
-    .signin-container {
+    .auth-container {
       grid-template-columns: 1fr;
     }
   }
 
-  /* Left Side - Image/Brand */
-  .signin-brand {
-    background: linear-gradient(135deg, rgba(3, 13, 78, 0.95) 0%, rgba(13, 52, 113, 0.9) 100%),
-    url('{% static ' images/homepage-img.jpeg' %}') no-repeat center/cover;
+  /* -------------------------------------
+     LEFT SIDE: IMMERSIVE BRANDING
+     ------------------------------------- */
+  .auth-brand {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    background: url("{% static 'images/kofc-bg.png' %}") no-repeat center center/cover;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: var(--space-12);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .signin-brand::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -30%;
-    width: 700px;
-    height: 700px;
-    background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%);
-    border-radius: 50%;
-  }
-
-  .signin-brand::after {
-    content: '';
-    position: absolute;
-    bottom: -30%;
-    left: -20%;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
-    border-radius: 50%;
+    color: white;
+    text-align: center;
+    z-index: 10;
   }
 
   @media (max-width: 968px) {
-    .signin-brand {
+    .auth-brand {
       display: none;
     }
   }
 
-  .brand-content {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-    color: white;
+  /* Overlay gradient */
+  .auth-brand::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(13, 52, 113, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%);
+    z-index: -1;
   }
 
+  /* Decorative circles */
+  .auth-decor {
+    position: absolute;
+    border-radius: 50%;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .auth-decor-1 {
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(251, 191, 36, 0.15) 0%, transparent 70%);
+    top: -20%;
+    right: -20%;
+  }
+
+  .auth-decor-2 {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+    bottom: -10%;
+    left: -10%;
+  }
+
+  /* Brand Content */
   .brand-logo {
     width: 120px;
     height: 120px;
     margin-bottom: var(--space-6);
-    border-radius: var(--radius-2xl);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
   }
 
   .brand-title {
-    font-size: var(--text-3xl);
-    font-weight: var(--font-bold);
-    margin-bottom: var(--space-3);
+    font-size: var(--text-4xl);
+    font-weight: 800;
+    margin-bottom: var(--space-4);
+    line-height: 1.1;
   }
 
   .brand-title span {
@@ -89,154 +113,161 @@ Knights of Columbus - Sign In
 
   .brand-subtitle {
     font-size: var(--text-lg);
-    color: rgba(255, 255, 255, 0.7);
-    max-width: 400px;
+    color: rgba(255, 255, 255, 0.8);
+    max-width: 480px;
+    margin-bottom: var(--space-8);
+    line-height: 1.6;
   }
 
+  /* Feature Grid */
   .brand-features {
-    margin-top: var(--space-12);
+    display: grid;
+    gap: var(--space-6);
     text-align: left;
+    max-width: 400px;
+    width: 100%;
   }
 
   .brand-feature {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: var(--space-4);
-    margin-bottom: var(--space-5);
+    background: rgba(255, 255, 255, 0.05);
+    padding: var(--space-4);
+    border-radius: var(--radius-xl);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease;
   }
 
-  .brand-feature-icon {
-    width: 48px;
-    height: 48px;
+  .brand-feature:hover {
+    transform: translateX(5px);
     background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: var(--radius-xl);
+  }
+
+  .feature-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: var(--text-lg);
+    background: rgba(251, 191, 36, 0.2);
     color: var(--accent-400);
+    border-radius: var(--radius-lg);
+    font-size: 1.2rem;
   }
 
-  .brand-feature-text {
-    flex: 1;
-  }
-
-  .brand-feature-text h4 {
-    font-size: var(--text-base);
-    font-weight: var(--font-semibold);
+  .feature-text h4 {
     color: white;
-    margin-bottom: var(--space-1);
+    font-size: var(--text-base);
+    font-weight: 600;
+    margin-bottom: 2px;
   }
 
-  .brand-feature-text p {
-    font-size: var(--text-sm);
+  .feature-text p {
     color: rgba(255, 255, 255, 0.6);
+    font-size: var(--text-sm);
     margin: 0;
   }
 
-  /* Right Side - Form */
-  .signin-form-wrapper {
+  @media (max-width: 968px) {
+    .auth-brand {
+      display: none;
+    }
+  }
+
+  /* -------------------------------------
+     RIGHT SIDE: FORM AREA
+     ------------------------------------- */
+  .auth-form-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
     padding: var(--space-8);
+    background: var(--neutral-50);
   }
 
-  .signin-form-container {
+  .auth-form-card {
     width: 100%;
-    max-width: 400px;
+    max-width: 420px;
+    padding: var(--space-8);
+    background: white;
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--neutral-200);
   }
 
-  .signin-header {
+  .form-header {
     text-align: center;
     margin-bottom: var(--space-8);
   }
 
-  .signin-logo-mobile {
+  .mobile-logo {
     display: none;
-    width: 80px;
-    height: 80px;
+    width: 64px;
+    height: 64px;
     margin: 0 auto var(--space-4);
-    border-radius: var(--radius-xl);
   }
 
   @media (max-width: 968px) {
-    .signin-logo-mobile {
+    .mobile-logo {
       display: block;
     }
   }
 
-  .signin-header h1 {
+  .form-header h1 {
     font-size: var(--text-2xl);
-    font-weight: var(--font-bold);
-    color: var(--neutral-900);
+    color: var(--primary-900);
     margin-bottom: var(--space-2);
   }
 
-  .signin-header p {
-    font-size: var(--text-base);
+  .form-header p {
     color: var(--neutral-500);
   }
 
-  /* Form Card */
-  .signin-card {
-    background: white;
-    border-radius: var(--radius-2xl);
-    padding: var(--space-8);
-    box-shadow: var(--shadow-lg);
-    border: 1px solid var(--neutral-200);
-  }
-
-  .signin-form .form-group {
+  /* Form Elements */
+  .form-group {
     margin-bottom: var(--space-5);
   }
 
-  .signin-form label {
+  .form-label {
     display: block;
-    font-size: var(--text-sm);
-    font-weight: var(--font-medium);
-    color: var(--neutral-700);
     margin-bottom: var(--space-2);
+    font-weight: 500;
+    color: var(--neutral-700);
+    font-size: var(--text-sm);
   }
 
-  .input-wrapper {
+  .input-with-icon {
     position: relative;
   }
 
-  .input-wrapper i {
+  .input-with-icon i {
     position: absolute;
     left: var(--space-4);
     top: 50%;
     transform: translateY(-50%);
     color: var(--neutral-400);
-    font-size: var(--text-base);
+    pointer-events: none;
   }
 
-  .signin-form input[type="text"],
-  .signin-form input[type="password"] {
+  .input-field {
     width: 100%;
-    padding: var(--space-4) var(--space-4) var(--space-4) var(--space-12);
-    font-size: var(--text-base);
-    font-family: inherit;
-    background: var(--neutral-50);
+    padding: 12px 16px 12px 42px;
     border: 1px solid var(--neutral-300);
-    border-radius: var(--radius-xl);
-    transition: all var(--transition-fast);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-base);
+    transition: all 0.2s;
   }
 
-  .signin-form input:focus {
+  .input-field:focus {
     outline: none;
     border-color: var(--primary-500);
-    background: white;
     box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
   }
 
-  .signin-form input::placeholder {
-    color: var(--neutral-400);
-  }
-
-  .form-options {
+  .form-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -244,47 +275,43 @@ Knights of Columbus - Sign In
     font-size: var(--text-sm);
   }
 
-  .form-options label {
+  .checkbox-label {
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    color: var(--neutral-600);
     cursor: pointer;
+    color: var(--neutral-600);
   }
 
-  .form-options a {
+  .forgot-link {
     color: var(--primary-600);
-    font-weight: var(--font-medium);
+    font-weight: 500;
   }
 
-  .signin-btn {
+  .submit-btn {
     width: 100%;
-    padding: var(--space-4);
-    font-size: var(--text-base);
-    font-weight: var(--font-semibold);
-    background: linear-gradient(135deg, var(--primary-700) 0%, var(--primary-800) 100%);
+    padding: 14px;
+    background: linear-gradient(135deg, var(--primary-700), var(--primary-800));
     color: white;
     border: none;
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    font-size: var(--text-base);
     cursor: pointer;
-    transition: all var(--transition-base);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: var(--space-2);
+    transition: all 0.2s;
+    box-shadow: var(--shadow-primary);
   }
 
-  .signin-btn:hover {
-    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+  .submit-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(13, 52, 113, 0.35);
+    box-shadow: 0 8px 20px rgba(13, 52, 113, 0.3);
   }
 
-  .signin-btn:active {
-    transform: translateY(0);
-  }
-
-  .signin-divider {
+  .divider {
     display: flex;
     align-items: center;
     margin: var(--space-6) 0;
@@ -292,159 +319,125 @@ Knights of Columbus - Sign In
     font-size: var(--text-sm);
   }
 
-  .signin-divider::before,
-  .signin-divider::after {
+  .divider::before,
+  .divider::after {
     content: '';
     flex: 1;
     height: 1px;
     background: var(--neutral-200);
   }
 
-  .signin-divider span {
+  .divider span {
     padding: 0 var(--space-4);
   }
 
-  .signin-footer {
+  .switch-auth {
     text-align: center;
-    margin-top: var(--space-6);
     font-size: var(--text-sm);
     color: var(--neutral-600);
   }
 
-  .signin-footer a {
+  .switch-auth a {
     color: var(--primary-600);
-    font-weight: var(--font-semibold);
-    text-decoration: none;
-  }
-
-  .signin-footer a:hover {
-    text-decoration: underline;
-  }
-
-  /* Error Messages */
-  .error-message {
-    background: var(--error-50);
-    color: var(--error-600);
-    padding: var(--space-4);
-    border-radius: var(--radius-lg);
-    margin-bottom: var(--space-5);
-    font-size: var(--text-sm);
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
+    font-weight: 600;
   }
 </style>
 
-<div class="signin-container">
-  <!-- Left Brand Section -->
-  <div class="signin-brand">
-    <div class="brand-content">
-      <img src="{% static 'images/kofc-logo.png' %}" alt="KofC Logo" class="brand-logo">
-      <h2 class="brand-title">Knights of <span>Columbus</span></h2>
-      <p class="brand-subtitle">Diocese of Lucena - District L61</p>
+<div class="auth-container">
 
-      <div class="brand-features">
-        <div class="brand-feature">
-          <div class="brand-feature-icon">
-            <i class="fas fa-shield-alt"></i>
-          </div>
-          <div class="brand-feature-text">
-            <h4>Secure Access</h4>
-            <p>Your data is protected with encryption</p>
-          </div>
+  <!-- Left Side: Branding -->
+  <div class="auth-brand">
+    <div class="auth-decor auth-decor-1"></div>
+    <div class="auth-decor auth-decor-2"></div>
+
+    <img src="{% static 'images/kofc-logo.png' %}" alt="KofC Logo" class="brand-logo">
+    <h1 class="brand-title">Knights of <span>Columbus</span></h1>
+    <p class="brand-subtitle">Diocese of Lucena - District L61</p>
+
+    <div class="brand-features">
+      <div class="brand-feature">
+        <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+        <div class="feature-text">
+          <h4>Secure Portal</h4>
+          <p>Encrypted access for all members</p>
         </div>
-        <div class="brand-feature">
-          <div class="brand-feature-icon">
-            <i class="fas fa-users"></i>
-          </div>
-          <div class="brand-feature-text">
-            <h4>Member Portal</h4>
-            <p>Access events, forums, and more</p>
-          </div>
+      </div>
+      <div class="brand-feature">
+        <div class="feature-icon"><i class="fas fa-users"></i></div>
+        <div class="feature-text">
+          <h4>Community Connect</h4>
+          <p>Stay updated with council events</p>
         </div>
-        <div class="brand-feature">
-          <div class="brand-feature-icon">
-            <i class="fas fa-chart-line"></i>
-          </div>
-          <div class="brand-feature-text">
-            <h4>Track Progress</h4>
-            <p>Monitor your involvement and impact</p>
-          </div>
+      </div>
+      <div class="brand-feature">
+        <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+        <div class="feature-text">
+          <h4>Impact Tracking</h4>
+          <p>Monitor your charitable contributions</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Right Form Section -->
-  <div class="signin-form-wrapper">
-    <div class="signin-form-container">
-      <div class="signin-header">
-        <img src="{% static 'images/kofc-logo.png' %}" alt="KofC Logo" class="signin-logo-mobile">
+  <!-- Right Side: Sign In Form -->
+  <div class="auth-form-wrapper">
+    <div class="auth-form-card">
+
+      <div class="form-header">
+        <img src="{% static 'images/kofc-logo.png' %}" alt="Logo" class="mobile-logo">
         <h1>Welcome Back</h1>
-        <p>Sign in to access your member dashboard</p>
+        <p>Please sign in to your account</p>
       </div>
 
-      <div class="signin-card">
-        {% if messages %}
-        {% for message in messages %}
-        <div class="error-message">
-          <i class="fas fa-exclamation-circle"></i>
-          {{ message }}
-        </div>
-        {% endfor %}
-        {% endif %}
-
-        <form method="post" class="signin-form">
-          {% csrf_token %}
-          <div class="form-group">
-            <label for="username">Username</label>
-            <div class="input-wrapper">
-              <i class="fas fa-user"></i>
-              <input type="text" id="username" name="username" placeholder="Enter your username" required>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="password">Password</label>
-            <div class="input-wrapper">
-              <i class="fas fa-lock"></i>
-              <input type="password" id="password" name="password" placeholder="Enter your password" required>
-            </div>
-          </div>
-
-          <div class="form-options">
-            <label>
-              <input type="checkbox" name="remember">
-              Remember me
-            </label>
-            <a href="#">Forgot password?</a>
-          </div>
-
-          <button type="submit" class="signin-btn">
-            <i class="fas fa-sign-in-alt"></i>
-            Sign In
-          </button>
-        </form>
-
-        <div class="signin-divider">
-          <span>or</span>
-        </div>
-
-        <div class="signin-footer">
-          Don't have an account? <a href="{% url 'sign-up' %}">Create one here</a>
-        </div>
+      {% if messages %}
+      {% for message in messages %}
+      <div
+        style="background: var(--error-50); color: var(--error-600); padding: 12px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-size: 0.9rem;">
+        <i class="fas fa-exclamation-circle"></i> {{ message }}
       </div>
+      {% endfor %}
+      {% endif %}
+
+      <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+          <label class="form-label" for="username">Username</label>
+          <div class="input-with-icon">
+            <i class="fas fa-user"></i>
+            <input type="text" id="username" name="username" class="input-field" placeholder="Enter your username"
+              required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <div class="input-with-icon">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="password" name="password" class="input-field" placeholder="Enter your password"
+              required>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <label class="checkbox-label">
+            <input type="checkbox" name="remember"> Remember me
+          </label>
+          <a href="#" class="forgot-link">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="submit-btn">
+          Sign In <i class="fas fa-arrow-right"></i>
+        </button>
+      </form>
+
+      <div class="divider"><span>or</span></div>
+
+      <div class="switch-auth">
+        Don't have an account? <a href="{% url 'sign-up' %}">Register now</a>
+      </div>
+
     </div>
   </div>
 </div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    // Reset form on page load
-    const form = document.querySelector('.signin-form');
-    if (form) {
-      form.reset();
-    }
-  });
-</script>
 {% endblock %}

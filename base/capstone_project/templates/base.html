@@ -64,6 +64,7 @@
     </script>
 </head>
 <body>
+    {% block header %}
     <header class="navbar {% if not user.is_authenticated %}not-logged-in{% endif %}">
         {% if not user.is_authenticated %}
             <button class="hamburger" aria-label="Toggle menu">
@@ -83,7 +84,6 @@
             <nav>
                 <ul>
                     <li><a href="{% url 'capstone_project' %}" {% if request.path == '/' %}class="active"{% endif %}>Home</a></li>
-
                     <li><a href="{% url 'councils' %}" {% if request.path == '/councils/' %}class="active"{% endif %}>Councils</a></li>
                     <li><a href="{% url 'donations' %}" {% if request.path == '/donations/' %}class="active"{% endif %}>Donations</a></li>
                     <li><a href="{% url 'about_us' %}" {% if request.path == '/about_us/' %}class="active"{% endif %}>About us</a></li>
@@ -108,7 +108,6 @@
             <div class="nav-container">
                 <nav>
                     <ul>
-
                         <li><a href="{% url 'councils' %}" {% if request.path == '/councils/' %}class="active"{% endif %}>Councils</a></li>
                         <li><a href="{% url 'donations' %}" {% if request.path == '/donations/' %}class="active"{% endif %}>Donations</a></li>
                         <li><a href="{% url 'about_us' %}" {% if request.path == '/about_us/' %}class="active"{% endif %}>About us</a></li>
@@ -151,6 +150,7 @@
             </div>
         {% endif %}
     </header>
+    {% endblock %}
 
     <!-- Notification container -->
     <div id="notification-container" class="notification-container">
