@@ -1,0 +1,751 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Events - Knights of Columbus{% endblock %}
+
+{% block page_title %}Events{% endblock %}
+{% block page_subtitle %}Manage and view all council events{% endblock %}
+
+{% block header_actions %}
+{% if user.role != 'member' %}
+<a href="{% url 'add_event' %}" class="btn btn--primary">
+  <i class="fas fa-plus"></i> New Event
+</a>
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Tabs */
+  .event-tabs {
+    display: flex;
+    gap: var(--space-1);
+    margin-bottom: var(--space-6);
+    border-bottom: 2px solid var(--neutral-200);
+  }
+
+  .event-tab {
+    padding: var(--space-3) var(--space-5);
+    background: none;
+    border: none;
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--neutral-500);
+    cursor: pointer;
+    position: relative;
+    transition: all var(--transition-fast);
+  }
+
+  .event-tab:hover {
+    color: var(--primary-700);
+  }
+
+  .event-tab.active {
+    color: var(--primary-700);
+  }
+
+  .event-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--primary-700);
+  }
+
+  .event-tab .badge {
+    background: var(--neutral-200);
+    color: var(--neutral-600);
+    font-size: var(--text-xs);
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    margin-left: var(--space-2);
+  }
+
+  .event-tab.active .badge {
+    background: var(--primary-100);
+    color: var(--primary-700);
+  }
+
+  /* Tab Content */
+  .tab-content {
+    display: none;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+  /* Filters */
+  .event-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+    align-items: center;
+  }
+
+  .filter-search {
+    flex: 1;
+    min-width: 250px;
+    position: relative;
+  }
+
+  .filter-search i {
+    position: absolute;
+    left: var(--space-3);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--neutral-400);
+  }
+
+  .filter-search input {
+    width: 100%;
+    padding: var(--space-2) var(--space-4) var(--space-2) var(--space-10);
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+  }
+
+  .filter-search input:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  }
+
+  .filter-select {
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    background: white;
+  }
+
+  /* Events Table */
+  .events-table-container {
+    background: white;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--neutral-200);
+    overflow: hidden;
+  }
+
+  .events-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .events-table th {
+    text-align: left;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-500);
+    background: var(--neutral-50);
+    border-bottom: 1px solid var(--neutral-200);
+    text-transform: uppercase;
+  }
+
+  .events-table td {
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--neutral-100);
+    font-size: var(--text-sm);
+    vertical-align: middle;
+  }
+
+  .events-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .events-table tr:hover {
+    background: var(--neutral-50);
+  }
+
+  .event-name-cell {
+    font-weight: var(--font-medium);
+    color: var(--neutral-900);
+  }
+
+  .event-venue {
+    font-size: var(--text-xs);
+    color: var(--neutral-500);
+  }
+
+  /* Status Badges */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+  }
+
+  .status-pending {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  .status-approved {
+    background: #d1fae5;
+    color: #065f46;
+  }
+
+  .status-rejected {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  .global-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-2);
+    background: var(--primary-100);
+    color: var(--primary-700);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    margin-left: var(--space-2);
+  }
+
+  /* Action Buttons */
+  .action-cell {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  .action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-md);
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+    cursor: pointer;
+    border: none;
+  }
+
+  .action-btn--view {
+    background: var(--neutral-100);
+    color: var(--neutral-700);
+  }
+
+  .action-btn--view:hover {
+    background: var(--neutral-200);
+  }
+
+  .action-btn--edit {
+    background: var(--info-50);
+    color: var(--info-700);
+  }
+
+  .action-btn--edit:hover {
+    background: var(--info-100);
+  }
+
+  .action-btn--approve {
+    background: var(--success-50);
+    color: var(--success-700);
+  }
+
+  .action-btn--approve:hover {
+    background: var(--success-100);
+  }
+
+  .action-btn--reject {
+    background: var(--error-50);
+    color: var(--error-700);
+  }
+
+  .action-btn--reject:hover {
+    background: var(--error-100);
+  }
+
+  .action-btn--attendance {
+    background: var(--primary-50);
+    color: var(--primary-700);
+  }
+
+  .action-btn--attendance:hover {
+    background: var(--primary-100);
+  }
+
+  .action-btn--attendance.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Empty State */
+  .empty-state {
+    text-align: center;
+    padding: var(--space-12);
+    color: var(--neutral-500);
+  }
+
+  .empty-state i {
+    font-size: var(--text-4xl);
+    margin-bottom: var(--space-4);
+    color: var(--neutral-300);
+  }
+
+  /* Modal */
+  .modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4);
+  }
+
+  .modal.show {
+    display: flex;
+  }
+
+  .modal-content {
+    background: white;
+    border-radius: var(--radius-xl);
+    max-width: 600px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-2xl);
+    animation: modalSlideIn 0.3s var(--ease-out);
+  }
+
+  @keyframes modalSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-5) var(--space-6);
+    border-bottom: 1px solid var(--neutral-200);
+  }
+
+  .modal-header h3 {
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    margin: 0;
+  }
+
+  .modal-close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full);
+    border: none;
+    background: var(--neutral-100);
+    color: var(--neutral-600);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .modal-close:hover {
+    background: var(--neutral-200);
+  }
+
+  .modal-body {
+    padding: var(--space-6);
+  }
+
+  .event-details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+
+  .detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .detail-item.full-width {
+    grid-column: span 2;
+  }
+
+  .detail-item strong {
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-500);
+    text-transform: uppercase;
+  }
+
+  .detail-item span {
+    font-size: var(--text-sm);
+    color: var(--neutral-800);
+  }
+
+  .rejection-reason {
+    background: var(--error-50);
+    padding: var(--space-3);
+    border-radius: var(--radius-lg);
+    border-left: 3px solid var(--error-500);
+  }
+
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: var(--space-4) var(--space-6);
+    border-top: 1px solid var(--neutral-200);
+    background: var(--neutral-50);
+  }
+
+  @media (max-width: 768px) {
+    .event-filters {
+      flex-direction: column;
+    }
+
+    .filter-search {
+      min-width: 100%;
+    }
+
+    .events-table-container {
+      overflow-x: auto;
+    }
+
+    .events-table {
+      min-width: 700px;
+    }
+
+    .event-details-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .detail-item.full-width {
+      grid-column: span 1;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Tabs -->
+<div class="event-tabs">
+  <button class="event-tab active" data-tab="active">
+    <i class="fas fa-calendar-alt"></i> Active
+    <span class="badge">{{ events|length }}</span>
+  </button>
+  {% if user.role == 'admin' %}
+  <button class="event-tab" data-tab="proposals">
+    <i class="fas fa-clipboard-list"></i> Proposals
+    <span class="badge">{{ pending_events|length|default:0 }}</span>
+  </button>
+  {% endif %}
+  <button class="event-tab" data-tab="archived">
+    <i class="fas fa-archive"></i> Archived
+    <span class="badge">{{ past_events|length|default:0 }}</span>
+  </button>
+</div>
+
+<!-- Active Events Tab -->
+<div class="tab-content active" id="tab-active">
+  <div class="event-filters">
+    <div class="filter-search">
+      <i class="fas fa-search"></i>
+      <input type="text" id="activeSearch" placeholder="Search events...">
+    </div>
+    {% if user.role != 'member' %}
+    <select id="statusFilter" class="filter-select">
+      <option value="all">All Status</option>
+      <option value="pending">Pending</option>
+      <option value="approved">Approved</option>
+      <option value="rejected">Rejected</option>
+    </select>
+    {% endif %}
+    <select id="categoryFilter" class="filter-select">
+      <option value="all">All Categories</option>
+      <option value="Exemplification">Exemplification</option>
+      <option value="Service Program">Service Program</option>
+      <option value="Council Meeting">Council Meeting</option>
+      <option value="Assembly Meeting">Assembly Meeting</option>
+    </select>
+  </div>
+
+  {% if events %}
+  <div class="events-table-container">
+    <table class="events-table" id="activeEventsTable">
+      <thead>
+        <tr>
+          <th>Event</th>
+          <th>Date</th>
+          <th>Category</th>
+          <th>Council</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for event in events %}
+        <tr data-status="{{ event.status }}" data-category="{{ event.category }}">
+          <td>
+            <div class="event-name-cell">{{ event.name }}</div>
+            <div class="event-venue">{{ event.venue }}</div>
+          </td>
+          <td>{{ event.date_from|date:"M d, Y" }}</td>
+          <td>{{ event.category }}</td>
+          <td>
+            {{ event.council.name }}
+            {% if event.is_global %}<span class="global-badge"><i class="fas fa-globe"></i> Global</span>{% endif %}
+          </td>
+          <td><span class="status-badge status-{{ event.status }}">{{ event.get_status_display }}</span></td>
+          <td>
+            <div class="action-cell">
+              <button class="action-btn action-btn--view" onclick="viewEvent({{ event.id }})">
+                <i class="fas fa-eye"></i> View
+              </button>
+              {% if user.role == 'admin' or user == event.created_by %}
+              {% if event.status != 'rejected' %}
+              <a href="{% url 'edit_event' event.id %}" class="action-btn action-btn--edit">
+                <i class="fas fa-edit"></i> Edit
+              </a>
+              {% endif %}
+              {% endif %}
+              {% if user.role == 'officer' and event.status == 'approved' %}
+              {% if event.is_today %}
+              <a href="{% url 'event_attendance' event.id %}" class="action-btn action-btn--attendance">
+                <i class="fas fa-clipboard-check"></i> Attendance
+              </a>
+              {% endif %}
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <i class="fas fa-calendar-times"></i>
+    <h3>No Active Events</h3>
+    <p>There are no upcoming events scheduled.</p>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Proposals Tab (Admin Only) -->
+{% if user.role == 'admin' %}
+<div class="tab-content" id="tab-proposals">
+  {% if pending_events %}
+  <div class="events-table-container">
+    <table class="events-table">
+      <thead>
+        <tr>
+          <th>Event</th>
+          <th>Date</th>
+          <th>Council</th>
+          <th>Proposed By</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for event in pending_events %}
+        <tr>
+          <td>
+            <div class="event-name-cell">{{ event.name }}</div>
+            <div class="event-venue">{{ event.category }}</div>
+          </td>
+          <td>{{ event.date_from|date:"M d, Y" }}</td>
+          <td>{{ event.council.name }}</td>
+          <td>{{ event.created_by.first_name }} {{ event.created_by.last_name }}</td>
+          <td>
+            <div class="action-cell">
+              <button class="action-btn action-btn--view" onclick="viewEvent({{ event.id }})">
+                <i class="fas fa-eye"></i>
+              </button>
+              <a href="{% url 'approve_event' event.id %}" class="action-btn action-btn--approve">
+                <i class="fas fa-check"></i> Approve
+              </a>
+              <a href="{% url 'reject_event' event.id %}" class="action-btn action-btn--reject">
+                <i class="fas fa-times"></i> Reject
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <i class="fas fa-check-circle"></i>
+    <h3>All Caught Up!</h3>
+    <p>No pending event proposals to review.</p>
+  </div>
+  {% endif %}
+</div>
+{% endif %}
+
+<!-- Archived Events Tab -->
+<div class="tab-content" id="tab-archived">
+  {% if past_events %}
+  <div class="events-table-container">
+    <table class="events-table">
+      <thead>
+        <tr>
+          <th>Event</th>
+          <th>Date</th>
+          <th>Category</th>
+          <th>Council</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for event in past_events %}
+        <tr>
+          <td>
+            <div class="event-name-cell">{{ event.name }}</div>
+            <div class="event-venue">{{ event.venue }}</div>
+          </td>
+          <td>{{ event.date_from|date:"M d, Y" }}</td>
+          <td>{{ event.category }}</td>
+          <td>{{ event.council.name }}</td>
+          <td><span class="status-badge status-{{ event.status }}">{{ event.get_status_display }}</span></td>
+          <td>
+            <div class="action-cell">
+              <button class="action-btn action-btn--view" onclick="viewEvent({{ event.id }})">
+                <i class="fas fa-eye"></i> View
+              </button>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <i class="fas fa-archive"></i>
+    <h3>No Archived Events</h3>
+    <p>Past events will appear here.</p>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Event Details Modal -->
+<div id="eventModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Event Details</h3>
+      <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="eventModalContent">
+      <div style="text-align: center; padding: 2rem; color: var(--neutral-500);">
+        <i class="fas fa-spinner fa-spin"></i> Loading...
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn--primary" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Tabs
+    const tabs = document.querySelectorAll('.event-tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', function () {
+        tabs.forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.getElementById('tab-' + this.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Filters
+    const searchInput = document.getElementById('activeSearch');
+    const statusFilter = document.getElementById('statusFilter');
+    const categoryFilter = document.getElementById('categoryFilter');
+
+    function filterTable() {
+      const search = searchInput?.value.toLowerCase() || '';
+      const status = statusFilter?.value || 'all';
+      const category = categoryFilter?.value || 'all';
+
+      document.querySelectorAll('#activeEventsTable tbody tr').forEach(row => {
+        const text = row.textContent.toLowerCase();
+        const rowStatus = row.dataset.status;
+        const rowCategory = row.dataset.category;
+
+        const matchesSearch = text.includes(search);
+        const matchesStatus = status === 'all' || rowStatus === status;
+        const matchesCategory = category === 'all' || rowCategory === category;
+
+        row.style.display = matchesSearch && matchesStatus && matchesCategory ? '' : 'none';
+      });
+    }
+
+    searchInput?.addEventListener('input', filterTable);
+    statusFilter?.addEventListener('change', filterTable);
+    categoryFilter?.addEventListener('change', filterTable);
+  });
+
+  // Modal
+  const modal = document.getElementById('eventModal');
+  const content = document.getElementById('eventModalContent');
+
+  function viewEvent(eventId) {
+    modal.classList.add('show');
+    content.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--neutral-500);"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+
+    fetch(`/event/${eventId}/details/`)
+      .then(res => res.json())
+      .then(data => {
+        let html = `
+        <h4 style="margin: 0 0 var(--space-4); font-size: var(--text-xl);">${data.name}</h4>
+        <div class="event-details-grid">
+          <div class="detail-item"><strong>Date</strong><span>${data.date_from}${data.date_until ? ' - ' + data.date_until : ''}</span></div>
+          <div class="detail-item"><strong>Status</strong><span class="status-badge status-${data.status}">${data.status_display}</span></div>
+          <div class="detail-item"><strong>Council</strong><span>${data.council_name}</span></div>
+          <div class="detail-item"><strong>Created By</strong><span>${data.creator_name}</span></div>
+          <div class="detail-item full-width"><strong>Location</strong><span>${data.street}, ${data.barangay}, ${data.city}, ${data.province}</span></div>
+          <div class="detail-item full-width"><strong>Description</strong><span>${data.description}</span></div>
+      `;
+
+        if (data.status === 'rejected' && data.rejection_reason) {
+          html += `<div class="detail-item full-width rejection-reason"><strong>Rejection Reason</strong><span>${data.rejection_reason}</span></div>`;
+        }
+
+        html += '</div>';
+        content.innerHTML = html;
+      })
+      .catch(() => {
+        content.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--error-600);"><i class="fas fa-exclamation-circle"></i> Error loading details</div>';
+      });
+  }
+
+  function closeModal() {
+    modal.classList.remove('show');
+  }
+
+  modal?.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+{% endblock %}

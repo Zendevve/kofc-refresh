@@ -1,0 +1,527 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Knights of Columbus{% endblock %}
+
+{% block page_title %}
+{% if user.role == 'admin' %}Admin Dashboard{% elif user.role == 'officer' %}Officer Dashboard{% else %}Member
+Dashboard{% endif %}
+{% endblock %}
+
+{% block page_subtitle %}Welcome back, {{ user.first_name }}. Here's your overview.{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Dashboard Specific Styles */
+  .dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-5);
+    margin-bottom: var(--space-8);
+  }
+
+  .stat-card {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: var(--space-5);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--neutral-200);
+    transition: all var(--transition-base);
+  }
+
+  .stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-lg);
+    flex-shrink: 0;
+  }
+
+  .stat-icon--primary {
+    background: linear-gradient(135deg, var(--primary-100) 0%, var(--primary-200) 100%);
+    color: var(--primary-700);
+  }
+
+  .stat-icon--accent {
+    background: linear-gradient(135deg, var(--accent-100) 0%, var(--accent-200) 100%);
+    color: var(--accent-600);
+  }
+
+  .stat-icon--success {
+    background: linear-gradient(135deg, var(--success-50) 0%, #dcfce7 100%);
+    color: var(--success-600);
+  }
+
+  .stat-icon--info {
+    background: linear-gradient(135deg, var(--info-50) 0%, #dbeafe 100%);
+    color: var(--info-600);
+  }
+
+  .stat-content {
+    flex: 1;
+  }
+
+  .stat-value {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: var(--neutral-900);
+    line-height: 1;
+    margin-bottom: var(--space-1);
+  }
+
+  .stat-label {
+    font-size: var(--text-sm);
+    color: var(--neutral-500);
+    font-weight: var(--font-medium);
+  }
+
+  /* Main Content Grid */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--space-6);
+  }
+
+  @media (max-width: 1024px) {
+    .dashboard-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Cards */
+  .dashboard-card {
+    background: white;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--neutral-200);
+    overflow: hidden;
+  }
+
+  .dashboard-card-header {
+    padding: var(--space-4) var(--space-5);
+    border-bottom: 1px solid var(--neutral-100);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .dashboard-card-header h3 {
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-900);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .dashboard-card-header h3 i {
+    color: var(--primary-600);
+  }
+
+  .dashboard-card-body {
+    padding: var(--space-5);
+  }
+
+  /* Profile Card */
+  .profile-card {
+    text-align: center;
+    padding: var(--space-6);
+  }
+
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-full);
+    border: 3px solid var(--primary-100);
+    margin: 0 auto var(--space-3);
+    object-fit: cover;
+    background: var(--neutral-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .profile-avatar i {
+    font-size: var(--text-3xl);
+    color: var(--primary-600);
+  }
+
+  .profile-name {
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-900);
+    margin-bottom: var(--space-1);
+  }
+
+  .profile-council {
+    font-size: var(--text-sm);
+    color: var(--neutral-500);
+    margin-bottom: var(--space-3);
+  }
+
+  .profile-degree {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-3);
+    background: linear-gradient(135deg, var(--accent-100) 0%, var(--accent-200) 100%);
+    color: var(--accent-600);
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    border-radius: var(--radius-full);
+  }
+
+  /* Bible Verse */
+  .verse-card {
+    background: linear-gradient(135deg, var(--primary-800) 0%, var(--primary-900) 100%);
+    color: white;
+    padding: var(--space-5);
+    border-radius: var(--radius-xl);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .verse-card::before {
+    content: '"';
+    position: absolute;
+    top: -15px;
+    left: 8px;
+    font-size: 80px;
+    font-family: var(--font-accent);
+    opacity: 0.1;
+    color: var(--accent-400);
+  }
+
+  .verse-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+    font-size: var(--text-xs);
+    color: var(--accent-400);
+    font-weight: var(--font-semibold);
+  }
+
+  .verse-text {
+    font-family: var(--font-accent);
+    font-size: var(--text-base);
+    font-style: italic;
+    line-height: var(--leading-relaxed);
+    margin-bottom: var(--space-2);
+  }
+
+  .verse-reference {
+    font-size: var(--text-xs);
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  /* Event Table */
+  .events-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .events-table th {
+    text-align: left;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-xs);
+    color: var(--neutral-500);
+    background: var(--neutral-50);
+    border-bottom: 1px solid var(--neutral-200);
+    font-weight: var(--font-semibold);
+  }
+
+  .events-table td {
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--neutral-100);
+    font-size: var(--text-sm);
+  }
+
+  .events-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .event-name {
+    font-weight: var(--font-medium);
+    color: var(--neutral-900);
+  }
+
+  .event-venue {
+    font-size: var(--text-xs);
+    color: var(--neutral-500);
+  }
+
+  .status-badge {
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    background: var(--success-50);
+    color: var(--success-700);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Stats Row - Role-specific -->
+<div class="dashboard-stats">
+  {% if user.role == 'admin' %}
+  <div class="stat-card">
+    <div class="stat-icon stat-icon--primary"><i class="fas fa-users"></i></div>
+    <div class="stat-content">
+      <div class="stat-value" data-target="{{ user_list|length }}">0</div>
+      <div class="stat-label">Active Members</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon stat-icon--accent"><i class="fas fa-user-clock"></i></div>
+    <div class="stat-content">
+      <div class="stat-value" data-target="{{ pending_users_count|default:0 }}">0</div>
+      <div class="stat-label">Pending Applications</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon stat-icon--success"><i class="fas fa-calendar-check"></i></div>
+    <div class="stat-content">
+      <div class="stat-value" data-target="{{ approved_events_count }}">0</div>
+      <div class="stat-label">Upcoming Events</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon stat-icon--info"><i class="fas fa-user-plus"></i></div>
+    <div class="stat-content">
+      <div class="stat-value" data-target="{{ user_recruitment_count|default:0 }}">0</div>
+      <div class="stat-label">Your Recruits</div>
+    </div>
+  </div>
+
+  {% elif user.role == 'officer' %}
+  <div class="stat-card">
+    <div class="stat-icon stat-icon--primary"><i class="fas fa-users"></i></div>
+    <div class="stat-content">
+      <div class="stat-value" data-target="{{ user_list|length }}">0</div>
+      <div class="stat-label">Active Members</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon stat-icon--accent"><i class="fas fa-calendar-alt"></i></div>
+    <div class="stat-content">
+      <div class="stat-value" data-target="{{ pending_events_count|default:0 }}">0</div>
+      <div class="stat-label">Pending Events</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon stat-icon--success"><i class="fas fa-calendar-check"></i></div>
+    <div class="stat-content">
+      <div class="stat-value" data-target="{{ approved_events_count }}">0</div>
+      <div class="stat-label">Approved Events</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon stat-icon--info"><i class="fas fa-user-plus"></i></div>
+    <div class="stat-content">
+      <div class="stat-value" data-target="{{ user_recruitment_count|default:0 }}">0</div>
+      <div class="stat-label">Your Recruits</div>
+    </div>
+  </div>
+
+  {% else %}
+  <!-- Member stats -->
+  <div class="stat-card">
+    <div class="stat-icon stat-icon--primary"><i class="fas fa-tasks"></i></div>
+    <div class="stat-content">
+      <div class="stat-value" data-target="{{ activities_count|default:0 }}">0</div>
+      <div class="stat-label">Completed Activities</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon stat-icon--accent"><i class="fas fa-calendar-check"></i></div>
+    <div class="stat-content">
+      <div class="stat-value" data-target="{{ approved_events_count|default:0 }}">0</div>
+      <div class="stat-label">Available Events</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon stat-icon--success"><i class="fas fa-user-plus"></i></div>
+    <div class="stat-content">
+      <div class="stat-value" data-target="{{ user_recruitment_count|default:0 }}">0</div>
+      <div class="stat-label">Your Recruits</div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Main Content Grid -->
+<div class="dashboard-grid">
+  <!-- Left Column -->
+  <div class="flex flex-col gap-6">
+    <!-- Daily Inspiration -->
+    <div class="verse-card animate-fadeInUp">
+      <div class="verse-header">
+        <i class="fas fa-book-open"></i>
+        <span>Daily Inspiration</span>
+      </div>
+      <p class="verse-text">"{{ daily_verse.verse }}"</p>
+      <div class="verse-reference">— {{ daily_verse.reference }}</div>
+    </div>
+
+    <!-- Upcoming Events -->
+    <div class="dashboard-card">
+      <div class="dashboard-card-header">
+        <h3><i class="fas fa-calendar-alt"></i> Upcoming Events</h3>
+        <a href="{% url 'event_list' %}" class="btn btn--ghost btn--sm">View All</a>
+      </div>
+      <div class="dashboard-card-body" style="padding: 0;">
+        {% if events %}
+        <table class="events-table">
+          <thead>
+            <tr>
+              <th>Event</th>
+              <th>Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for event in events|slice:":5" %}
+            <tr>
+              <td>
+                <div class="event-name">{{ event.name }}</div>
+                <div class="event-venue">{{ event.venue }}</div>
+              </td>
+              <td>{{ event.date_from|date:"M d, Y" }}</td>
+              <td><span class="status-badge">{{ event.status|title }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <div style="padding: var(--space-6); text-align: center; color: var(--neutral-500);">
+          No upcoming events scheduled.
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Column -->
+  <div class="flex flex-col gap-6">
+    <!-- Profile Card -->
+    <div class="dashboard-card">
+      <div class="dashboard-card-body profile-card">
+        <div class="profile-avatar">
+          {% if user.profile_picture %}
+          <img src="{{ user.profile_picture.url }}" alt="Profile"
+            style="width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-full);">
+          {% else %}
+          <i class="fas fa-user"></i>
+          {% endif %}
+        </div>
+        <h4 class="profile-name">{{ user.first_name }} {{ user.last_name }}</h4>
+        <p class="profile-council">{{ user.council.name|default:"No council assigned" }}</p>
+        <div class="profile-degree">
+          <i class="fas fa-medal"></i>
+          {{ user.get_current_degree_display|default:"1st Degree" }}
+        </div>
+        <div style="margin-top: var(--space-4);">
+          <a href="{% url 'edit_profile' %}" class="btn btn--ghost btn--sm">
+            <i class="fas fa-user-edit"></i> Edit Profile
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Inactive Warning Popup -->
+{% if show_inactive_warning %}
+<div class="inactive-warning-overlay" id="inactiveWarningOverlay" style="
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+">
+  <div style="
+        background: white;
+        padding: var(--space-8);
+        border-radius: var(--radius-2xl);
+        max-width: 400px;
+        text-align: center;
+        box-shadow: var(--shadow-2xl);
+        animation: scaleIn 0.3s ease;
+    ">
+    <div style="
+            width: 64px;
+            height: 64px;
+            background: var(--warning-50);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-4);
+        ">
+      <i class="fas fa-exclamation-triangle" style="font-size: var(--text-2xl); color: var(--warning-500);"></i>
+    </div>
+    <h3 style="margin-bottom: var(--space-3); color: var(--neutral-900);">Activity Warning</h3>
+    <p style="color: var(--neutral-600); margin-bottom: var(--space-6);">
+      Your account has been inactive for more than 30 days. Please participate in council events or recruitment
+      activities to maintain your active status.
+    </p>
+    <button onclick="closeInactiveWarning()" class="btn btn--primary">I Understand</button>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Animate counters
+    const counters = document.querySelectorAll('.stat-value');
+    counters.forEach(counter => {
+      const target = parseInt(counter.getAttribute('data-target'));
+      if (isNaN(target)) return;
+
+      let current = 0;
+      const duration = 1000;
+      const stepTime = 16;
+      const totalSteps = duration / stepTime;
+      const increment = target / totalSteps;
+
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+          counter.textContent = target;
+          clearInterval(timer);
+        } else {
+          counter.textContent = Math.floor(current);
+        }
+      }, stepTime);
+    });
+  });
+
+  function closeInactiveWarning() {
+    const overlay = document.getElementById('inactiveWarningOverlay');
+    if (overlay) {
+      overlay.style.opacity = '0';
+      setTimeout(() => overlay.remove(), 300);
+    }
+  }
+</script>
+{% endblock %}

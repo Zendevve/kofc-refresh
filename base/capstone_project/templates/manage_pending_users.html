@@ -1,981 +1,766 @@
-{% extends 'base.html' %}
+{% extends 'dashboard_base.html' %}
 {% load static %}
 
-{% block title %}
-Knights of Columbus - Manage Pending Users
+{% block title %}Pending Users - Knights of Columbus{% endblock %}
+
+{% block page_title %}Pending Users{% endblock %}
+{% block page_subtitle %}Review and approve membership requests{% endblock %}
+
+{% block header_actions %}
+{% if request.user.role == 'admin' %}
+<a href="{% url 'my_recruits' %}" class="btn btn--ghost">
+  <i class="fas fa-users"></i> My Recruits
+</a>
+{% endif %}
 {% endblock %}
 
-{% block content %}
-<link rel="stylesheet" href="{% static 'css/dashboard_shared.css' %}?v={% now 'U' %}">
-
-<div class="dashboard-container">
-    <div class="content-card">
-        <div class="dashboard-header">
-            <h1 style="color: var(--primary-bg);">Pending User Requests</h1>
-            <div>
-                <a href="{% url 'dashboard' %}" class="dashboard-btn secondary back-btn">
-                    <i class="fas fa-arrow-left"></i> Back to Dashboard
-                </a>
-                {% if request.user.role == 'admin' %}
-                <a href="{% url 'my_recruits' %}" class="dashboard-btn">
-                    <i class="fas fa-users"></i> View My Recruits
-                </a>
-                {% endif %}
-            </div>
-        </div>
-    
-    <!-- Messages block removed - now using popup notifications from base.html -->
-    
-        <!-- Search and Filters -->
-        <div class="search-container">
-            <div class="search-wrapper">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" id="pendingUserSearch" class="search-input" placeholder="Search pending users by name or email...">
-                <button id="clearSearch" class="clear-search"><i class="fas fa-times"></i></button>
-            </div>
-        </div>
-        
-        <div class="sort-filter-container">
-            <div class="sort-filter">
-                <select id="sortSelect" class="sort-dropdown">
-                    <option value="alphabetical">Alphabetical (A-Z)</option>
-                    <option value="reverse-alphabetical">Reverse Alphabetical (Z-A)</option>
-                    <option value="newest">Newest Applications</option>
-                    <option value="oldest">Oldest Applications</option>
-                </select>
-            </div>
-        </div>
-        
-        <!-- Pending Users Table -->
-        {% if pending_users %}
-        <div class="event-table-container">
-            <table class="event-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Council</th>
-                        <th>Applied On</th>
-                        <th>Status</th>
-                        <th class="action-header">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for user in pending_users %}
-                    <tr data-role="pending" data-name="{{ user.first_name }} {{ user.last_name }}" data-joined="{{ user.date_joined|date:'Y-m-d' }}">
-                        <td>
-                            {{ user.first_name }}
-                            {% if user.second_name %} {{ user.second_name }}{% endif %}
-                            {% if user.middle_name %} {{ user.middle_name }}{% endif %}
-                            {{ user.last_name }}
-                            {% if user.suffix %} {{ user.suffix }}{% endif %}
-                        </td>
-                        <td>{{ user.username }}</td>
-                        <td>{{ user.email }}</td>
-                        <td>{{ user.council.name }}</td>
-                        <td>{{ user.date_joined|date:"F j, Y" }}</td>
-                        <td><span class="status-badge status-pending">Pending</span></td>
-                        <td>
-                            <div class="action-cell">
-                                <button class="action-btn details-btn view-member-btn" data-user-id="{{ user.id }}">
-                                    <i class="fas fa-eye"></i> View Details
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        {% else %}
-        <div class="no-events-message">
-            <i class="fas fa-user-check"></i>
-            <p>No pending users to review.</p>
-            <p>All membership requests have been processed.</p>
-        </div>
-        {% endif %}
-    </div>
-</div>
-
-<!-- Member details modal -->
-<div id="memberDetailsModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Pending Member Details</h3>
-            <span class="close">&times;</span>
-        </div>
-        <div id="memberDetailsContent">
-            <div class="loading">Loading member details...</div>
-        </div>
-        <div class="modal-footer" id="modalFooter">
-            <button type="button" class="dashboard-btn" onclick="closeModal('memberDetailsModal')">OK</button>
-        </div>
-    </div>
-</div>
-
+{% block extra_css %}
 <style>
-.dashboard-header {
+  /* Stats */
+  .pending-stats {
+    display: flex;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+
+  .pending-stat {
+    background: white;
+    padding: var(--space-4) var(--space-6);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--neutral-200);
+    text-align: center;
+    flex: 1;
+    max-width: 200px;
+  }
+
+  .pending-stat-value {
+    font-size: var(--text-3xl);
+    font-weight: var(--font-bold);
+    color: var(--warning-600);
+  }
+
+  .pending-stat-label {
+    font-size: var(--text-sm);
+    color: var(--neutral-500);
+  }
+
+  /* Filters */
+  .pending-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+    align-items: center;
+  }
+
+  .pending-search {
+    flex: 1;
+    min-width: 250px;
+    position: relative;
+  }
+
+  .pending-search i {
+    position: absolute;
+    left: var(--space-3);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--neutral-400);
+  }
+
+  .pending-search input {
+    width: 100%;
+    padding: var(--space-3) var(--space-4) var(--space-3) var(--space-10);
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+  }
+
+  .pending-search input:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  }
+
+  .sort-select {
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    background: white;
+    cursor: pointer;
+  }
+
+  .view-toggle {
+    display: flex;
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .view-toggle-btn {
+    padding: var(--space-2) var(--space-3);
+    background: white;
+    border: none;
+    color: var(--neutral-500);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .view-toggle-btn:hover {
+    background: var(--neutral-50);
+  }
+
+  .view-toggle-btn.active {
+    background: var(--primary-700);
+    color: white;
+  }
+
+  /* Users Container */
+  .users-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .users-container.list-view {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+
+  /* User Card */
+  .user-card {
+    background: white;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--neutral-200);
+    border-left: 4px solid var(--warning-500);
+    padding: var(--space-5);
+    transition: all var(--transition-base);
+  }
+
+  .user-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  .user-card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .user-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+    background: var(--neutral-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--neutral-400);
+    font-size: var(--text-xl);
+    flex-shrink: 0;
+  }
+
+  .user-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .user-name {
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-900);
+    margin-bottom: var(--space-1);
+  }
+
+  .user-email {
+    font-size: var(--text-sm);
+    color: var(--neutral-500);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .user-card-body {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+  }
+
+  .user-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--text-xs);
+    color: var(--neutral-500);
+    background: var(--neutral-100);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-md);
+  }
+
+  .pending-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    color: #92400e;
+  }
+
+  /* Action Buttons */
+  .user-card-actions {
+    display: flex;
+    gap: var(--space-2);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--neutral-100);
+  }
+
+  .action-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+    cursor: pointer;
+    border: none;
+  }
+
+  .view-btn {
+    background: var(--primary-700);
+    color: white;
+  }
+
+  .view-btn:hover {
+    background: var(--primary-800);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(13, 52, 113, 0.3);
+  }
+
+  /* List View */
+  .list-view .user-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-lg);
+  }
+
+  .list-view .user-card:hover {
+    transform: none;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .list-view .user-card-header {
+    margin-bottom: 0;
+    flex-shrink: 0;
+    min-width: 200px;
+  }
+
+  .list-view .user-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: var(--text-base);
+  }
+
+  .list-view .user-name {
+    font-size: var(--text-sm);
+  }
+
+  .list-view .user-email {
+    font-size: var(--text-xs);
+  }
+
+  .list-view .user-card-body {
+    flex: 1;
+    margin-bottom: 0;
+    justify-content: flex-start;
+  }
+
+  .list-view .user-card-actions {
+    padding-top: 0;
+    border-top: none;
+    flex-shrink: 0;
+  }
+
+  .list-view .action-btn {
+    flex: initial;
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--text-xs);
+  }
+
+  /* Modal */
+  .modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4);
+  }
+
+  .modal.show {
+    display: flex;
+  }
+
+  .modal-content {
+    background: white;
+    border-radius: var(--radius-xl);
+    max-width: 650px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-2xl);
+    animation: modalSlideIn 0.3s var(--ease-out);
+  }
+
+  @keyframes modalSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-5) var(--space-6);
+    border-bottom: 1px solid var(--neutral-200);
+  }
+
+  .modal-header h3 {
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    margin: 0;
+  }
+
+  .modal-close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full);
+    border: none;
+    background: var(--neutral-100);
+    color: var(--neutral-600);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .modal-close:hover {
+    background: var(--neutral-200);
+    color: var(--neutral-900);
+  }
+
+  .modal-body {
+    padding: var(--space-6);
+  }
+
+  .user-details-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+    padding-bottom: var(--space-5);
+    border-bottom: 1px solid var(--neutral-100);
+  }
+
+  .user-details-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-full);
+    object-fit: cover;
+    background: var(--neutral-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--neutral-400);
+    font-size: var(--text-2xl);
+    border: 3px solid var(--warning-400);
+  }
+
+  .user-details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+
+  .detail-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .detail-group.full-width {
+    grid-column: span 2;
+  }
+
+  .detail-group strong {
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-500);
+    text-transform: uppercase;
+  }
+
+  .detail-group span {
+    font-size: var(--text-sm);
+    color: var(--neutral-800);
+  }
+
+  .signature-container {
+    margin-top: var(--space-4);
+    padding: var(--space-4);
+    background: var(--neutral-50);
+    border-radius: var(--radius-lg);
+    text-align: center;
+  }
+
+  .signature-container img {
+    max-width: 100%;
+    max-height: 150px;
+  }
+
+  .modal-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(13, 52, 113, 0.1);
-}
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-6);
+    border-top: 1px solid var(--neutral-200);
+    background: var(--neutral-50);
+  }
 
-.search-container {
-    margin-bottom: 2rem;
-}
+  .modal-actions {
+    display: flex;
+    gap: var(--space-2);
+  }
 
-.search-wrapper {
-    position: relative;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.search-icon {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #6c757d;
-}
-
-.search-input {
-    width: 100%;
-    padding: 0.75rem 1rem 0.75rem 2.5rem;
-    border: 2px solid rgba(13, 52, 113, 0.2);
-    border-radius: var(--border-radius);
-    font-size: 1rem;
-    background-color: white;
-    transition: box-shadow 0.2s ease;
-}
-
-.clear-search {
-    position: absolute;
-    right: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: #6c757d;
-    cursor: pointer;
-    display: none;
-    padding: 0;
-    font-size: 1rem;
-}
-
-/* Event Table Styles */
-.event-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    background-color: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(13, 52, 113, 0.1);
-    margin-bottom: 2rem;
-}
-
-.event-table thead {
-    background: linear-gradient(135deg, var(--primary-bg), #1e5a96);
-}
-
-.event-table th {
-    padding: 1rem;
-    text-align: left;
-    font-weight: 600;
+  .approve-btn {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
     color: white;
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-lg);
     border: none;
-    font-size: 0.95rem;
-    letter-spacing: 0.5px;
-}
+    font-weight: var(--font-medium);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
 
-.event-table th:first-child {
-    border-top-left-radius: 12px;
-}
-
-.event-table th:last-child {
-    border-top-right-radius: 12px;
-}
-
-.event-table tbody tr {
-    transition: all 0.3s ease;
-    border-bottom: 1px solid rgba(13, 52, 113, 0.08);
-}
-
-.event-table tbody tr:hover {
-    background-color: rgba(13, 52, 113, 0.02);
+  .approve-btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(13, 52, 113, 0.1);
-}
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+  }
 
-.event-table tbody tr:last-child {
-    border-bottom: none;
-}
-
-.event-table td {
-    padding: 1rem;
-    vertical-align: middle;
-    border: none;
-}
-
-.action-cell {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.action-btn {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    text-decoration: none;
-}
-
-.details-btn {
-    background: linear-gradient(135deg, #17a2b8, #138496);
+  .reject-btn {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
     color: white;
-}
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-lg);
+    border: none;
+    font-weight: var(--font-medium);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
 
-.details-btn:hover {
-    background: linear-gradient(135deg, #138496, #117a8b);
+  .reject-btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
-}
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+  }
 
-.status-badge {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    border-radius: 25px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-.status-pending {
-    background: linear-gradient(135deg, #ffc107, #f39c12);
-    color: #212529;
-}
-
-.no-events-message {
+  /* Empty State */
+  .empty-state {
     text-align: center;
-    padding: 3rem;
-    color: #6c757d;
-    background-color: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(13, 52, 113, 0.1);
-}
-
-.no-events-message i {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    color: var(--primary-bg);
-}
-
-.no-events-message p {
-    margin: 0.5rem 0;
-    font-size: 1.1rem;
-}
-
-.no-events-message p:first-of-type {
-    font-weight: 600;
-    color: var(--heading-color);
-}
-
-/* Responsive Design */
-@media (max-width: 1200px) {
-    .event-table th:nth-child(4),
-    .event-table td:nth-child(4) {
-        display: none;
-    }
-}
-
-@media (max-width: 992px) {
-    .event-table th:nth-child(3),
-    .event-table td:nth-child(3) {
-        display: none;
-    }
-}
-
-@media (max-width: 768px) {
-    .event-table {
-        font-size: 0.9rem;
-    }
-    
-    .event-table th,
-    .event-table td {
-        padding: 0.75rem 0.5rem;
-    }
-    
-    .action-cell {
-        flex-direction: column;
-        gap: 0.25rem;
-    }
-    
-    .action-btn {
-        font-size: 0.8rem;
-        padding: 0.4rem 0.8rem;
-        width: 100%;
-        justify-content: center;
-    }
-    
-    .dashboard-header {
-        flex-direction: column;
-        gap: 1rem;
-        align-items: stretch;
-    }
-    
-    .dashboard-header div {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-    
-    .dashboard-btn {
-        text-align: center;
-        width: 100%;
-    }
-    
-    .modal-footer {
-        flex-direction: column;
-        gap: 1rem;
-        align-items: stretch;
-    }
-    
-    .modal-footer .action-buttons {
-        justify-content: center;
-        width: 100%;
-    }
-    
-    .modal-footer .ok-button {
-        margin-left: 0;
-        width: 100%;
-    }
-}
-
-@media (max-width: 576px) {
-    .event-table-container {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        margin: 0 -1rem;
-        padding: 0 1rem;
-    }
-    
-    .event-table {
-        min-width: 600px;
-    }
-    
-    .content-card {
-        padding: 1rem;
-    }
-}
-
-.event-table-container {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    margin-bottom: 2rem;
-}
-
-/* Modal styles */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-        width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.modal.show {
-    opacity: 1;
-}
-
-.modal-content {
-    background-color: var(--secondary-bg);
-    margin: 5% auto;
-    padding: 0;
-    border-radius: var(--border-radius);
-    max-width: 700px;
-    position: relative;
-    max-height: 85vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(13, 52, 113, 0.3);
-    animation: modalSlideIn 0.4s ease-out;
-}
-@keyframes modalSlideIn { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
-.modal.show .modal-content {
-    transform: translateY(0);
-    opacity: 1;
-}
-
-.modal-header {
-    padding: 1.5rem 1.5rem 0 1.5rem;
-    position: relative;
-}
-
-.modal-header h3 { 
-    color: var(--heading-color); 
-    margin: 0 0 1.5rem 0; 
-    border-bottom: 2px solid var(--primary-bg); 
-    padding-bottom: 1rem; 
-    font-size: 1.8rem; 
-}
-
-#memberDetailsContent { 
-    padding: 1.5rem; 
-}
-.modal-member-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-.modal-detail-item { padding: 1rem; background-color: rgba(13, 52, 113, 0.05); border-radius: var(--border-radius); }
-.modal-detail-item strong { display: block; color: var(--heading-color); margin-bottom: 0.5rem; }
-.modal-detail-item.full-width { grid-column: 1 / -1; }
-.modal-member-title { grid-column: 1 / -1; margin: 0 0 1rem 0; padding-bottom: 1rem; border-bottom: 1px solid rgba(13, 52, 113, 0.1); }
-.modal-footer { 
-    padding: 1.5rem; 
-    display: flex; 
-    justify-content: flex-start; 
-    align-items: center; 
-    border-top: 1px solid rgba(13, 52, 113, 0.1); 
-    gap: 1rem;
-}
-.modal-footer .action-buttons {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-}
-.modal-footer .ok-button {
-    margin-left: auto;
-}
-.modal-footer .dashboard-btn {
-    background: linear-gradient(135deg, var(--primary-bg), #1e5a96);
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(13, 52, 113, 0.3);
-}
-.modal-footer .dashboard-btn:hover {
-    background: linear-gradient(135deg, #1e5a96, var(--primary-bg));
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(13, 52, 113, 0.4);
-}
-
-.close {
-    position: absolute;
-    top: 1.5rem; right: 2rem;
-    font-size: 2rem;
-    cursor: pointer;
-    color: var(--heading-color);
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: all var(--transition-speed) ease;
-}
-.close:hover {
-    background-color: var(--primary-bg);
-    color: var(--secondary-bg);
-    transform: rotate(90deg);
-}
-
-.loading {
-    text-align: center;
-    padding: 2rem;
-    color: var(--heading-color);
-}
-
-.detail-group {
-    margin-bottom: 1rem;
-}
-
-.detail-group strong {
-    display: block;
-    margin-bottom: 0.25rem;
-    color: #0D3471;
-}
-
-.profile-image-container {
-    text-align: center;
-    margin-bottom: 1.5rem;
-}
-
-.profile-image {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #0D3471;
-}
-
-.profile-placeholder {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    background-color: #f0f0f0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3rem;
-    color: #0D3471;
-}
-
-.e-signature-container {
-    text-align: center;
-    margin: 1.5rem 0;
-    border: 1px solid #ddd;
-    padding: 1rem;
-    border-radius: var(--border-radius);
-}
-
-.e-signature-image {
-    max-width: 100%;
-    max-height: 200px;
-}
-
-    .approve-btn {
-        background-color: #28a745;
-        color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    font-weight: 600;
-    }
-
-    .reject-btn {
-        background-color: #dc3545;
-        color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    font-weight: 600;
-}
-
-.role-selection-container {
-        display: flex;
-        align-items: center;
-    gap: 1rem;
-    }
-
-    .role-select {
-    padding: 0.5rem;
-    border-radius: var(--border-radius);
-    border: 1px solid #ced4da;
-}
-
-    .message-container {
-        margin-bottom: 20px;
-    }
-
-    .alert {
-        padding: 10px;
-        border-radius: 5px;
-        margin-bottom: 10px;
-    }
-
-    .alert-success {
-        background-color: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
-    }
-
-    .alert-danger {
-        background-color: #f8d7da;
-        color: #721c24;
-        border: 1px solid #f5c6cb;
-    }
-
-    .alert-info {
-        background-color: #d1ecf1;
-        color: #0c5460;
-        border: 1px solid #bee5eb;
-    }
-
-.reason-container {
-    display: none;
-    margin-top: 1rem;
-}
-
-.reason-textarea {
-    width: 100%;
-    padding: 0.5rem;
-    border-radius: var(--border-radius);
-    border: 1px solid #ced4da;
-    min-height: 100px;
-    margin-bottom: 1rem;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .dashboard-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-    }
-    
-    .modal-content {
-        margin: 10% 1rem;
-        max-height: 90vh;
-    }
-    
-    .modal-footer {
-        flex-direction: column;
-    }
-    
-    .role-selection-container {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-}
-
-.back-btn:hover {
-    background-color: #f4b41a !important;
-    color: white;
-}
-
-/* Sort dropdown styles */
-.sort-filter-container {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin-bottom: 1.5rem;
-}
-
-.sort-filter {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.sort-dropdown {
-    padding: 0.75rem 1rem;
-    border: 2px solid rgba(13, 52, 113, 0.2);
-    border-radius: 8px;
+    padding: var(--space-12);
+    color: var(--neutral-500);
     background: white;
-    color: var(--primary-bg);
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(13, 52, 113, 0.1);
-    min-width: 200px;
-}
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--neutral-200);
+  }
 
-.sort-dropdown:hover {
-    border-color: var(--primary-bg);
-    box-shadow: 0 4px 12px rgba(13, 52, 113, 0.2);
-}
+  .empty-state i {
+    font-size: var(--text-4xl);
+    margin-bottom: var(--space-4);
+    color: var(--success-500);
+  }
 
-.sort-dropdown:focus {
-    outline: none;
-    border-color: var(--primary-bg);
-    box-shadow: 0 0 0 3px rgba(13, 52, 113, 0.1);
-}
+  @media (max-width: 768px) {
+    .pending-filters {
+      flex-direction: column;
+    }
 
-@media (max-width: 768px) {
-    .sort-filter-container { justify-content: center; }
-    .sort-dropdown { min-width: auto; width: 100%; }
-}
+    .pending-search {
+      min-width: 100%;
+    }
+
+    .users-container {
+      grid-template-columns: 1fr;
+    }
+
+    .user-details-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .detail-group.full-width {
+      grid-column: span 1;
+    }
+
+    .modal-footer {
+      flex-direction: column;
+    }
+
+    .modal-actions {
+      width: 100%;
+      justify-content: stretch;
+    }
+
+    .modal-actions button {
+      flex: 1;
+    }
+  }
 </style>
+{% endblock %}
 
+{% block content %}
+<!-- Stats -->
+<div class="pending-stats">
+  <div class="pending-stat">
+    <div class="pending-stat-value">{{ pending_users|length }}</div>
+    <div class="pending-stat-label">Pending Requests</div>
+  </div>
+</div>
+
+<!-- Filters -->
+<div class="pending-filters">
+  <div class="pending-search">
+    <i class="fas fa-search"></i>
+    <input type="text" id="pendingUserSearch" placeholder="Search by name, email, or council...">
+  </div>
+  <select id="sortSelect" class="sort-select">
+    <option value="newest">Newest First</option>
+    <option value="oldest">Oldest First</option>
+    <option value="alphabetical">A → Z</option>
+    <option value="reverse-alphabetical">Z → A</option>
+  </select>
+  <div class="view-toggle">
+    <button class="view-toggle-btn active" data-view="grid" title="Grid View"><i class="fas fa-th-large"></i></button>
+    <button class="view-toggle-btn" data-view="list" title="List View"><i class="fas fa-list"></i></button>
+  </div>
+</div>
+
+<!-- Users Container -->
+{% if pending_users %}
+<div class="users-container" id="usersContainer">
+  {% for user in pending_users %}
+  <div class="user-card" data-name="{{ user.first_name }} {{ user.last_name }}"
+    data-joined="{{ user.date_joined|date:'Y-m-d' }}">
+    <div class="user-card-header">
+      {% if user.profile_picture %}
+      <img src="{{ user.profile_picture.url }}" alt="{{ user.first_name }}" class="user-avatar">
+      {% else %}
+      <div class="user-avatar"><i class="fas fa-user"></i></div>
+      {% endif %}
+      <div class="user-info">
+        <div class="user-name">{{ user.first_name }} {{ user.last_name }}</div>
+        <div class="user-email">{{ user.email }}</div>
+      </div>
+    </div>
+    <div class="user-card-body">
+      <span class="pending-badge"><i class="fas fa-clock"></i> Pending</span>
+      <span class="user-meta"><i class="fas fa-building"></i> {{ user.council.name }}</span>
+      <span class="user-meta"><i class="fas fa-calendar"></i> {{ user.date_joined|date:"M j, Y" }}</span>
+    </div>
+    <div class="user-card-actions">
+      <button class="action-btn view-btn" data-user-id="{{ user.id }}">
+        <i class="fas fa-eye"></i> Review Application
+      </button>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <i class="fas fa-check-circle"></i>
+  <h3>All caught up!</h3>
+  <p>No pending membership requests to review.</p>
+</div>
+{% endif %}
+
+<!-- User Details Modal -->
+<div id="memberDetailsModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Membership Application</h3>
+      <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="memberDetailsContent">
+      <div style="text-align: center; padding: 2rem; color: var(--neutral-500);">
+        <i class="fas fa-spinner fa-spin"></i> Loading...
+      </div>
+    </div>
+    <div class="modal-footer" id="modalFooter">
+      <div class="modal-actions">
+        <button class="approve-btn" id="approveBtn"><i class="fas fa-check"></i> Approve</button>
+        <button class="reject-btn" id="rejectBtn"><i class="fas fa-times"></i> Reject</button>
+      </div>
+      <button class="btn btn--ghost" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Search functionality with clear button
+  document.addEventListener('DOMContentLoaded', function () {
+    const cards = document.querySelectorAll('.user-card');
+    const container = document.getElementById('usersContainer');
     const searchInput = document.getElementById('pendingUserSearch');
-    const clearButton = document.getElementById('clearSearch');
-    
-    if (searchInput) {
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const rows = document.querySelectorAll('.event-table tbody tr');
-            
-            // Show/hide clear button
-            clearButton.style.display = searchTerm ? 'block' : 'none';
-            
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                const shouldShow = text.includes(searchTerm);
-                row.style.display = shouldShow ? '' : 'none';
-            });
-        });
-        
-        // Focus effect
-        searchInput.addEventListener('focus', function() {
-            this.parentElement.style.boxShadow = '0 0 0 3px rgba(13, 52, 113, 0.1)';
-        });
-        
-        searchInput.addEventListener('blur', function() {
-            this.parentElement.style.boxShadow = 'none';
-        });
-    }
-    
-    // Clear search
-    if (clearButton) {
-        clearButton.addEventListener('click', function() {
-            searchInput.value = '';
-            searchInput.dispatchEvent(new Event('input'));
-            searchInput.focus();
-        });
-    }
-    
-    // Sort functionality
     const sortSelect = document.getElementById('sortSelect');
-    
-    function sortTable(sortType) {
-        const tbody = document.querySelector('.event-table tbody');
-        const rows = Array.from(tbody.querySelectorAll('tr'));
-        
-        rows.sort((a, b) => {
-            switch(sortType) {
-                case 'alphabetical':
-                    const nameA = a.dataset.name.toLowerCase();
-                    const nameB = b.dataset.name.toLowerCase();
-                    return nameA.localeCompare(nameB);
-                case 'reverse-alphabetical':
-                    const nameA2 = a.dataset.name.toLowerCase();
-                    const nameB2 = b.dataset.name.toLowerCase();
-                    return nameB2.localeCompare(nameA2);
-                case 'newest':
-                    const dateA = new Date(a.dataset.joined);
-                    const dateB = new Date(b.dataset.joined);
-                    return dateB - dateA;
-                case 'oldest':
-                    const dateA2 = new Date(a.dataset.joined);
-                    const dateB2 = new Date(b.dataset.joined);
-                    return dateA2 - dateB2;
-                default:
-                    return 0;
-            }
+
+    // Search
+    if (searchInput) {
+      searchInput.addEventListener('input', function () {
+        const term = this.value.toLowerCase();
+        cards.forEach(card => {
+          const text = card.textContent.toLowerCase();
+          card.style.display = text.includes(term) ? '' : 'none';
         });
-        
-        // Re-append sorted rows
-        rows.forEach(row => tbody.appendChild(row));
+      });
     }
-    
-    // Initialize with alphabetical sort
-    sortTable('alphabetical');
-    
-    sortSelect.addEventListener('change', function() {
-        sortTable(this.value);
-    });
-    
-    // View member details
-    const viewMemberBtns = document.querySelectorAll('.view-member-btn');
-    const modal = document.getElementById('memberDetailsModal');
-    const contentDiv = document.getElementById('memberDetailsContent');
-    const modalFooter = document.getElementById('modalFooter');
-    
-    function openModal() {
-        modal.style.display = 'block';
-        // Trigger reflow to allow animation to work
-        modal.offsetHeight;
-        modal.classList.add('show');
-    }
-    
-    function closeModal() {
-        modal.classList.remove('show');
-        setTimeout(function() {
-            modal.style.display = 'none';
-        }, 300); // Match the transition duration
-    }
-    
-    viewMemberBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const userId = this.getAttribute('data-user-id');
-            
-            openModal();
-            contentDiv.innerHTML = '<div class="loading">Loading member details...</div>';
-            
-            fetch(`/user/${userId}/details/`)
-                .then(response => response.json())
-                .then(data => {
-                    let detailsHTML = `
-                        <div class="member-full-details">
-                            <div class="profile-image-container">
-                                ${data.profile_picture ? 
-                                    `<img src="${data.profile_picture}" alt="Profile Picture" class="profile-image">` : 
-                                    `<div class="profile-placeholder"><i class="fas fa-user"></i></div>`
-                                }
-                            </div>
-                            
-                            <h4>
-                                ${data.first_name}
-                                ${data.second_name ? data.second_name + ' ' : ''}
-                                ${data.middle_name ? data.middle_name + ' ' : ''}
-                                ${data.last_name}
-                                ${data.suffix ? ' ' + data.suffix : ''}
-                            </h4>
-                            <span class="role-badge role-pending">Pending</span>
-                            
-                            <div class="detail-group">
-                                <strong>Username:</strong>
-                                <p>${data.username}</p>
-                            </div>
-                            
-                            <div class="detail-group">
-                                <strong>Email:</strong>
-                                <p>${data.email || 'Not provided'}</p>
-                            </div>
-                            
-                            <div class="detail-group">
-                                <strong>Contact Number:</strong>
-                                <p>${data.contact_number || 'Not provided'}</p>
-                            </div>
-                            
-                            <div class="detail-group">
-                                <strong>Council:</strong>
-                                <p>${data.council_name || 'Not assigned'}</p>
-                            </div>
-                            
-                            <div class="detail-group">
-                                <strong>Birthday:</strong>
-                                <p>${data.birthday || 'Not specified'}</p>
-                            </div>
-                            
-                            <div class="detail-group">
-                                <strong>Age:</strong>
-                                <p>${data.age || 'Not specified'}</p>
-                            </div>
-                            
-                            <div class="detail-group">
-                                <strong>Address:</strong>
-                                <address>
-                                    ${data.street ? data.street + '<br>' : ''}
-                                    ${data.barangay ? data.barangay + '<br>' : ''}
-                                    ${data.city ? data.city + ', ' : ''}${data.province || ''}
-                                    ${data.zip_code ? '<br>ZIP: ' + data.zip_code : ''}
-                                </address>
-                            </div>
-                            
-                            <div class="detail-group">
-                                <strong>Marital Status:</strong>
-                                <p>${data.marital_status || 'Not specified'}</p>
-                            </div>
-                            
-                            <div class="detail-group">
-                                <strong>Occupation:</strong>
-                                <p>${data.occupation || 'Not specified'}</p>
-                            </div>
-                            
-                            <div class="detail-group">
-                                <strong>Recruiter's Name:</strong>
-                                <p>${data.recruiter_name || (data.voluntary_join ? 'Joined voluntarily' : 'Not specified')}</p>
-                            </div>
-                            
-                            <div class="detail-group">
-                                <strong>Reason for Joining:</strong>
-                                <p>${data.join_reason || 'Not specified'}</p>
-                            </div>
-                            
-                            ${data.e_signature ? `
-                            <div class="detail-group">
-                                <strong>E-Signature:</strong>
-                                <div class="e-signature-container">
-                                    <img src="${data.e_signature}" alt="E-Signature" class="e-signature-image" onerror="this.onerror=null; this.src='{% static 'img/signature-placeholder.png' %}'; this.alt='Signature not available';">
-                                </div>
-                            </div>
-                            ` : `
-                            <div class="detail-group">
-                                <strong>E-Signature:</strong>
-                                <div class="e-signature-container">
-                                    <p class="text-muted">No signature provided</p>
-                                </div>
-                            </div>
-                            `}
-                            
-                            <div class="detail-group">
-                                <strong>Applied On:</strong>
-                                <p>${data.date_joined}</p>
-                            </div>
-                        </div>
-                    `;
-                    
-                    contentDiv.innerHTML = detailsHTML;
-                    
-                    // Add approval/rejection buttons to modal footer
-                    modalFooter.innerHTML = `
-                        <div class="role-selection-container">
-                            <form method="post" action="/approve-user/${userId}/" id="approveForm">
-                                {% csrf_token %}
-                                <select name="role" class="role-select">
-                                    <option value="member">Approve as Member</option>
-                                    {% if request.user.role == 'admin' %}
-                                    <option value="officer">Approve as Officer</option>
-                                    {% endif %}
-                                </select>
-                                <button type="submit" class="approve-btn">Approve</button>
-                            </form>
-                        </div>
-                        <button id="rejectBtn" class="reject-btn" data-user-id="${userId}">Reject</button>
-                        
-                        <div id="rejectReasonContainer" class="reason-container">
-                            <form method="post" action="/reject-user/${userId}/" id="rejectForm">
-                                {% csrf_token %}
-                                <textarea name="rejection_reason" class="reason-textarea" placeholder="Please provide a reason for rejection (optional)"></textarea>
-                                <button type="submit" class="reject-btn">Confirm Rejection</button>
-                            </form>
-                        </div>
-                    `;
-                    
-                    // Add event listener for reject button
-                    document.getElementById('rejectBtn').addEventListener('click', function() {
-                        const reasonContainer = document.getElementById('rejectReasonContainer');
-                        reasonContainer.style.display = 'block';
-                        this.style.display = 'none';
-                    });
-                })
-                .catch(error => {
-                    contentDiv.innerHTML = '<p>Error loading member details. Please try again later.</p>';
-                });
-        });
-    });
-    
-    // Close modal when clicking the close button
-    const closeButton = document.querySelector('.modal .close');
-    if (closeButton) {
-        closeButton.addEventListener('click', closeModal);
-    }
-    
-    // Close modal when clicking outside of it
-    window.addEventListener('click', function(event) {
-        if (event.target === modal) {
-            closeModal();
+
+    // Sort
+    function sortCards() {
+      if (!container) return;
+      const cardsArr = Array.from(cards);
+      cardsArr.sort((a, b) => {
+        switch (sortSelect.value) {
+          case 'alphabetical':
+            return a.dataset.name.localeCompare(b.dataset.name);
+          case 'reverse-alphabetical':
+            return b.dataset.name.localeCompare(a.dataset.name);
+          case 'newest':
+            return new Date(b.dataset.joined) - new Date(a.dataset.joined);
+          case 'oldest':
+            return new Date(a.dataset.joined) - new Date(b.dataset.joined);
         }
-    });
-    
-    // Make notification messages disappear after 5 seconds
-    const alerts = document.querySelectorAll('.alert');
-    if (alerts.length > 0) {
-        setTimeout(function() {
-            alerts.forEach(function(alert) {
-                alert.style.transition = 'opacity 1s ease';
-                alert.style.opacity = '0';
-                setTimeout(function() {
-                    alert.style.display = 'none';
-                }, 1000);
-            });
-        }, 5000);
+      });
+      cardsArr.forEach(card => container.appendChild(card));
     }
-});
+
+    sortSelect?.addEventListener('change', sortCards);
+    sortCards();
+
+    // View toggle
+    const viewToggleBtns = document.querySelectorAll('.view-toggle-btn');
+    viewToggleBtns.forEach(btn => {
+      btn.addEventListener('click', function () {
+        viewToggleBtns.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        if (container) {
+          container.classList.toggle('list-view', this.dataset.view === 'list');
+        }
+        localStorage.setItem('pendingUsersView', this.dataset.view);
+      });
+    });
+
+    // Restore view preference
+    const savedView = localStorage.getItem('pendingUsersView');
+    if (savedView === 'list') {
+      document.querySelector('.view-toggle-btn[data-view="list"]')?.click();
+    }
+
+    // Modal
+    const modal = document.getElementById('memberDetailsModal');
+    const content = document.getElementById('memberDetailsContent');
+    let currentUserId = null;
+
+    document.querySelectorAll('.view-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        currentUserId = this.dataset.userId;
+        modal.classList.add('show');
+        content.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--neutral-500);"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+
+        fetch(`/user/${currentUserId}/details/`)
+          .then(res => res.json())
+          .then(data => {
+            content.innerHTML = `
+            <div class="user-details-header">
+              ${data.profile_picture
+                ? `<img src="${data.profile_picture}" class="user-details-avatar">`
+                : `<div class="user-details-avatar"><i class="fas fa-user"></i></div>`}
+              <div>
+                <h4 style="margin: 0 0 var(--space-2); font-size: var(--text-xl);">${data.first_name} ${data.middle_name || ''} ${data.last_name}${data.suffix ? ' ' + data.suffix : ''}</h4>
+                <span class="pending-badge"><i class="fas fa-clock"></i> Pending Approval</span>
+              </div>
+            </div>
+            <div class="user-details-grid">
+              <div class="detail-group"><strong>Email</strong><span>${data.email}</span></div>
+              <div class="detail-group"><strong>Username</strong><span>${data.username}</span></div>
+              <div class="detail-group"><strong>Contact</strong><span>${data.contact_number || 'Not provided'}</span></div>
+              <div class="detail-group"><strong>Council</strong><span>${data.council_name || 'No council'}</span></div>
+              <div class="detail-group"><strong>Birthday</strong><span>${data.birthday || 'Not provided'}</span></div>
+              <div class="detail-group"><strong>Age</strong><span>${data.age || 'N/A'}</span></div>
+              <div class="detail-group full-width"><strong>Address</strong><span>${data.street ? `${data.street}, ${data.barangay}, ${data.city}, ${data.province} ${data.zip_code}` : 'Not provided'}</span></div>
+              <div class="detail-group"><strong>Marital Status</strong><span>${data.marital_status || 'Not provided'}</span></div>
+              <div class="detail-group"><strong>Occupation</strong><span>${data.occupation || 'Not provided'}</span></div>
+              <div class="detail-group"><strong>Applied On</strong><span>${data.date_joined}</span></div>
+              <div class="detail-group"><strong>Recruiter</strong><span>${data.recruiter_name || (data.voluntary_join ? 'Voluntary' : 'Not specified')}</span></div>
+              ${data.join_reason ? `<div class="detail-group full-width"><strong>Why They Want to Join</strong><span>${data.join_reason}</span></div>` : ''}
+            </div>
+            ${data.e_signature ? `<div class="signature-container"><strong>E-Signature</strong><img src="${data.e_signature}" alt="Signature"></div>` : ''}
+          `;
+          })
+          .catch(() => {
+            content.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--error-600);"><i class="fas fa-exclamation-circle"></i> Error loading details</div>';
+          });
+      });
+    });
+
+    // Approve/Reject handlers
+    document.getElementById('approveBtn')?.addEventListener('click', function () {
+      if (currentUserId && confirm('Approve this membership request?')) {
+        window.location.href = `/approve-user/${currentUserId}/`;
+      }
+    });
+
+    document.getElementById('rejectBtn')?.addEventListener('click', function () {
+      if (currentUserId && confirm('Reject this membership request?')) {
+        window.location.href = `/reject-user/${currentUserId}/`;
+      }
+    });
+  });
+
+  function closeModal() {
+    document.getElementById('memberDetailsModal').classList.remove('show');
+  }
+
+  document.getElementById('memberDetailsModal')?.addEventListener('click', function (e) {
+    if (e.target === this) closeModal();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeModal();
+  });
 </script>
 {% endblock %}

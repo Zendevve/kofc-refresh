@@ -62,11 +62,13 @@
             <span>Pending Users</span>
           </a>
 
+          {% if user.role == 'admin' %}
           <a href="{% url 'member_list' %}"
             class="sidebar-link {% if 'member_list' in request.path %}active{% endif %}">
             <i class="fas fa-users"></i>
             <span>Members</span>
           </a>
+          {% endif %}
         </div>
         {% endif %}
 
@@ -84,14 +86,17 @@
             <span>Create Event</span>
           </a>
 
+          {% if user.role == 'admin' %}
           <a href="{% url 'event_proposals' %}"
             class="sidebar-link {% if 'proposals' in request.path %}active{% endif %}">
             <i class="fas fa-clipboard-check"></i>
             <span>Proposals</span>
           </a>
           {% endif %}
+          {% endif %}
         </div>
 
+        {% if user.role == 'admin' or user.role == 'officer' %}
         <div class="sidebar-section">
           <div class="sidebar-section-title">Analytics</div>
 
@@ -118,6 +123,7 @@
             <span>My Recruits</span>
           </a>
         </div>
+        {% endif %}
 
         {% if user.role == 'admin' or user.role == 'officer' %}
         <div class="sidebar-section">

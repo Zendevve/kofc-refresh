@@ -15955,3 +15955,226 @@ DEBUG 2025-12-09 17:53:54,334 views Donation sources data: [{'payment_method': '
 DEBUG 2025-12-09 17:53:55,079 views Active members: 4, Total members: 14
 DEBUG 2025-12-09 17:53:55,364 views Member activity data: [{'category': 'Active Members', 'count': 4}, {'category': 'Inactive Members', 'count': 10}]
 DEBUG 2025-12-09 17:53:55,686 views Summary stats: {'total_events': 24.0, 'total_donations': 8533.0, 'total_members': 14.0, 'total_officers': 10.0, 'avg_donation': 948.111111111111}
+DEBUG 2025-12-09 18:05:47,939 views Events data: [{'council__name': 'Council 18035', 'count': 1, 'council_name': 'Council 18035'}, {'council__name': 'Council 3469', 'count': 12, 'council_name': 'Council 3469'}, {'council__name': 'Council 6789', 'count': 5, 'council_name': 'Council 6789'}]
+DEBUG 2025-12-09 18:05:47,949 views Donations data: [{'month': 'May', 'total': 8533.0}]
+DEBUG 2025-12-09 18:05:47,957 views Members/officers data: [{'council_name': 'Council 1234', 'members': 3.0, 'officers': 1}, {'council_name': 'Council 18035', 'members': 7.0, 'officers': 1}, {'council_name': 'Council 3469', 'members': 3.0, 'officers': 2}, {'council_name': 'Council 6789', 'members': 1.0, 'officers': 5}, {'council_name': 'Test Council', 'members': 0.0, 'officers': 1}]
+DEBUG 2025-12-09 18:05:47,962 views Event types data: [{'category': 'Assembly Meeting', 'count': 2}, {'category': 'Council Meeting', 'count': 3}, {'category': 'Meeting', 'count': 5}, {'category': 'Seminar', 'count': 8}, {'category': 'Service Program', 'count': 3}, {'category': 'Trip', 'count': 3}]
+DEBUG 2025-12-09 18:05:47,966 views Donation sources data: [{'payment_method': 'gcash', 'amount': 8533.0}]
+DEBUG 2025-12-09 18:05:47,969 views Active members: 4, Total members: 14
+DEBUG 2025-12-09 18:05:47,970 views Member activity data: [{'category': 'Active Members', 'count': 4}, {'category': 'Inactive Members', 'count': 10}]
+DEBUG 2025-12-09 18:05:47,976 views Summary stats: {'total_events': 24.0, 'total_donations': 8533.0, 'total_members': 14.0, 'total_officers': 10.0, 'avg_donation': 948.111111111111}
+DEBUG 2025-12-09 18:05:50,930 views Events data: [{'council__name': 'Council 18035', 'count': 1, 'council_name': 'Council 18035'}, {'council__name': 'Council 3469', 'count': 12, 'council_name': 'Council 3469'}, {'council__name': 'Council 6789', 'count': 5, 'council_name': 'Council 6789'}]
+DEBUG 2025-12-09 18:05:50,935 views Donations data: [{'month': 'May', 'total': 8533.0}]
+DEBUG 2025-12-09 18:05:50,944 views Members/officers data: [{'council_name': 'Council 1234', 'members': 3.0, 'officers': 1}, {'council_name': 'Council 18035', 'members': 7.0, 'officers': 1}, {'council_name': 'Council 3469', 'members': 3.0, 'officers': 2}, {'council_name': 'Council 6789', 'members': 1.0, 'officers': 5}, {'council_name': 'Test Council', 'members': 0.0, 'officers': 1}]
+DEBUG 2025-12-09 18:05:50,947 views Event types data: [{'category': 'Assembly Meeting', 'count': 2}, {'category': 'Council Meeting', 'count': 3}, {'category': 'Meeting', 'count': 5}, {'category': 'Seminar', 'count': 8}, {'category': 'Service Program', 'count': 3}, {'category': 'Trip', 'count': 3}]
+DEBUG 2025-12-09 18:05:50,949 views Donation sources data: [{'payment_method': 'gcash', 'amount': 8533.0}]
+DEBUG 2025-12-09 18:05:50,952 views Active members: 4, Total members: 14
+DEBUG 2025-12-09 18:05:50,952 views Member activity data: [{'category': 'Active Members', 'count': 4}, {'category': 'Inactive Members', 'count': 10}]
+DEBUG 2025-12-09 18:05:50,957 views Summary stats: {'total_events': 24.0, 'total_donations': 8533.0, 'total_members': 14.0, 'total_officers': 10.0, 'avg_donation': 948.111111111111}
+DEBUG 2025-12-09 18:05:58,975 views Events data: [{'council__name': 'Council 18035', 'count': 1, 'council_name': 'Council 18035'}, {'council__name': 'Council 3469', 'count': 12, 'council_name': 'Council 3469'}, {'council__name': 'Council 6789', 'count': 5, 'council_name': 'Council 6789'}]
+DEBUG 2025-12-09 18:05:59,027 views Donations data: [{'month': 'May', 'total': 8533.0}]
+DEBUG 2025-12-09 18:05:59,112 views Members/officers data: [{'council_name': 'Council 1234', 'members': 3.0, 'officers': 1}, {'council_name': 'Council 18035', 'members': 7.0, 'officers': 1}, {'council_name': 'Council 3469', 'members': 3.0, 'officers': 2}, {'council_name': 'Council 6789', 'members': 1.0, 'officers': 5}, {'council_name': 'Test Council', 'members': 0.0, 'officers': 1}]
+DEBUG 2025-12-09 18:05:59,155 views Event types data: [{'category': 'Assembly Meeting', 'count': 2}, {'category': 'Council Meeting', 'count': 3}, {'category': 'Meeting', 'count': 5}, {'category': 'Seminar', 'count': 8}, {'category': 'Service Program', 'count': 3}, {'category': 'Trip', 'count': 3}]
+DEBUG 2025-12-09 18:05:59,167 views Donation sources data: [{'payment_method': 'gcash', 'amount': 8533.0}]
+DEBUG 2025-12-09 18:05:59,182 views Active members: 4, Total members: 14
+DEBUG 2025-12-09 18:05:59,185 views Member activity data: [{'category': 'Active Members', 'count': 4}, {'category': 'Inactive Members', 'count': 10}]
+DEBUG 2025-12-09 18:05:59,202 views Summary stats: {'total_events': 24.0, 'total_donations': 8533.0, 'total_members': 14.0, 'total_officers': 10.0, 'avg_donation': 948.111111111111}
+DEBUG 2025-12-09 18:57:21,258 views show_manual_link: True, User: hoppay, Role: officer
+DEBUG 2025-12-09 18:57:21,281 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-09" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-09" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-09 18:57:25,300 views User hoppay (role=officer, council=Council 6789): Found 0 pending manual donations
+DEBUG 2025-12-09 19:02:43,699 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-09 19:02:43,703 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-09" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-09" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-09 19:02:47,618 views Fetching blockchain data
+INFO 2025-12-09 19:02:47,622 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-09 19:26:55,845 views show_manual_link: True, User: hoppay, Role: officer
+DEBUG 2025-12-09 19:26:55,854 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-09" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-09" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-09 19:26:58,646 views show_manual_link: True, User: hoppay, Role: officer
+DEBUG 2025-12-09 19:26:58,650 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-09" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-09" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
