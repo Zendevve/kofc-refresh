@@ -1,64 +1,368 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block title %}
-Knights of Columbus - {{ council.name }} Details
+Knights of Columbus - {{ council.name }}
 {% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/council-detail.css' %}?v={% now 'U' %}">
-<body>
-    <main>
-        <div class="council-header">
-            <img src="{% static 'images/kofc-logo.png' %}" alt="Council Logo" class="council-logo">
-            <h1>{{ council.name }}</h1>
-            <p>{{ council.district }}</p>
+<style>
+  /* ============================================
+    LAYOUT RESET & DESIGN SYSTEM
+    ============================================ */
+  body,
+  html {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden;
+  }
+
+  main {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+    overflow-x: hidden;
+  }
+
+  .council-detail-page {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #f8fafc;
+    min-height: 100vh;
+    width: 100%;
+  }
+
+  /* --------------------------------------------------
+       HERO SECTION
+    -------------------------------------------------- */
+  .hero-section {
+    position: relative;
+    width: 100%;
+    height: 360px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    background: url("{% static 'images/kofc-bg.png' %}") no-repeat center center/cover;
+    margin-bottom: 0;
+  }
+
+  .hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(13, 52, 113, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%);
+    z-index: 1;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+    padding: 0 24px;
+    margin: 0 auto;
+  }
+
+  .breadcrumb {
+    margin-bottom: 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.1);
+    padding: 6px 16px;
+    border-radius: 99px;
+    backdrop-filter: blur(4px);
+  }
+
+  .breadcrumb a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .breadcrumb a:hover {
+    color: #fbbf24;
+  }
+
+  .breadcrumb i {
+    font-size: 0.7rem;
+    opacity: 0.6;
+  }
+
+  .hero-title {
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 800;
+    margin-bottom: 16px;
+    line-height: 1.1;
+  }
+
+  .hero-district {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #fbbf24;
+    color: #0f172a;
+    padding: 6px 16px;
+    border-radius: 99px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* --------------------------------------------------
+       CONTENT GRID
+    -------------------------------------------------- */
+  .content-container {
+    max-width: 1100px;
+    margin: -48px auto 80px;
+    padding: 0 24px;
+    position: relative;
+    z-index: 10;
+    width: 100%;
+  }
+
+  /* Section Cards */
+  .section-card {
+    background: white;
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+    margin-bottom: 32px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-title i {
+    color: #0D3471;
+  }
+
+  .badge-count {
+    background: #f1f5f9;
+    color: #64748b;
+    padding: 4px 12px;
+    border-radius: 99px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  /* Members Grid */
+  .members-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+  }
+
+  .member-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: #ffffff;
+    border: 1px solid #f1f5f9;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+  }
+
+  .member-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    border-color: #cbd5e1;
+  }
+
+  .leader-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #fbbf24;
+    /* Gold accent for leaders */
+  }
+
+  .profile-pic {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e2e8f0;
+  }
+
+  .profile-pic-placeholder {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #cbd5e1;
+    color: #94a3b8;
+    font-size: 1.5rem;
+  }
+
+  .member-info h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 4px;
+  }
+
+  .member-role {
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 500;
+    display: block;
+  }
+
+  .member-degree {
+    font-size: 0.75rem;
+    color: #0D3471;
+    background: #f0f9ff;
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-top: 6px;
+    font-weight: 600;
+  }
+
+  /* Empty States */
+  .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #94a3b8;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 2px dashed #e2e8f0;
+  }
+</style>
+
+<div class="council-detail-page">
+
+  <!-- Hero Section -->
+  <header class="hero-section">
+    <div class="hero-content">
+      <div class="breadcrumb">
+        <a href="{% url 'councils' %}">Councils</a>
+        <i class="fas fa-chevron-right"></i>
+        <span>{{ council.name }}</span>
+      </div>
+      <h1 class="hero-title">{{ council.name }}</h1>
+      <div class="hero-district">
+        <i class="fas fa-map-marker-alt"></i>
+        {{ council.district }}
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="content-container">
+
+    <!-- Leadership Section -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2 class="section-title"><i class="fas fa-crown"></i> Council Leadership</h2>
+      </div>
+
+      <div class="members-grid">
+        <!-- District Deputy / Admin -->
+        {% if admin %}
+        <div class="member-card leader-card">
+          {% if admin.profile_picture %}
+          <img src="{{ admin.profile_picture.url }}" alt="{{ admin.first_name }}" class="profile-pic">
+          {% else %}
+          <div class="profile-pic-placeholder">
+            <i class="fas fa-user-tie"></i>
+          </div>
+          {% endif %}
+          <div class="member-info">
+            <h3>{{ admin.first_name }} {{ admin.last_name }}</h3>
+            <span class="member-role">District Deputy / Admin</span>
+            <span class="member-degree">{{ admin.get_current_degree_display|default:"Member" }}</span>
+          </div>
         </div>
+        {% endif %}
 
-        <div class="members-container">
-            {% if admin %}
-            <div class="member-section">
-                <h2>District Deputy</h2>
-                <div class="member-card admin-card">
-                    <div class="member-info">
-                        <img src="{% if admin.profile_picture %}{{ admin.profile_picture.url }}{% else %}{% static 'images/default-profile.png' %}{% endif %}" alt="Profile Picture" class="profile-pic">
-                        <div class="member-details">
-                            <h3>{{ admin.first_name }} {{ admin.last_name }}</h3>
-                            <p>{{ admin.get_current_degree_display|default:"" }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-
-            {% if officers %}
-            <div class="member-section">
-                <h2>Officers</h2>
-                <div class="members-grid">
-                    {% for officer in officers %}
-                    <div class="member-card officer-card">
-                        <div class="member-info">
-                            <img src="{% if officer.profile_picture %}{{ officer.profile_picture.url }}{% else %}{% static 'images/default-profile.png' %}{% endif %}" alt="Profile Picture" class="profile-pic">
-                            <div class="member-details">
-                                <h3>{{ officer.first_name }} {{ officer.last_name }}</h3>
-                                <p>{{ officer.get_current_degree_display|default:"" }}</p>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-            {% endif %}
-
-            {% if not admin and not officers %}
-            <div class="no-members">
-                <p>No members found for this council.</p>
-            </div>
-            {% endif %}
+        <!-- Officers -->
+        {% for officer in officers %}
+        <div class="member-card leader-card">
+          {% if officer.profile_picture %}
+          <img src="{{ officer.profile_picture.url }}" alt="{{ officer.first_name }}" class="profile-pic">
+          {% else %}
+          <div class="profile-pic-placeholder">
+            <i class="fas fa-user-shield"></i>
+          </div>
+          {% endif %}
+          <div class="member-info">
+            <h3>{{ officer.first_name }} {{ officer.last_name }}</h3>
+            <span class="member-role">Council Officer</span>
+            <span class="member-degree">{{ officer.get_current_degree_display|default:"Member" }}</span>
+          </div>
         </div>
+        {% endfor %}
 
-        <div class="back-link">
-            <a href="{% url 'councils' %}">Back to Councils</a>
+        {% if not admin and not officers %}
+        <div class="empty-state" style="grid-column: 1/-1;">
+          <p>No leadership information available currently.</p>
         </div>
-    </main>
-</body>
-{% endblock %} 
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Members Section -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2 class="section-title"><i class="fas fa-users"></i> General Membership</h2>
+        <span class="badge-count">{{ members|length }} Members</span>
+      </div>
+
+      <div class="members-grid">
+        {% for member in members %}
+        <div class="member-card">
+          {% if member.profile_picture %}
+          <img src="{{ member.profile_picture.url }}" alt="{{ member.first_name }}" class="profile-pic">
+          {% else %}
+          <div class="profile-pic-placeholder">
+            <i class="fas fa-user"></i>
+          </div>
+          {% endif %}
+          <div class="member-info">
+            <h3>{{ member.first_name }} {{ member.last_name }}</h3>
+            <span class="member-role">Brother Knight</span>
+            <span class="member-degree">{{ member.get_current_degree_display|default:"Member" }}</span>
+          </div>
+        </div>
+        {% empty %}
+        <div class="empty-state" style="grid-column: 1/-1;">
+          <p>No members listed in this council yet.</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
