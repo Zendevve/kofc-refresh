@@ -16,6 +16,72 @@
 
 {% block extra_css %}
 <style>
+  /* Stats Cards */
+  .event-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+
+  .stat-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    background: white;
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--neutral-200);
+    transition: all var(--transition-base);
+  }
+
+  .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-xl);
+  }
+
+  .stat-icon.active {
+    background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+    color: #065f46;
+  }
+
+  .stat-icon.pending {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    color: #92400e;
+  }
+
+  .stat-icon.archived {
+    background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+    color: #4338ca;
+  }
+
+  .stat-info {
+    flex: 1;
+  }
+
+  .stat-value {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: var(--neutral-900);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: var(--text-sm);
+    color: var(--neutral-500);
+    margin-top: var(--space-1);
+  }
+
   /* Tabs */
   .event-tabs {
     display: flex;
@@ -441,6 +507,33 @@
 {% endblock %}
 
 {% block content %}
+<!-- Stats Cards -->
+<div class="event-stats">
+  <div class="stat-card">
+    <div class="stat-icon active"><i class="fas fa-calendar-check"></i></div>
+    <div class="stat-info">
+      <div class="stat-value">{{ events|length }}</div>
+      <div class="stat-label">Active Events</div>
+    </div>
+  </div>
+  {% if user.role == 'admin' %}
+  <div class="stat-card">
+    <div class="stat-icon pending"><i class="fas fa-clipboard-list"></i></div>
+    <div class="stat-info">
+      <div class="stat-value">{{ pending_events|length|default:0 }}</div>
+      <div class="stat-label">Pending Proposals</div>
+    </div>
+  </div>
+  {% endif %}
+  <div class="stat-card">
+    <div class="stat-icon archived"><i class="fas fa-archive"></i></div>
+    <div class="stat-info">
+      <div class="stat-value">{{ past_events|length|default:0 }}</div>
+      <div class="stat-label">Archived</div>
+    </div>
+  </div>
+</div>
+
 <!-- Tabs -->
 <div class="event-tabs">
   <button class="event-tab active" data-tab="active">
