@@ -837,16 +837,47 @@ def analytics_view(request):
     }
     logger.debug(f"Summary stats: {summary_stats}")
 
-    # Convert data to JSON for Chart.js
+    # Convert data to Chart.js format: {labels: [...], data: [...]}
+    events_chart_data = {
+        'labels': [item.get('council_name', 'Unknown') for item in events_data],
+        'data': [item.get('count', 0) for item in events_data]
+    }
+    
+    donations_chart_data = {
+        'labels': [item.get('month', 'Unknown') for item in donations_data],
+        'data': [item.get('total', 0) for item in donations_data]
+    }
+    
+    members_officers_chart_data = {
+        'labels': [item.get('council_name', 'Unknown') for item in members_officers_data],
+        'members': [item.get('members', 0) for item in members_officers_data],
+        'officers': [item.get('officers', 0) for item in members_officers_data]
+    }
+    
+    event_types_chart_data = {
+        'labels': [item.get('category', 'Unknown') for item in event_types_data],
+        'data': [item.get('count', 0) for item in event_types_data]
+    }
+    
+    donation_sources_chart_data = {
+        'labels': [item.get('payment_method', 'Unknown') for item in donation_sources_data],
+        'data': [item.get('amount', 0) for item in donation_sources_data]
+    }
+    
+    member_activity_chart_data = {
+        'labels': [item.get('category', 'Unknown') for item in member_activity_data],
+        'data': [item.get('count', 0) for item in member_activity_data]
+    }
+
     context = {
         'councils': councils,
         'selected_council': council_id,
-        'events_data': json.dumps(events_data),
-        'donations_data': json.dumps(donations_data),
-        'members_officers_data': json.dumps(members_officers_data),
-        'event_types_data': json.dumps(event_types_data),
-        'donation_sources_data': json.dumps(donation_sources_data),
-        'member_activity_data': json.dumps(member_activity_data),
+        'events_data': json.dumps(events_chart_data),
+        'donations_data': json.dumps(donations_chart_data),
+        'members_officers_data': json.dumps(members_officers_chart_data),
+        'event_types_data': json.dumps(event_types_chart_data),
+        'donation_sources_data': json.dumps(donation_sources_chart_data),
+        'member_activity_data': json.dumps(member_activity_chart_data),
         'summary_stats': summary_stats,
         'is_officer': request.user.role == 'officer'
     }

@@ -215,7 +215,7 @@ Council performance and insights overview
     <select name="council_id" id="council_id" onchange="this.form.submit()">
       <option value="">All Councils</option>
       {% for council in councils %}
-      <option value="{{ council.id }}" {% if selected_council==council.id|stringformat:"s" %}selected{% endif %}>
+      <option value="{{ council.id }}" {% if selected_council == council.id|stringformat:"s" %}selected{% endif %}>
         {{ council.name }}
       </option>
       {% endfor %}

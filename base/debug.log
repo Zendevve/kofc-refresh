@@ -15628,3 +15628,322 @@ DEBUG 2025-12-09 15:11:19,912 views Rendered form HTML: <p>
       
     
   </p>
+DEBUG 2025-12-09 16:44:38,742 views show_manual_link: False, User: harvey, Role: member
+DEBUG 2025-12-09 16:44:38,845 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-09" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-09" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-09 17:11:48,099 views Events data: [{'council__name': 'Council 18035', 'count': 1, 'council_name': 'Council 18035'}, {'council__name': 'Council 3469', 'count': 12, 'council_name': 'Council 3469'}, {'council__name': 'Council 6789', 'count': 5, 'council_name': 'Council 6789'}]
+DEBUG 2025-12-09 17:11:48,137 views Donations data: [{'month': 'May', 'total': 8533.0}]
+DEBUG 2025-12-09 17:11:48,159 views Members/officers data: [{'council_name': 'Council 1234', 'members': 3.0, 'officers': 1}, {'council_name': 'Council 18035', 'members': 7.0, 'officers': 1}, {'council_name': 'Council 3469', 'members': 3.0, 'officers': 2}, {'council_name': 'Council 6789', 'members': 1.0, 'officers': 5}, {'council_name': 'Test Council', 'members': 0.0, 'officers': 1}]
+DEBUG 2025-12-09 17:11:48,161 views Event types data: [{'category': 'Assembly Meeting', 'count': 2}, {'category': 'Council Meeting', 'count': 3}, {'category': 'Meeting', 'count': 5}, {'category': 'Seminar', 'count': 8}, {'category': 'Service Program', 'count': 3}, {'category': 'Trip', 'count': 3}]
+DEBUG 2025-12-09 17:11:48,163 views Donation sources data: [{'payment_method': 'gcash', 'amount': 8533.0}]
+DEBUG 2025-12-09 17:11:48,167 views Active members: 4, Total members: 14
+DEBUG 2025-12-09 17:11:48,167 views Member activity data: [{'category': 'Active Members', 'count': 4}, {'category': 'Inactive Members', 'count': 10}]
+DEBUG 2025-12-09 17:11:48,170 views Summary stats: {'total_events': 24.0, 'total_donations': 8533.0, 'total_members': 14.0, 'total_officers': 10.0, 'avg_donation': 948.111111111111}
+DEBUG 2025-12-09 17:12:49,943 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-09 17:12:50,126 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-09" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-09" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-09 17:12:55,005 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-09 17:12:55,011 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-09" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-09" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-09 17:12:57,614 views User Mr_Admin (role=admin, council=Council 3469): Found 1 pending manual donations
+DEBUG 2025-12-09 17:12:57,618 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-09 17:13:25,059 views Events data: [{'council__name': 'Council 18035', 'count': 1, 'council_name': 'Council 18035'}, {'council__name': 'Council 3469', 'count': 12, 'council_name': 'Council 3469'}, {'council__name': 'Council 6789', 'count': 5, 'council_name': 'Council 6789'}]
+DEBUG 2025-12-09 17:13:25,066 views Donations data: [{'month': 'May', 'total': 8533.0}]
+DEBUG 2025-12-09 17:13:25,080 views Members/officers data: [{'council_name': 'Council 1234', 'members': 3.0, 'officers': 1}, {'council_name': 'Council 18035', 'members': 7.0, 'officers': 1}, {'council_name': 'Council 3469', 'members': 3.0, 'officers': 2}, {'council_name': 'Council 6789', 'members': 1.0, 'officers': 5}, {'council_name': 'Test Council', 'members': 0.0, 'officers': 1}]
+DEBUG 2025-12-09 17:13:25,084 views Event types data: [{'category': 'Assembly Meeting', 'count': 2}, {'category': 'Council Meeting', 'count': 3}, {'category': 'Meeting', 'count': 5}, {'category': 'Seminar', 'count': 8}, {'category': 'Service Program', 'count': 3}, {'category': 'Trip', 'count': 3}]
+DEBUG 2025-12-09 17:13:25,117 views Donation sources data: [{'payment_method': 'gcash', 'amount': 8533.0}]
+DEBUG 2025-12-09 17:13:25,123 views Active members: 4, Total members: 14
+DEBUG 2025-12-09 17:13:25,124 views Member activity data: [{'category': 'Active Members', 'count': 4}, {'category': 'Inactive Members', 'count': 10}]
+DEBUG 2025-12-09 17:13:25,130 views Summary stats: {'total_events': 24.0, 'total_donations': 8533.0, 'total_members': 14.0, 'total_officers': 10.0, 'avg_donation': 948.111111111111}
+DEBUG 2025-12-09 17:13:28,884 views Fetching blockchain data
+INFO 2025-12-09 17:13:28,893 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-09 17:14:09,188 views Events data: [{'council__name': 'Council 18035', 'count': 1, 'council_name': 'Council 18035'}, {'council__name': 'Council 3469', 'count': 12, 'council_name': 'Council 3469'}, {'council__name': 'Council 6789', 'count': 5, 'council_name': 'Council 6789'}]
+DEBUG 2025-12-09 17:14:09,195 views Donations data: [{'month': 'May', 'total': 8533.0}]
+DEBUG 2025-12-09 17:14:09,208 views Members/officers data: [{'council_name': 'Council 1234', 'members': 3.0, 'officers': 1}, {'council_name': 'Council 18035', 'members': 7.0, 'officers': 1}, {'council_name': 'Council 3469', 'members': 3.0, 'officers': 2}, {'council_name': 'Council 6789', 'members': 1.0, 'officers': 5}, {'council_name': 'Test Council', 'members': 0.0, 'officers': 1}]
+DEBUG 2025-12-09 17:14:09,212 views Event types data: [{'category': 'Assembly Meeting', 'count': 2}, {'category': 'Council Meeting', 'count': 3}, {'category': 'Meeting', 'count': 5}, {'category': 'Seminar', 'count': 8}, {'category': 'Service Program', 'count': 3}, {'category': 'Trip', 'count': 3}]
+DEBUG 2025-12-09 17:14:09,216 views Donation sources data: [{'payment_method': 'gcash', 'amount': 8533.0}]
+DEBUG 2025-12-09 17:14:09,223 views Active members: 4, Total members: 14
+DEBUG 2025-12-09 17:14:09,224 views Member activity data: [{'category': 'Active Members', 'count': 4}, {'category': 'Inactive Members', 'count': 10}]
+DEBUG 2025-12-09 17:14:09,230 views Summary stats: {'total_events': 24.0, 'total_donations': 8533.0, 'total_members': 14.0, 'total_officers': 10.0, 'avg_donation': 948.111111111111}
+DEBUG 2025-12-09 17:14:15,968 views Events data: [{'council__name': 'Council 18035', 'count': 1, 'council_name': 'Council 18035'}, {'council__name': 'Council 3469', 'count': 12, 'council_name': 'Council 3469'}, {'council__name': 'Council 6789', 'count': 5, 'council_name': 'Council 6789'}]
+DEBUG 2025-12-09 17:14:15,972 views Donations data: [{'month': 'May', 'total': 8533.0}]
+DEBUG 2025-12-09 17:14:15,978 views Members/officers data: [{'council_name': 'Council 1234', 'members': 3.0, 'officers': 1}, {'council_name': 'Council 18035', 'members': 7.0, 'officers': 1}, {'council_name': 'Council 3469', 'members': 3.0, 'officers': 2}, {'council_name': 'Council 6789', 'members': 1.0, 'officers': 5}, {'council_name': 'Test Council', 'members': 0.0, 'officers': 1}]
+DEBUG 2025-12-09 17:14:15,980 views Event types data: [{'category': 'Assembly Meeting', 'count': 2}, {'category': 'Council Meeting', 'count': 3}, {'category': 'Meeting', 'count': 5}, {'category': 'Seminar', 'count': 8}, {'category': 'Service Program', 'count': 3}, {'category': 'Trip', 'count': 3}]
+DEBUG 2025-12-09 17:14:15,983 views Donation sources data: [{'payment_method': 'gcash', 'amount': 8533.0}]
+DEBUG 2025-12-09 17:14:15,987 views Active members: 4, Total members: 14
+DEBUG 2025-12-09 17:14:15,988 views Member activity data: [{'category': 'Active Members', 'count': 4}, {'category': 'Inactive Members', 'count': 10}]
+DEBUG 2025-12-09 17:14:15,991 views Summary stats: {'total_events': 24.0, 'total_donations': 8533.0, 'total_members': 14.0, 'total_officers': 10.0, 'avg_donation': 948.111111111111}
+DEBUG 2025-12-09 17:16:15,690 views Events data: [{'council__name': 'Council 18035', 'count': 1, 'council_name': 'Council 18035'}, {'council__name': 'Council 3469', 'count': 12, 'council_name': 'Council 3469'}, {'council__name': 'Council 6789', 'count': 5, 'council_name': 'Council 6789'}]
+DEBUG 2025-12-09 17:16:15,708 views Donations data: [{'month': 'May', 'total': 8533.0}]
+DEBUG 2025-12-09 17:16:15,719 views Members/officers data: [{'council_name': 'Council 1234', 'members': 3.0, 'officers': 1}, {'council_name': 'Council 18035', 'members': 7.0, 'officers': 1}, {'council_name': 'Council 3469', 'members': 3.0, 'officers': 2}, {'council_name': 'Council 6789', 'members': 1.0, 'officers': 5}, {'council_name': 'Test Council', 'members': 0.0, 'officers': 1}]
+DEBUG 2025-12-09 17:16:15,723 views Event types data: [{'category': 'Assembly Meeting', 'count': 2}, {'category': 'Council Meeting', 'count': 3}, {'category': 'Meeting', 'count': 5}, {'category': 'Seminar', 'count': 8}, {'category': 'Service Program', 'count': 3}, {'category': 'Trip', 'count': 3}]
+DEBUG 2025-12-09 17:16:15,728 views Donation sources data: [{'payment_method': 'gcash', 'amount': 8533.0}]
+DEBUG 2025-12-09 17:16:15,734 views Active members: 4, Total members: 14
+DEBUG 2025-12-09 17:16:15,734 views Member activity data: [{'category': 'Active Members', 'count': 4}, {'category': 'Inactive Members', 'count': 10}]
+DEBUG 2025-12-09 17:16:15,740 views Summary stats: {'total_events': 24.0, 'total_donations': 8533.0, 'total_members': 14.0, 'total_officers': 10.0, 'avg_donation': 948.111111111111}
+DEBUG 2025-12-09 17:17:30,962 views Events data: [{'council__name': 'Council 18035', 'count': 1, 'council_name': 'Council 18035'}, {'council__name': 'Council 3469', 'count': 12, 'council_name': 'Council 3469'}, {'council__name': 'Council 6789', 'count': 5, 'council_name': 'Council 6789'}]
+DEBUG 2025-12-09 17:17:30,967 views Donations data: [{'month': 'May', 'total': 8533.0}]
+DEBUG 2025-12-09 17:17:30,976 views Members/officers data: [{'council_name': 'Council 1234', 'members': 3.0, 'officers': 1}, {'council_name': 'Council 18035', 'members': 7.0, 'officers': 1}, {'council_name': 'Council 3469', 'members': 3.0, 'officers': 2}, {'council_name': 'Council 6789', 'members': 1.0, 'officers': 5}, {'council_name': 'Test Council', 'members': 0.0, 'officers': 1}]
+DEBUG 2025-12-09 17:17:30,979 views Event types data: [{'category': 'Assembly Meeting', 'count': 2}, {'category': 'Council Meeting', 'count': 3}, {'category': 'Meeting', 'count': 5}, {'category': 'Seminar', 'count': 8}, {'category': 'Service Program', 'count': 3}, {'category': 'Trip', 'count': 3}]
+DEBUG 2025-12-09 17:17:30,982 views Donation sources data: [{'payment_method': 'gcash', 'amount': 8533.0}]
+DEBUG 2025-12-09 17:17:30,984 views Active members: 4, Total members: 14
+DEBUG 2025-12-09 17:17:30,984 views Member activity data: [{'category': 'Active Members', 'count': 4}, {'category': 'Inactive Members', 'count': 10}]
+DEBUG 2025-12-09 17:17:30,989 views Summary stats: {'total_events': 24.0, 'total_donations': 8533.0, 'total_members': 14.0, 'total_officers': 10.0, 'avg_donation': 948.111111111111}
+DEBUG 2025-12-09 17:19:41,646 views Events data: [{'council__name': 'Council 18035', 'count': 1, 'council_name': 'Council 18035'}, {'council__name': 'Council 3469', 'count': 12, 'council_name': 'Council 3469'}, {'council__name': 'Council 6789', 'count': 5, 'council_name': 'Council 6789'}]
+DEBUG 2025-12-09 17:19:41,682 views Donations data: [{'month': 'May', 'total': 8533.0}]
+DEBUG 2025-12-09 17:19:41,694 views Members/officers data: [{'council_name': 'Council 1234', 'members': 3.0, 'officers': 1}, {'council_name': 'Council 18035', 'members': 7.0, 'officers': 1}, {'council_name': 'Council 3469', 'members': 3.0, 'officers': 2}, {'council_name': 'Council 6789', 'members': 1.0, 'officers': 5}, {'council_name': 'Test Council', 'members': 0.0, 'officers': 1}]
+DEBUG 2025-12-09 17:19:41,700 views Event types data: [{'category': 'Assembly Meeting', 'count': 2}, {'category': 'Council Meeting', 'count': 3}, {'category': 'Meeting', 'count': 5}, {'category': 'Seminar', 'count': 8}, {'category': 'Service Program', 'count': 3}, {'category': 'Trip', 'count': 3}]
+DEBUG 2025-12-09 17:19:41,707 views Donation sources data: [{'payment_method': 'gcash', 'amount': 8533.0}]
+DEBUG 2025-12-09 17:19:41,712 views Active members: 4, Total members: 14
+DEBUG 2025-12-09 17:19:41,712 views Member activity data: [{'category': 'Active Members', 'count': 4}, {'category': 'Inactive Members', 'count': 10}]
+DEBUG 2025-12-09 17:19:41,722 views Summary stats: {'total_events': 24.0, 'total_donations': 8533.0, 'total_members': 14.0, 'total_officers': 10.0, 'avg_donation': 948.111111111111}
+DEBUG 2025-12-09 17:21:12,144 views Events data: [{'council__name': 'Council 18035', 'count': 1, 'council_name': 'Council 18035'}, {'council__name': 'Council 3469', 'count': 12, 'council_name': 'Council 3469'}, {'council__name': 'Council 6789', 'count': 5, 'council_name': 'Council 6789'}]
+DEBUG 2025-12-09 17:21:12,157 views Donations data: [{'month': 'May', 'total': 8533.0}]
+DEBUG 2025-12-09 17:21:12,169 views Members/officers data: [{'council_name': 'Council 1234', 'members': 3.0, 'officers': 1}, {'council_name': 'Council 18035', 'members': 7.0, 'officers': 1}, {'council_name': 'Council 3469', 'members': 3.0, 'officers': 2}, {'council_name': 'Council 6789', 'members': 1.0, 'officers': 5}, {'council_name': 'Test Council', 'members': 0.0, 'officers': 1}]
+DEBUG 2025-12-09 17:21:12,174 views Event types data: [{'category': 'Assembly Meeting', 'count': 2}, {'category': 'Council Meeting', 'count': 3}, {'category': 'Meeting', 'count': 5}, {'category': 'Seminar', 'count': 8}, {'category': 'Service Program', 'count': 3}, {'category': 'Trip', 'count': 3}]
+DEBUG 2025-12-09 17:21:12,179 views Donation sources data: [{'payment_method': 'gcash', 'amount': 8533.0}]
+DEBUG 2025-12-09 17:21:12,184 views Active members: 4, Total members: 14
+DEBUG 2025-12-09 17:21:12,184 views Member activity data: [{'category': 'Active Members', 'count': 4}, {'category': 'Inactive Members', 'count': 10}]
+DEBUG 2025-12-09 17:21:12,191 views Summary stats: {'total_events': 24.0, 'total_donations': 8533.0, 'total_members': 14.0, 'total_officers': 10.0, 'avg_donation': 948.111111111111}
+DEBUG 2025-12-09 17:21:18,552 views Events data: [{'council_name': 'Test Council', 'count': 0}]
+DEBUG 2025-12-09 17:21:18,554 views Donations data: []
+DEBUG 2025-12-09 17:21:18,567 views Members/officers data: [{'council_name': 'Test Council', 'members': 0.0, 'officers': 1}]
+DEBUG 2025-12-09 17:21:18,569 views Event types data: []
+DEBUG 2025-12-09 17:21:18,572 views Donation sources data: []
+DEBUG 2025-12-09 17:21:18,577 views Active members: 0, Total members: 0
+DEBUG 2025-12-09 17:21:18,578 views Member activity data: [{'category': 'Active Members', 'count': 0}, {'category': 'Inactive Members', 'count': 0}]
+DEBUG 2025-12-09 17:21:18,586 views Summary stats: {'total_events': 0.0, 'total_donations': 0.0, 'total_members': 0.0, 'total_officers': 1.0, 'avg_donation': 0.0}
+DEBUG 2025-12-09 17:21:20,671 views Events data: [{'council_name': 'Council 1234', 'count': 0}]
+DEBUG 2025-12-09 17:21:20,674 views Donations data: []
+DEBUG 2025-12-09 17:21:20,685 views Members/officers data: [{'council_name': 'Council 1234', 'members': 3, 'officers': 1}]
+DEBUG 2025-12-09 17:21:20,688 views Event types data: []
+DEBUG 2025-12-09 17:21:20,690 views Donation sources data: []
+DEBUG 2025-12-09 17:21:20,695 views Active members: 0, Total members: 3
+DEBUG 2025-12-09 17:21:20,700 views Member activity data: [{'category': 'Active Members', 'count': 0}, {'category': 'Inactive Members', 'count': 3}]
+DEBUG 2025-12-09 17:21:20,710 views Summary stats: {'total_events': 0.0, 'total_donations': 0.0, 'total_members': 3.0, 'total_officers': 1.0, 'avg_donation': 0.0}
+DEBUG 2025-12-09 17:21:22,352 views Events data: [{'council__name': 'Council 3469', 'count': 12, 'council_name': 'Council 3469'}]
+DEBUG 2025-12-09 17:21:22,359 views Donations data: [{'month': 'May', 'total': 6933.0}]
+DEBUG 2025-12-09 17:21:22,369 views Members/officers data: [{'council_name': 'Council 3469', 'members': 3, 'officers': 2}]
+DEBUG 2025-12-09 17:21:22,373 views Event types data: [{'category': 'Assembly Meeting', 'count': 1}, {'category': 'Council Meeting', 'count': 1}, {'category': 'Meeting', 'count': 4}, {'category': 'Seminar', 'count': 4}, {'category': 'Service Program', 'count': 1}, {'category': 'Trip', 'count': 1}]
+DEBUG 2025-12-09 17:21:22,377 views Donation sources data: [{'payment_method': 'gcash', 'amount': 6933.0}]
+DEBUG 2025-12-09 17:21:22,383 views Active members: 3, Total members: 3
+DEBUG 2025-12-09 17:21:22,383 views Member activity data: [{'category': 'Active Members', 'count': 3}, {'category': 'Inactive Members', 'count': 0}]
+DEBUG 2025-12-09 17:21:22,390 views Summary stats: {'total_events': 12.0, 'total_donations': 6933.0, 'total_members': 3.0, 'total_officers': 2.0, 'avg_donation': 1155.5}
+DEBUG 2025-12-09 17:23:37,494 views Events data: [{'council__name': 'Council 3469', 'count': 12, 'council_name': 'Council 3469'}]
+DEBUG 2025-12-09 17:23:37,504 views Donations data: [{'month': 'May', 'total': 6933.0}]
+DEBUG 2025-12-09 17:23:37,513 views Members/officers data: [{'council_name': 'Council 3469', 'members': 3, 'officers': 2}]
+DEBUG 2025-12-09 17:23:37,516 views Event types data: [{'category': 'Assembly Meeting', 'count': 1}, {'category': 'Council Meeting', 'count': 1}, {'category': 'Meeting', 'count': 4}, {'category': 'Seminar', 'count': 4}, {'category': 'Service Program', 'count': 1}, {'category': 'Trip', 'count': 1}]
+DEBUG 2025-12-09 17:23:37,521 views Donation sources data: [{'payment_method': 'gcash', 'amount': 6933.0}]
+DEBUG 2025-12-09 17:23:37,526 views Active members: 3, Total members: 3
+DEBUG 2025-12-09 17:23:37,526 views Member activity data: [{'category': 'Active Members', 'count': 3}, {'category': 'Inactive Members', 'count': 0}]
+DEBUG 2025-12-09 17:23:37,531 views Summary stats: {'total_events': 12.0, 'total_donations': 6933.0, 'total_members': 3.0, 'total_officers': 2.0, 'avg_donation': 1155.5}
+DEBUG 2025-12-09 17:23:41,013 views Events data: [{'council__name': 'Council 3469', 'count': 12, 'council_name': 'Council 3469'}]
+DEBUG 2025-12-09 17:23:41,022 views Donations data: [{'month': 'May', 'total': 6933.0}]
+DEBUG 2025-12-09 17:23:41,031 views Members/officers data: [{'council_name': 'Council 3469', 'members': 3, 'officers': 2}]
+DEBUG 2025-12-09 17:23:41,034 views Event types data: [{'category': 'Assembly Meeting', 'count': 1}, {'category': 'Council Meeting', 'count': 1}, {'category': 'Meeting', 'count': 4}, {'category': 'Seminar', 'count': 4}, {'category': 'Service Program', 'count': 1}, {'category': 'Trip', 'count': 1}]
+DEBUG 2025-12-09 17:23:41,037 views Donation sources data: [{'payment_method': 'gcash', 'amount': 6933.0}]
+DEBUG 2025-12-09 17:23:41,042 views Active members: 3, Total members: 3
+DEBUG 2025-12-09 17:23:41,043 views Member activity data: [{'category': 'Active Members', 'count': 3}, {'category': 'Inactive Members', 'count': 0}]
+DEBUG 2025-12-09 17:23:41,048 views Summary stats: {'total_events': 12.0, 'total_donations': 6933.0, 'total_members': 3.0, 'total_officers': 2.0, 'avg_donation': 1155.5}
+DEBUG 2025-12-09 17:23:44,352 views Events data: [{'council__name': 'Council 3469', 'count': 12, 'council_name': 'Council 3469'}]
+DEBUG 2025-12-09 17:23:44,356 views Donations data: [{'month': 'May', 'total': 6933.0}]
+DEBUG 2025-12-09 17:23:44,367 views Members/officers data: [{'council_name': 'Council 3469', 'members': 3, 'officers': 2}]
+DEBUG 2025-12-09 17:23:44,369 views Event types data: [{'category': 'Assembly Meeting', 'count': 1}, {'category': 'Council Meeting', 'count': 1}, {'category': 'Meeting', 'count': 4}, {'category': 'Seminar', 'count': 4}, {'category': 'Service Program', 'count': 1}, {'category': 'Trip', 'count': 1}]
+DEBUG 2025-12-09 17:23:44,373 views Donation sources data: [{'payment_method': 'gcash', 'amount': 6933.0}]
+DEBUG 2025-12-09 17:23:44,378 views Active members: 3, Total members: 3
+DEBUG 2025-12-09 17:23:44,378 views Member activity data: [{'category': 'Active Members', 'count': 3}, {'category': 'Inactive Members', 'count': 0}]
+DEBUG 2025-12-09 17:23:44,384 views Summary stats: {'total_events': 12.0, 'total_donations': 6933.0, 'total_members': 3.0, 'total_officers': 2.0, 'avg_donation': 1155.5}
+DEBUG 2025-12-09 17:23:48,075 views Events data: [{'council__name': 'Council 3469', 'count': 12, 'council_name': 'Council 3469'}]
+DEBUG 2025-12-09 17:23:48,081 views Donations data: [{'month': 'May', 'total': 6933.0}]
+DEBUG 2025-12-09 17:23:48,087 views Members/officers data: [{'council_name': 'Council 3469', 'members': 3, 'officers': 2}]
+DEBUG 2025-12-09 17:23:48,093 views Event types data: [{'category': 'Assembly Meeting', 'count': 1}, {'category': 'Council Meeting', 'count': 1}, {'category': 'Meeting', 'count': 4}, {'category': 'Seminar', 'count': 4}, {'category': 'Service Program', 'count': 1}, {'category': 'Trip', 'count': 1}]
+DEBUG 2025-12-09 17:23:48,096 views Donation sources data: [{'payment_method': 'gcash', 'amount': 6933.0}]
+DEBUG 2025-12-09 17:23:48,099 views Active members: 3, Total members: 3
+DEBUG 2025-12-09 17:23:48,099 views Member activity data: [{'category': 'Active Members', 'count': 3}, {'category': 'Inactive Members', 'count': 0}]
+DEBUG 2025-12-09 17:23:48,103 views Summary stats: {'total_events': 12.0, 'total_donations': 6933.0, 'total_members': 3.0, 'total_officers': 2.0, 'avg_donation': 1155.5}
+DEBUG 2025-12-09 17:23:51,921 views Events data: [{'council__name': 'Council 3469', 'count': 12, 'council_name': 'Council 3469'}]
+DEBUG 2025-12-09 17:23:51,928 views Donations data: [{'month': 'May', 'total': 6933.0}]
+DEBUG 2025-12-09 17:23:51,936 views Members/officers data: [{'council_name': 'Council 3469', 'members': 3, 'officers': 2}]
+DEBUG 2025-12-09 17:23:51,938 views Event types data: [{'category': 'Assembly Meeting', 'count': 1}, {'category': 'Council Meeting', 'count': 1}, {'category': 'Meeting', 'count': 4}, {'category': 'Seminar', 'count': 4}, {'category': 'Service Program', 'count': 1}, {'category': 'Trip', 'count': 1}]
+DEBUG 2025-12-09 17:23:51,943 views Donation sources data: [{'payment_method': 'gcash', 'amount': 6933.0}]
+DEBUG 2025-12-09 17:23:51,947 views Active members: 3, Total members: 3
+DEBUG 2025-12-09 17:23:51,947 views Member activity data: [{'category': 'Active Members', 'count': 3}, {'category': 'Inactive Members', 'count': 0}]
+DEBUG 2025-12-09 17:23:51,952 views Summary stats: {'total_events': 12.0, 'total_donations': 6933.0, 'total_members': 3.0, 'total_officers': 2.0, 'avg_donation': 1155.5}
+DEBUG 2025-12-09 17:23:56,656 views Events data: [{'council__name': 'Council 3469', 'count': 12, 'council_name': 'Council 3469'}]
+DEBUG 2025-12-09 17:23:56,662 views Donations data: [{'month': 'May', 'total': 6933.0}]
+DEBUG 2025-12-09 17:23:56,668 views Members/officers data: [{'council_name': 'Council 3469', 'members': 3, 'officers': 2}]
+DEBUG 2025-12-09 17:23:56,671 views Event types data: [{'category': 'Assembly Meeting', 'count': 1}, {'category': 'Council Meeting', 'count': 1}, {'category': 'Meeting', 'count': 4}, {'category': 'Seminar', 'count': 4}, {'category': 'Service Program', 'count': 1}, {'category': 'Trip', 'count': 1}]
+DEBUG 2025-12-09 17:23:56,674 views Donation sources data: [{'payment_method': 'gcash', 'amount': 6933.0}]
+DEBUG 2025-12-09 17:23:56,677 views Active members: 3, Total members: 3
+DEBUG 2025-12-09 17:23:56,677 views Member activity data: [{'category': 'Active Members', 'count': 3}, {'category': 'Inactive Members', 'count': 0}]
+DEBUG 2025-12-09 17:23:56,681 views Summary stats: {'total_events': 12.0, 'total_donations': 6933.0, 'total_members': 3.0, 'total_officers': 2.0, 'avg_donation': 1155.5}
+DEBUG 2025-12-09 17:27:07,242 views Events data: [{'council__name': 'Council 3469', 'count': 12, 'council_name': 'Council 3469'}]
+DEBUG 2025-12-09 17:27:07,303 views Donations data: [{'month': 'May', 'total': 6933.0}]
+DEBUG 2025-12-09 17:27:07,320 views Members/officers data: [{'council_name': 'Council 3469', 'members': 3, 'officers': 2}]
+DEBUG 2025-12-09 17:27:07,332 views Event types data: [{'category': 'Assembly Meeting', 'count': 1}, {'category': 'Council Meeting', 'count': 1}, {'category': 'Meeting', 'count': 4}, {'category': 'Seminar', 'count': 4}, {'category': 'Service Program', 'count': 1}, {'category': 'Trip', 'count': 1}]
+DEBUG 2025-12-09 17:27:07,352 views Donation sources data: [{'payment_method': 'gcash', 'amount': 6933.0}]
+DEBUG 2025-12-09 17:27:07,360 views Active members: 3, Total members: 3
+DEBUG 2025-12-09 17:27:07,376 views Member activity data: [{'category': 'Active Members', 'count': 3}, {'category': 'Inactive Members', 'count': 0}]
+DEBUG 2025-12-09 17:27:07,401 views Summary stats: {'total_events': 12.0, 'total_donations': 6933.0, 'total_members': 3.0, 'total_officers': 2.0, 'avg_donation': 1155.5}
+DEBUG 2025-12-09 17:33:10,704 views Events data: [{'council__name': 'Council 3469', 'count': 12, 'council_name': 'Council 3469'}]
+DEBUG 2025-12-09 17:33:10,711 views Donations data: [{'month': 'May', 'total': 6933.0}]
+DEBUG 2025-12-09 17:33:10,757 views Members/officers data: [{'council_name': 'Council 3469', 'members': 3, 'officers': 2}]
+DEBUG 2025-12-09 17:33:10,800 views Event types data: [{'category': 'Assembly Meeting', 'count': 1}, {'category': 'Council Meeting', 'count': 1}, {'category': 'Meeting', 'count': 4}, {'category': 'Seminar', 'count': 4}, {'category': 'Service Program', 'count': 1}, {'category': 'Trip', 'count': 1}]
+DEBUG 2025-12-09 17:33:10,871 views Donation sources data: [{'payment_method': 'gcash', 'amount': 6933.0}]
+DEBUG 2025-12-09 17:33:10,952 views Active members: 3, Total members: 3
+DEBUG 2025-12-09 17:33:10,953 views Member activity data: [{'category': 'Active Members', 'count': 3}, {'category': 'Inactive Members', 'count': 0}]
+DEBUG 2025-12-09 17:33:10,976 views Summary stats: {'total_events': 12.0, 'total_donations': 6933.0, 'total_members': 3.0, 'total_officers': 2.0, 'avg_donation': 1155.5}
+DEBUG 2025-12-09 17:41:59,386 views Events data: [{'council__name': 'Council 18035', 'count': 1, 'council_name': 'Council 18035'}, {'council__name': 'Council 3469', 'count': 12, 'council_name': 'Council 3469'}, {'council__name': 'Council 6789', 'count': 5, 'council_name': 'Council 6789'}]
+DEBUG 2025-12-09 17:41:59,481 views Donations data: [{'month': 'May', 'total': 8533.0}]
+DEBUG 2025-12-09 17:41:59,564 views Members/officers data: [{'council_name': 'Council 1234', 'members': 3.0, 'officers': 1}, {'council_name': 'Council 18035', 'members': 7.0, 'officers': 1}, {'council_name': 'Council 3469', 'members': 3.0, 'officers': 2}, {'council_name': 'Council 6789', 'members': 1.0, 'officers': 5}, {'council_name': 'Test Council', 'members': 0.0, 'officers': 1}]
+DEBUG 2025-12-09 17:41:59,786 views Event types data: [{'category': 'Assembly Meeting', 'count': 2}, {'category': 'Council Meeting', 'count': 3}, {'category': 'Meeting', 'count': 5}, {'category': 'Seminar', 'count': 8}, {'category': 'Service Program', 'count': 3}, {'category': 'Trip', 'count': 3}]
+DEBUG 2025-12-09 17:41:59,867 views Donation sources data: [{'payment_method': 'gcash', 'amount': 8533.0}]
+DEBUG 2025-12-09 17:41:59,892 views Active members: 4, Total members: 14
+DEBUG 2025-12-09 17:41:59,902 views Member activity data: [{'category': 'Active Members', 'count': 4}, {'category': 'Inactive Members', 'count': 10}]
+DEBUG 2025-12-09 17:42:00,004 views Summary stats: {'total_events': 24.0, 'total_donations': 8533.0, 'total_members': 14.0, 'total_officers': 10.0, 'avg_donation': 948.111111111111}
+DEBUG 2025-12-09 17:42:57,580 views Events data: [{'council__name': 'Council 18035', 'count': 1, 'council_name': 'Council 18035'}, {'council__name': 'Council 3469', 'count': 12, 'council_name': 'Council 3469'}, {'council__name': 'Council 6789', 'count': 5, 'council_name': 'Council 6789'}]
+DEBUG 2025-12-09 17:42:57,591 views Donations data: [{'month': 'May', 'total': 8533.0}]
+DEBUG 2025-12-09 17:42:57,600 views Members/officers data: [{'council_name': 'Council 1234', 'members': 3.0, 'officers': 1}, {'council_name': 'Council 18035', 'members': 7.0, 'officers': 1}, {'council_name': 'Council 3469', 'members': 3.0, 'officers': 2}, {'council_name': 'Council 6789', 'members': 1.0, 'officers': 5}, {'council_name': 'Test Council', 'members': 0.0, 'officers': 1}]
+DEBUG 2025-12-09 17:42:57,607 views Event types data: [{'category': 'Assembly Meeting', 'count': 2}, {'category': 'Council Meeting', 'count': 3}, {'category': 'Meeting', 'count': 5}, {'category': 'Seminar', 'count': 8}, {'category': 'Service Program', 'count': 3}, {'category': 'Trip', 'count': 3}]
+DEBUG 2025-12-09 17:42:57,612 views Donation sources data: [{'payment_method': 'gcash', 'amount': 8533.0}]
+DEBUG 2025-12-09 17:42:57,617 views Active members: 4, Total members: 14
+DEBUG 2025-12-09 17:42:57,623 views Member activity data: [{'category': 'Active Members', 'count': 4}, {'category': 'Inactive Members', 'count': 10}]
+DEBUG 2025-12-09 17:42:57,629 views Summary stats: {'total_events': 24.0, 'total_donations': 8533.0, 'total_members': 14.0, 'total_officers': 10.0, 'avg_donation': 948.111111111111}
