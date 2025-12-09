@@ -14101,3 +14101,101 @@ DEBUG 2025-09-11 22:55:00,400 views Active members: 4, Total members: 14
 DEBUG 2025-09-11 22:55:00,400 views Member activity data: [{'category': 'Active Members', 'count': 4}, {'category': 'Inactive Members', 'count': 10}]
 DEBUG 2025-09-11 22:55:00,405 views Summary stats: {'total_events': 24.0, 'total_donations': 8533.0, 'total_members': 14.0, 'total_officers': 10.0, 'avg_donation': 948.111111111111}
 DEBUG 2025-09-11 22:55:00,407 views Summary stats: {'total_events': 24.0, 'total_donations': 8533.0, 'total_members': 14.0, 'total_officers': 10.0, 'avg_donation': 948.111111111111}
+DEBUG 2025-12-09 10:58:20,813 views show_manual_link: False, User: AnonymousUser, Role: N/A
+DEBUG 2025-12-09 10:58:21,834 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-09" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-09" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-09 10:59:59,534 views show_manual_link: False, User: AnonymousUser, Role: N/A
+DEBUG 2025-12-09 10:59:59,544 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-09" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-09" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>

@@ -1,87 +1,816 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}   
-Knights of Columbus
-{% endblock %}
+{% block title %}Knights of Columbus - Diocese of Lucena{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/homepage-style.css' %}?v={% now 'U' %}">
-</head>
-<body>
-    <div class="background" style="background: url('{% static 'images/homepage-img.jpeg' %}') no-repeat center/cover;">
-        <h1>Welcome to the Knights of Columbus</h1>
-        <p>Strengthening faith, families, and communities since 1882.</p>
-        <a href="/donations/" class="cta-button">Support Our Mission</a>
-    </div>
+<style>
+  /* ============================================
+   MODERN MINIMALIST + CHURCH COLORS
+   Clean layout with blue/gold identity
+   ============================================ */
+
+  * {
+    box-sizing: border-box;
+  }
+
+  .landing {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #fff;
+    color: #111827;
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ============================================
+   HERO - Image + Clean Layout
+   ============================================ */
+  .hero {
+    position: relative;
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, rgba(13, 52, 113, 0.92) 0%, rgba(3, 13, 78, 0.95) 100%),
+    url('{% static ' images/homepage-img.jpeg' %}') center/cover no-repeat;
+    padding: 120px 0 100px;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 64px;
+    align-items: center;
+  }
+
+  @media (max-width: 900px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .hero {
+      padding: 100px 0 80px;
+      min-height: auto;
+    }
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(251, 191, 36, 0.15);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    color: #fbbf24;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 100px;
+    margin-bottom: 24px;
+  }
+
+  .hero h1 {
+    font-size: clamp(36px, 5vw, 48px);
+    font-weight: 700;
+    line-height: 1.15;
+    color: #fff;
+    margin: 0 0 20px;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-desc {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0 0 32px;
+    max-width: 480px;
+    line-height: 1.7;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-gold {
+    background: #f59e0b;
+    color: #1c1917;
+  }
+
+  .btn-gold:hover {
+    background: #d97706;
+    transform: translateY(-1px);
+  }
+
+  .btn-white-outline {
+    background: transparent;
+    color: #fff;
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+  }
+
+  .btn-white-outline:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.6);
+  }
+
+  .btn-blue {
+    background: #0D3471;
+    color: #fff;
+  }
+
+  .btn-blue:hover {
+    background: #0a2a5e;
+  }
+
+  .btn-outline-blue {
+    background: transparent;
+    color: #0D3471;
+    border: 1.5px solid #0D3471;
+  }
+
+  .btn-outline-blue:hover {
+    background: #0D3471;
+    color: #fff;
+  }
+
+  /* Hero Stats Card */
+  .hero-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    padding: 32px;
+  }
+
+  @media (max-width: 900px) {
+    .hero-card {
+      max-width: 400px;
+    }
+  }
+
+  .hero-card h3 {
+    color: #fbbf24;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 20px;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .stat-item {
+    text-align: left;
+  }
+
+  .stat-number {
+    font-size: 36px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+  }
+
+  .hero-quote {
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .hero-quote p {
+    font-size: 14px;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0 0 6px;
+    line-height: 1.6;
+  }
+
+  .hero-quote cite {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    font-style: normal;
+  }
+
+  /* ============================================
+   FEATURES - Blue accents on white
+   ============================================ */
+  .features {
+    padding: 100px 0;
+    background: #fff;
+  }
+
+  .section-header {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto 60px;
+  }
+
+  .section-tag {
+    display: inline-block;
+    padding: 6px 14px;
+    background: #eff6ff;
+    color: #0D3471;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 100px;
+    margin-bottom: 16px;
+  }
+
+  .section-header h2 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 12px;
+    letter-spacing: -0.01em;
+  }
+
+  .section-header p {
+    font-size: 17px;
+    color: #6b7280;
+    margin: 0;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  @media (max-width: 900px) {
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .feature-card {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 32px;
+    transition: all 0.2s ease;
+  }
+
+  .feature-card:hover {
+    border-color: #0D3471;
+    box-shadow: 0 4px 24px rgba(13, 52, 113, 0.08);
+  }
+
+  .feature-icon {
+    width: 52px;
+    height: 52px;
+    background: #0D3471;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .feature-icon i {
+    font-size: 20px;
+    color: #fff;
+  }
+
+  .feature-card:nth-child(2) .feature-icon {
+    background: #f59e0b;
+  }
+
+  .feature-card:nth-child(3) .feature-icon {
+    background: #16a34a;
+  }
+
+  .feature-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 10px;
+  }
+
+  .feature-card p {
+    font-size: 15px;
+    color: #6b7280;
+    margin: 0;
+    line-height: 1.65;
+  }
+
+  /* ============================================
+   METRICS - Light blue background
+   ============================================ */
+  .metrics {
+    padding: 80px 0;
+    background: linear-gradient(180deg, #f0f7ff 0%, #e8f2ff 100%);
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 32px;
+    text-align: center;
+  }
+
+  @media (max-width: 768px) {
+    .metrics-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .metric-item h3 {
+    font-size: 44px;
+    font-weight: 700;
+    color: #0D3471;
+    margin: 0 0 6px;
+    letter-spacing: -0.02em;
+  }
+
+  .metric-item p {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+    font-weight: 500;
+  }
+
+  /* ============================================
+   CTA - Blue card
+   ============================================ */
+  .cta {
+    padding: 100px 0;
+    background: #fff;
+  }
+
+  .cta-box {
+    background: linear-gradient(135deg, #0D3471 0%, #0a2a5e 100%);
+    border-radius: 16px;
+    padding: 64px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 40px;
+  }
+
+  @media (max-width: 768px) {
+    .cta-box {
+      grid-template-columns: 1fr;
+      text-align: center;
+      padding: 48px 32px;
+    }
+  }
+
+  .cta-content h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 8px;
+  }
+
+  .cta-content p {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.75);
+    margin: 0;
+  }
+
+  .btn-gold-lg {
+    background: #f59e0b;
+    color: #1c1917;
+    padding: 16px 32px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+
+  .btn-gold-lg:hover {
+    background: #d97706;
+    transform: translateY(-1px);
+  }
+
+  /* ============================================
+   CONTACT - Clean two-column
+   ============================================ */
+  .contact {
+    padding: 100px 0;
+    background: #f9fafb;
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 64px;
+  }
+
+  @media (max-width: 900px) {
+    .contact-grid {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+  }
+
+  .contact-info h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 12px;
+  }
+
+  .contact-info>p {
+    font-size: 16px;
+    color: #6b7280;
+    margin: 0 0 32px;
+  }
+
+  .contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .contact-icon {
+    width: 44px;
+    height: 44px;
+    background: #0D3471;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .contact-text strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 2px;
+  }
+
+  .contact-text span {
+    font-size: 14px;
+    color: #6b7280;
+  }
+
+  /* Form */
+  .form-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  }
+
+  .form-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 24px;
+  }
+
+  .form-row {
+    margin-bottom: 16px;
+  }
+
+  .form-row label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 6px;
+  }
+
+  .form-row input,
+  .form-row textarea {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 15px;
+    font-family: inherit;
+    background: #f9fafb;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    color: #111827;
+    transition: all 0.15s ease;
+  }
+
+  .form-row input:focus,
+  .form-row textarea:focus {
+    outline: none;
+    border-color: #0D3471;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(13, 52, 113, 0.1);
+  }
+
+  .form-row input::placeholder,
+  .form-row textarea::placeholder {
+    color: #9ca3af;
+  }
+
+  .form-row textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+
+  .btn-submit {
+    width: 100%;
+    background: #0D3471;
+    color: #fff;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.15s ease;
+  }
+
+  .btn-submit:hover {
+    background: #0a2a5e;
+  }
+
+  /* ============================================
+   FOOTER
+   ============================================ */
+  .footer {
+    padding: 24px 0;
+    background: #0D3471;
+    text-align: center;
+  }
+
+  .footer p {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+  }
+
+  /* Alerts */
+  .alert {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .alert-success {
+    background: #ecfdf5;
+    color: #065f46;
+  }
+
+  .alert-error {
+    background: #fef2f2;
+    color: #991b1b;
+  }
+</style>
+
+<div class="landing">
+  <!-- HERO with image -->
+  <section class="hero">
     <div class="container">
-        <section class="highlights">
-            <h2>Why Join the Knights of Columbus?</h2>
-            <div class="highlight-grid">
-                <div class="highlight">
-                    <h3>Faith in Action</h3>
-                    <p>Participate in programs that deepen your faith and serve the Church.</p>
-                </div>
-                <div class="highlight">
-                    <h3>Community Service</h3>
-                    <p>Make a difference through charity and volunteer work in your local community.</p>
-                </div>
-                <div class="highlight">
-                    <h3>Brotherhood</h3>
-                    <p>Join a global network of over 2 million Catholic men dedicated to fraternity.</p>
-                </div>
+      <div class="hero-grid">
+        <div class="hero-content">
+          <div class="hero-tag">
+            <i class="fas fa-shield-alt"></i>
+            Est. 1882 · Diocese of Lucena
+          </div>
+          <h1>Faith in Action. Community in Service.</h1>
+          <p class="hero-desc">The Knights of Columbus is the world's largest Catholic fraternal organization—dedicated
+            to charity, unity, and the protection of families.</p>
+          <div class="hero-actions">
+            <a href="{% url 'sign-up' %}" class="btn btn-gold">
+              <i class="fas fa-arrow-right"></i>
+              Become a Knight
+            </a>
+            <a href="#contact" class="btn btn-white-outline">
+              Learn More
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-card">
+          <h3>Our Community</h3>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-number">2M+</div>
+              <div class="stat-label">Members</div>
             </div>
-        </section>
-
-        <section class="impact">
-            <h2>Our Impact</h2>
-            <div class="impact-stats">
-                <div class="stat">
-                    <h3>2M+</h3>
-                    <p>Members Worldwide</p>
-                </div>
-                <div class="stat">
-                    <h3>$185M+</h3>
-                    <p>Donated to Charity in 2023</p>
-                </div>
-                <div class="stat">
-                    <h3>77M+</h3>
-                    <p>Volunteer Hours in 2023</p>
-                </div>
+            <div class="stat-item">
+              <div class="stat-number">16K+</div>
+              <div class="stat-label">Councils</div>
             </div>
-        </section>
-
-        <section class="cta-section">
-            <h2>Join Us Today</h2>
-            <p>Become a Knight and make a lasting impact in your community.</p>
-            <a href="/sign-in/" class="cta-button">Join Now</a>
-        </section>
-
-        <section class="contact-us">
-            <div class="user-input">
-                <h2>Contact Us</h2>
-                <p>Have questions? Reach out to learn more about the Knights of Columbus.</p>
-
-                {% if success %}
-                    <p style="color: rgb(255, 205, 56);">{{ success }}</p>
-                {% endif %}
-                {% if error %}
-                    <p style="color: red;">{{ error }}</p>
-                {% endif %}
-
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="text" name="name" placeholder="Name" required>
-                    <input type="email" name="email" placeholder="Email" required>
-                    <textarea name="message" placeholder="Message" required></textarea>
-                    <button type="submit">Send</button>
-                </form>
+            <div class="stat-item">
+              <div class="stat-number">$185M</div>
+              <div class="stat-label">Donated 2023</div>
             </div>
-        </section>
+            <div class="stat-item">
+              <div class="stat-number">77M</div>
+              <div class="stat-label">Volunteer Hours</div>
+            </div>
+          </div>
+          <div class="hero-quote">
+            <p>"Charity is the greatest of all virtues."</p>
+            <cite>— Fr. Michael J. McGivney, Founder</cite>
+          </div>
+        </div>
+      </div>
     </div>
-</body>
-<footer class="footer">
-    <p>&copy; 2025 Knights of Columbus. All rights reserved.</p>
-</footer>
-</html> 
+  </section>
+
+  <!-- FEATURES on white -->
+  <section class="features">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Why Join</span>
+        <h2>Be Part of Something Greater</h2>
+        <p>Join a brotherhood making a real difference in communities everywhere.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-cross"></i>
+          </div>
+          <h3>Strengthen Your Faith</h3>
+          <p>Grow spiritually through prayer, formation programs, and service to your parish community.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-hands-helping"></i>
+          </div>
+          <h3>Serve Your Community</h3>
+          <p>Lead charitable initiatives and support those in need in your local area.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <h3>Build Brotherhood</h3>
+          <p>Connect with Catholic men who share your values and support one another.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- METRICS on light blue -->
+  <section class="metrics">
+    <div class="container">
+      <div class="metrics-grid">
+        <div class="metric-item">
+          <h3>142</h3>
+          <p>Years of Service</p>
+        </div>
+        <div class="metric-item">
+          <h3>$1.7B+</h3>
+          <p>Donated Since 1882</p>
+        </div>
+        <div class="metric-item">
+          <h3>750M+</h3>
+          <p>Volunteer Hours</p>
+        </div>
+        <div class="metric-item">
+          <h3>100+</h3>
+          <p>Countries</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <div class="container">
+      <div class="cta-box">
+        <div class="cta-content">
+          <h2>Ready to make a difference?</h2>
+          <p>Join thousands of Catholic men serving their communities.</p>
+        </div>
+        <a href="{% url 'sign-up' %}" class="btn-gold-lg">
+          Get Started <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact" id="contact">
+    <div class="container">
+      <div class="contact-grid">
+        <div class="contact-info">
+          <h2>Get in Touch</h2>
+          <p>Have questions about joining? We're here to help.</p>
+
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div class="contact-text">
+              <strong>Diocese of Lucena</strong>
+              <span>Quezon Province, Philippines</span>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fas fa-envelope"></i>
+            </div>
+            <div class="contact-text">
+              <strong>Email</strong>
+              <span>info@kofc-lucena.org</span>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fas fa-phone"></i>
+            </div>
+            <div class="contact-text">
+              <strong>Phone</strong>
+              <span>+63 123 456 7890</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-card">
+          <h3>Send us a message</h3>
+
+          {% if success %}
+          <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i> {{ success }}
+          </div>
+          {% endif %}
+          {% if error %}
+          <div class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i> {{ error }}
+          </div>
+          {% endif %}
+
+          <form method="post">
+            {% csrf_token %}
+            <div class="form-row">
+              <label>Name</label>
+              <input type="text" name="name" placeholder="Your full name" required>
+            </div>
+            <div class="form-row">
+              <label>Email</label>
+              <input type="email" name="email" placeholder="you@example.com" required>
+            </div>
+            <div class="form-row">
+              <label>Message</label>
+              <textarea name="message" placeholder="How can we help?" required></textarea>
+            </div>
+            <button type="submit" class="btn-submit">
+              Send Message <i class="fas fa-arrow-right"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2025 Knights of Columbus — Diocese of Lucena. All rights reserved.</p>
+    </div>
+  </footer>
+</div>
 {% endblock %}

@@ -6,28 +6,445 @@ Knights of Columbus - Sign In
 {% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/signin-style.css' %}?v={% now 'U' %}">
+<style>
+  /* Modern Sign In Page */
+  .signin-container {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: var(--neutral-100);
+  }
 
-<div class="container">
-    <h1>Sign In</h1>
-    <p>Access your Knights of Columbus account.</p>
-    <section class="sign-in-form">
-        <h2>User Credentials</h2>
-        <form method="post" autocomplete="off">
-            {% csrf_token %}
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" placeholder="Enter your username" required autocomplete="on">
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" placeholder="Enter your password" required autocomplete="off">
-            <button type="submit">Sign In</button>
+  @media (max-width: 968px) {
+    .signin-container {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Left Side - Image/Brand */
+  .signin-brand {
+    background: linear-gradient(135deg, rgba(3, 13, 78, 0.95) 0%, rgba(13, 52, 113, 0.9) 100%),
+    url('{% static ' images/homepage-img.jpeg' %}') no-repeat center/cover;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-12);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .signin-brand::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -30%;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .signin-brand::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -20%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  @media (max-width: 968px) {
+    .signin-brand {
+      display: none;
+    }
+  }
+
+  .brand-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    color: white;
+  }
+
+  .brand-logo {
+    width: 120px;
+    height: 120px;
+    margin-bottom: var(--space-6);
+    border-radius: var(--radius-2xl);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  }
+
+  .brand-title {
+    font-size: var(--text-3xl);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--space-3);
+  }
+
+  .brand-title span {
+    color: var(--accent-400);
+  }
+
+  .brand-subtitle {
+    font-size: var(--text-lg);
+    color: rgba(255, 255, 255, 0.7);
+    max-width: 400px;
+  }
+
+  .brand-features {
+    margin-top: var(--space-12);
+    text-align: left;
+  }
+
+  .brand-feature {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+  }
+
+  .brand-feature-icon {
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-lg);
+    color: var(--accent-400);
+  }
+
+  .brand-feature-text {
+    flex: 1;
+  }
+
+  .brand-feature-text h4 {
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
+    color: white;
+    margin-bottom: var(--space-1);
+  }
+
+  .brand-feature-text p {
+    font-size: var(--text-sm);
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+  }
+
+  /* Right Side - Form */
+  .signin-form-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8);
+  }
+
+  .signin-form-container {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .signin-header {
+    text-align: center;
+    margin-bottom: var(--space-8);
+  }
+
+  .signin-logo-mobile {
+    display: none;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto var(--space-4);
+    border-radius: var(--radius-xl);
+  }
+
+  @media (max-width: 968px) {
+    .signin-logo-mobile {
+      display: block;
+    }
+  }
+
+  .signin-header h1 {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: var(--neutral-900);
+    margin-bottom: var(--space-2);
+  }
+
+  .signin-header p {
+    font-size: var(--text-base);
+    color: var(--neutral-500);
+  }
+
+  /* Form Card */
+  .signin-card {
+    background: white;
+    border-radius: var(--radius-2xl);
+    padding: var(--space-8);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--neutral-200);
+  }
+
+  .signin-form .form-group {
+    margin-bottom: var(--space-5);
+  }
+
+  .signin-form label {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--neutral-700);
+    margin-bottom: var(--space-2);
+  }
+
+  .input-wrapper {
+    position: relative;
+  }
+
+  .input-wrapper i {
+    position: absolute;
+    left: var(--space-4);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--neutral-400);
+    font-size: var(--text-base);
+  }
+
+  .signin-form input[type="text"],
+  .signin-form input[type="password"] {
+    width: 100%;
+    padding: var(--space-4) var(--space-4) var(--space-4) var(--space-12);
+    font-size: var(--text-base);
+    font-family: inherit;
+    background: var(--neutral-50);
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--radius-xl);
+    transition: all var(--transition-fast);
+  }
+
+  .signin-form input:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+  }
+
+  .signin-form input::placeholder {
+    color: var(--neutral-400);
+  }
+
+  .form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-6);
+    font-size: var(--text-sm);
+  }
+
+  .form-options label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--neutral-600);
+    cursor: pointer;
+  }
+
+  .form-options a {
+    color: var(--primary-600);
+    font-weight: var(--font-medium);
+  }
+
+  .signin-btn {
+    width: 100%;
+    padding: var(--space-4);
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
+    background: linear-gradient(135deg, var(--primary-700) 0%, var(--primary-800) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-xl);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+  }
+
+  .signin-btn:hover {
+    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(13, 52, 113, 0.35);
+  }
+
+  .signin-btn:active {
+    transform: translateY(0);
+  }
+
+  .signin-divider {
+    display: flex;
+    align-items: center;
+    margin: var(--space-6) 0;
+    color: var(--neutral-400);
+    font-size: var(--text-sm);
+  }
+
+  .signin-divider::before,
+  .signin-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--neutral-200);
+  }
+
+  .signin-divider span {
+    padding: 0 var(--space-4);
+  }
+
+  .signin-footer {
+    text-align: center;
+    margin-top: var(--space-6);
+    font-size: var(--text-sm);
+    color: var(--neutral-600);
+  }
+
+  .signin-footer a {
+    color: var(--primary-600);
+    font-weight: var(--font-semibold);
+    text-decoration: none;
+  }
+
+  .signin-footer a:hover {
+    text-decoration: underline;
+  }
+
+  /* Error Messages */
+  .error-message {
+    background: var(--error-50);
+    color: var(--error-600);
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-5);
+    font-size: var(--text-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+</style>
+
+<div class="signin-container">
+  <!-- Left Brand Section -->
+  <div class="signin-brand">
+    <div class="brand-content">
+      <img src="{% static 'images/kofc-logo.png' %}" alt="KofC Logo" class="brand-logo">
+      <h2 class="brand-title">Knights of <span>Columbus</span></h2>
+      <p class="brand-subtitle">Diocese of Lucena - District L61</p>
+
+      <div class="brand-features">
+        <div class="brand-feature">
+          <div class="brand-feature-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <div class="brand-feature-text">
+            <h4>Secure Access</h4>
+            <p>Your data is protected with encryption</p>
+          </div>
+        </div>
+        <div class="brand-feature">
+          <div class="brand-feature-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="brand-feature-text">
+            <h4>Member Portal</h4>
+            <p>Access events, forums, and more</p>
+          </div>
+        </div>
+        <div class="brand-feature">
+          <div class="brand-feature-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="brand-feature-text">
+            <h4>Track Progress</h4>
+            <p>Monitor your involvement and impact</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Form Section -->
+  <div class="signin-form-wrapper">
+    <div class="signin-form-container">
+      <div class="signin-header">
+        <img src="{% static 'images/kofc-logo.png' %}" alt="KofC Logo" class="signin-logo-mobile">
+        <h1>Welcome Back</h1>
+        <p>Sign in to access your member dashboard</p>
+      </div>
+
+      <div class="signin-card">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="error-message">
+          <i class="fas fa-exclamation-circle"></i>
+          {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <form method="post" class="signin-form">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="username">Username</label>
+            <div class="input-wrapper">
+              <i class="fas fa-user"></i>
+              <input type="text" id="username" name="username" placeholder="Enter your username" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-wrapper">
+              <i class="fas fa-lock"></i>
+              <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+          </div>
+
+          <div class="form-options">
+            <label>
+              <input type="checkbox" name="remember">
+              Remember me
+            </label>
+            <a href="#">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="signin-btn">
+            <i class="fas fa-sign-in-alt"></i>
+            Sign In
+          </button>
         </form>
-        <p>Not a member? <a href="{% url 'sign-up' %}">Join now</a>.</p>
-    </section>
+
+        <div class="signin-divider">
+          <span>or</span>
+        </div>
+
+        <div class="signin-footer">
+          Don't have an account? <a href="{% url 'sign-up' %}">Create one here</a>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const form = document.querySelector('form');
-        form.reset();
-    });
+  document.addEventListener('DOMContentLoaded', function () {
+    // Reset form on page load
+    const form = document.querySelector('.signin-form');
+    if (form) {
+      form.reset();
+    }
+  });
 </script>
 {% endblock %}

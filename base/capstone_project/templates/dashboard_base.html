@@ -1,0 +1,273 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+  <title>{% block title %}Dashboard - Knights of Columbus{% endblock %}</title>
+  <link rel="icon" type="image/png" href="{% static 'images/kofc-logo.png' %}">
+
+  <!-- FONTS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{% static 'css/design-system.css' %}?v={% now 'U' %}" />
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+  <div class="app-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <!-- Brand -->
+      <div class="sidebar-brand">
+        <img src="{% static 'images/kofc-logo.png' %}" alt="KofC Logo">
+        <div class="sidebar-brand-text">
+          <h3>Diocese of Lucena</h3>
+          <p>District L61</p>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="sidebar-nav">
+        <!-- Main Menu -->
+        <a href="{% url 'dashboard' %}" class="sidebar-link {% if request.path == '/dashboard/' %}active{% endif %}">
+          <i class="fas fa-home"></i>
+          <span>Dashboard</span>
+        </a>
+
+        {% if user.role == 'admin' or user.role == 'officer' %}
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Management</div>
+
+          {% if user.role == 'admin' %}
+          <a href="{% url 'manage_roles' %}"
+            class="sidebar-link {% if 'manage_roles' in request.path %}active{% endif %}">
+            <i class="fas fa-user-tag"></i>
+            <span>Role Management</span>
+          </a>
+          {% endif %}
+
+          <a href="{% url 'manage_pending_users' %}"
+            class="sidebar-link {% if 'pending' in request.path %}active{% endif %}">
+            <i class="fas fa-user-clock"></i>
+            <span>Pending Users</span>
+          </a>
+
+          <a href="{% url 'member_list' %}"
+            class="sidebar-link {% if 'member_list' in request.path %}active{% endif %}">
+            <i class="fas fa-users"></i>
+            <span>Members</span>
+          </a>
+        </div>
+        {% endif %}
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Events</div>
+
+          <a href="{% url 'event_list' %}" class="sidebar-link {% if 'event_list' in request.path %}active{% endif %}">
+            <i class="fas fa-calendar"></i>
+            <span>All Events</span>
+          </a>
+
+          {% if user.role == 'admin' or user.role == 'officer' %}
+          <a href="{% url 'add_event' %}" class="sidebar-link {% if 'add_event' in request.path %}active{% endif %}">
+            <i class="fas fa-plus-circle"></i>
+            <span>Create Event</span>
+          </a>
+
+          <a href="{% url 'event_proposals' %}"
+            class="sidebar-link {% if 'proposals' in request.path %}active{% endif %}">
+            <i class="fas fa-clipboard-check"></i>
+            <span>Proposals</span>
+          </a>
+          {% endif %}
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Analytics</div>
+
+          <a href="{% url 'analytics_view' %}"
+            class="sidebar-link {% if 'analytics' in request.path %}active{% endif %}">
+            <i class="fas fa-chart-line"></i>
+            <span>Analytics</span>
+          </a>
+
+          <a href="{% url 'leaderboard' %}"
+            class="sidebar-link {% if 'leaderboard' in request.path %}active{% endif %}">
+            <i class="fas fa-trophy"></i>
+            <span>Leaderboard</span>
+          </a>
+
+          <a href="{% url 'my_recruits' %}" class="sidebar-link {% if 'recruits' in request.path %}active{% endif %}">
+            <i class="fas fa-user-plus"></i>
+            <span>My Recruits</span>
+          </a>
+        </div>
+
+        {% if user.role == 'admin' or user.role == 'officer' %}
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Donations</div>
+
+          <a href="{% url 'donations' %}" class="sidebar-link {% if request.path == '/donations/' %}active{% endif %}">
+            <i class="fas fa-hand-holding-heart"></i>
+            <span>Donations</span>
+          </a>
+
+          <a href="{% url 'review_manual_donations' %}"
+            class="sidebar-link {% if 'review' in request.path %}active{% endif %}">
+            <i class="fas fa-file-invoice-dollar"></i>
+            <span>Review Donations</span>
+          </a>
+
+          <a href="{% url 'blockchain' %}" class="sidebar-link {% if 'blockchain' in request.path %}active{% endif %}">
+            <i class="fas fa-link"></i>
+            <span>Blockchain</span>
+          </a>
+        </div>
+        {% endif %}
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Community</div>
+
+          <a href="{% url 'forum' %}" class="sidebar-link {% if 'forum' in request.path %}active{% endif %}">
+            <i class="fas fa-comments"></i>
+            <span>Community Forum</span>
+          </a>
+        </div>
+      </nav>
+
+      <!-- User Profile -->
+      <div class="sidebar-user">
+        {% if user.profile_picture %}
+        <img src="{{ user.profile_picture.url }}" alt="Profile" class="sidebar-user-avatar">
+        {% else %}
+        <div class="sidebar-user-avatar"
+          style="background: var(--primary-600); display: flex; align-items: center; justify-content: center;">
+          <i class="fas fa-user" style="color: white;"></i>
+        </div>
+        {% endif %}
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name">{{ user.first_name }} {{ user.last_name }}</div>
+          <div class="sidebar-user-role">
+            {% if user.role == 'admin' %}Administrator
+            {% elif user.role == 'officer' %}Officer
+            {% else %}Member{% endif %}
+          </div>
+        </div>
+        <a href="{% url 'logout' %}" class="btn btn--ghost btn--icon" title="Logout"
+          style="color: rgba(255,255,255,0.6);">
+          <i class="fas fa-sign-out-alt"></i>
+        </a>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <!-- Header -->
+      <header class="main-header">
+        <div class="main-header-left flex items-center gap-4">
+          <button class="btn btn--ghost btn--icon sidebar-toggle" id="sidebarToggle" style="display: none;">
+            <i class="fas fa-bars"></i>
+          </button>
+          <div class="main-header-title">
+            <h1>{% block page_title %}Dashboard{% endblock %}</h1>
+            <p>{% block page_subtitle %}Welcome back, {{ user.first_name }}{% endblock %}</p>
+          </div>
+        </div>
+        <div class="main-header-right flex items-center gap-4">
+          {% block header_actions %}
+          <a href="{% url 'edit_profile' %}" class="btn btn--ghost">
+            <i class="fas fa-user-edit"></i>
+            <span>Edit Profile</span>
+          </a>
+          {% endblock %}
+        </div>
+      </header>
+
+      <!-- Notification container -->
+      <div id="notification-container" class="notification-container">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="notification {% if message.tags %}{{ message.tags }}{% endif %}">
+          <span class="notification-message">{{ message }}</span>
+          <button class="notification-close"><i class="fas fa-times"></i></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+      </div>
+
+      <!-- Page Content -->
+      <div class="main-body stagger-children">
+        {% block content %}
+        {% endblock %}
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Sidebar toggle for mobile
+      const sidebarToggle = document.getElementById('sidebarToggle');
+      const sidebar = document.getElementById('sidebar');
+
+      if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', () => {
+          sidebar.classList.toggle('open');
+        });
+      }
+
+      // Show toggle on mobile
+      function checkMobile() {
+        if (window.innerWidth <= 768) {
+          sidebarToggle.style.display = 'block';
+        } else {
+          sidebarToggle.style.display = 'none';
+          sidebar.classList.remove('open');
+        }
+      }
+      checkMobile();
+      window.addEventListener('resize', checkMobile);
+
+      // Close sidebar when clicking outside on mobile
+      document.addEventListener('click', (event) => {
+        if (window.innerWidth <= 768) {
+          if (!sidebar.contains(event.target) && !sidebarToggle.contains(event.target)) {
+            sidebar.classList.remove('open');
+          }
+        }
+      });
+
+      // Notification functionality
+      const notifications = document.querySelectorAll('.notification');
+      const closeButtons = document.querySelectorAll('.notification-close');
+
+      notifications.forEach(notification => {
+        setTimeout(() => {
+          notification.classList.add('fade-out');
+          setTimeout(() => notification.remove(), 300);
+        }, 4000);
+      });
+
+      closeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const notification = button.parentElement;
+          notification.classList.add('fade-out');
+          setTimeout(() => notification.remove(), 300);
+        });
+      });
+    });
+  </script>
+
+  {% block extra_js %}{% endblock %}
+</body>
+
+</html>

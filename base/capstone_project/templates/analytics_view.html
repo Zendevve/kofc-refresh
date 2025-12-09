@@ -1,100 +1,563 @@
-{% extends 'base.html' %}
+{% extends 'dashboard_base.html' %}
 {% load static %}
 
-{% block title %}
-Knights of Columbus - Analytics
+{% block title %}Analytics - Knights of Columbus{% endblock %}
+
+{% block page_title %}Analytics Dashboard{% endblock %}
+{% block page_subtitle %}
+{% if is_officer %}
+Analytics for {{ councils.first.name }}
+{% else %}
+Council performance and insights overview
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Analytics Page Specific Styles */
+
+  /* Summary Stats */
+  .analytics-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+  }
+
+  .analytics-stat {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: var(--space-5);
+    border: 1px solid var(--neutral-200);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .analytics-stat::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-600), var(--primary-400));
+  }
+
+  .analytics-stat:nth-child(2)::before {
+    background: linear-gradient(90deg, var(--accent-500), var(--accent-300));
+  }
+
+  .analytics-stat:nth-child(3)::before {
+    background: linear-gradient(90deg, var(--success-500), #4ade80);
+  }
+
+  .analytics-stat:nth-child(4)::before {
+    background: linear-gradient(90deg, var(--info-500), #60a5fa);
+  }
+
+  .analytics-stat:nth-child(5)::before {
+    background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+  }
+
+  .analytics-stat:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .analytics-stat h4 {
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-500);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    margin-bottom: var(--space-2);
+  }
+
+  .analytics-stat-value {
+    font-size: var(--text-3xl);
+    font-weight: var(--font-bold);
+    color: var(--neutral-900);
+    line-height: 1;
+  }
+
+  /* Filter Section */
+  .analytics-filter {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+    padding: var(--space-4) var(--space-6);
+    background: white;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--neutral-200);
+  }
+
+  .analytics-filter label {
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--neutral-600);
+  }
+
+  .analytics-filter select {
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-sm);
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--radius-lg);
+    background: white;
+    color: var(--neutral-800);
+    cursor: pointer;
+    min-width: 200px;
+  }
+
+  .analytics-filter select:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  }
+
+  /* Charts Grid */
+  .charts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-6);
+  }
+
+  @media (max-width: 1200px) {
+    .charts-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Chart Card */
+  .chart-card {
+    background: white;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--neutral-200);
+    overflow: hidden;
+  }
+
+  .chart-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-5) var(--space-6);
+    border-bottom: 1px solid var(--neutral-100);
+  }
+
+  .chart-card-header h3 {
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-900);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .chart-card-header h3 i {
+    color: var(--primary-600);
+    font-size: var(--text-lg);
+  }
+
+  .chart-card-body {
+    padding: var(--space-6);
+    height: 300px;
+    position: relative;
+  }
+
+  .chart-card-body canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* Full Width Chart */
+  .chart-card--full {
+    grid-column: span 2;
+  }
+
+  @media (max-width: 1200px) {
+    .chart-card--full {
+      grid-column: span 1;
+    }
+  }
+
+  /* Empty State */
+  .chart-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--neutral-400);
+  }
+
+  .chart-empty i {
+    font-size: var(--text-4xl);
+    margin-bottom: var(--space-3);
+  }
+
+  .chart-empty p {
+    font-size: var(--text-sm);
+  }
+</style>
+{% endblock %}
+
+{% block header_actions %}
+<div class="analytics-filter"
+  style="margin: 0; padding: var(--space-2) var(--space-4); background: transparent; border: none; box-shadow: none;">
+  {% if not is_officer %}
+  <form method="get" action="{% url 'analytics_view' %}" class="flex items-center gap-3">
+    <label for="council_id">Council:</label>
+    <select name="council_id" id="council_id" onchange="this.form.submit()">
+      <option value="">All Councils</option>
+      {% for council in councils %}
+      <option value="{{ council.id }}" {% if selected_council==council.id|stringformat:"s" %}selected{% endif %}>
+        {{ council.name }}
+      </option>
+      {% endfor %}
+    </select>
+  </form>
+  {% endif %}
+</div>
 {% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/analytics.css' %}">
-
-<div class="container">
-    <h1>Analytics Overview</h1>
-    {% if not is_officer %}
-    <div class="filter-section">
-        <form method="get" action="{% url 'analytics_view' %}">
-            <label for="council_id">Filter by Council:</label>
-            <select name="council_id" id="council_id" onchange="this.form.submit()">
-                <option value="">All Councils</option>
-                {% for council in councils %}
-                    <option value="{{ council.id }}" {% if selected_council == council.id|stringformat:"s" %}selected{% endif %}>
-                        {{ council.name }}
-                    </option>
-                {% endfor %}
-            </select>
-        </form>
-    </div>
-    {% else %}
-    <div class="filter-section">
-        <h3>Analytics for {{ councils.first.name }}</h3>
-    </div>
-    {% endif %}
-
-    <div class="summary-section">
-        <h2>Summary Statistics</h2>
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h3>Total Events</h3>
-                <p>{{ summary_stats.total_events }}</p>
-            </div>
-            <div class="stat-card">
-                <h3>Total Donations (PHP)</h3>
-                <p>{{ summary_stats.total_donations }}</p>
-            </div>
-            <div class="stat-card">
-                <h3>Total Members</h3>
-                <p>{{ summary_stats.total_members }}</p>
-            </div>
-            <div class="stat-card">
-                <h3>Total Officers</h3>
-                <p>{{ summary_stats.total_officers }}</p>
-            </div>
-            <div class="stat-card">
-                <h3>Average Donation (PHP)</h3>
-                <p>{{ summary_stats.avg_donation|floatformat:2 }}</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="chart-container" style="grid-area: events;">
-        <h2>Events by Council</h2>
-        <canvas id="eventsChart"></canvas>
-    </div>
-
-    <div class="chart-container" style="grid-area: donations;">
-        <h2>Donations Per Month</h2>
-        <canvas id="donationsChart"></canvas>
-    </div>
-
-    <div class="chart-container" style="grid-area: event-types;">
-        <h2>Event Types Distribution</h2>
-        <canvas id="eventTypesChart"></canvas>
-    </div>
-
-    <div class="chart-container" style="grid-area: members;">
-        <h2>Members and Officers by Council</h2>
-        <canvas id="membersOfficersChart"></canvas>
-    </div>
-
-    <div class="chart-container" style="grid-area: donation-sources;">
-        <h2>Donation Sources</h2>
-        <canvas id="donationSourcesChart"></canvas>
-    </div>
-
-    <div class="chart-container" style="grid-area: member-activity;">
-        <h2>Member Activity</h2>
-        <canvas id="memberActivityChart"></canvas>
-    </div>
-
-    <script id="eventsData" type="application/json">{{ events_data | safe }}</script>
-    <script id="donationsData" type="application/json">{{ donations_data | safe }}</script>
-    <script id="membersOfficersData" type="application/json">{{ members_officers_data | safe }}</script>
-    <script id="eventTypesData" type="application/json">{{ event_types_data | safe }}</script>
-    <script id="donationSourcesData" type="application/json">{{ donation_sources_data | safe }}</script>
-    <script id="memberActivityData" type="application/json">{{ member_activity_data | safe }}</script>
-    <input type="hidden" id="selectedCouncil" value="{{ selected_council|default:'' }}">
+<!-- Summary Stats -->
+<div class="analytics-stats">
+  <div class="analytics-stat">
+    <h4>Total Events</h4>
+    <div class="analytics-stat-value" data-target="{{ summary_stats.total_events }}">0</div>
+  </div>
+  <div class="analytics-stat">
+    <h4>Total Donations</h4>
+    <div class="analytics-stat-value" data-target="{{ summary_stats.total_donations }}">₱0</div>
+  </div>
+  <div class="analytics-stat">
+    <h4>Total Members</h4>
+    <div class="analytics-stat-value" data-target="{{ summary_stats.total_members }}">0</div>
+  </div>
+  <div class="analytics-stat">
+    <h4>Total Officers</h4>
+    <div class="analytics-stat-value" data-target="{{ summary_stats.total_officers }}">0</div>
+  </div>
+  <div class="analytics-stat">
+    <h4>Avg. Donation</h4>
+    <div class="analytics-stat-value" data-target="{{ summary_stats.avg_donation|floatformat:0 }}">₱0</div>
+  </div>
 </div>
 
+<!-- Charts Grid -->
+<div class="charts-grid">
+  <!-- Events by Council -->
+  <div class="chart-card">
+    <div class="chart-card-header">
+      <h3><i class="fas fa-calendar-alt"></i> Events by Council</h3>
+    </div>
+    <div class="chart-card-body">
+      <canvas id="eventsChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Donations Per Month -->
+  <div class="chart-card">
+    <div class="chart-card-header">
+      <h3><i class="fas fa-chart-line"></i> Donations Trend</h3>
+    </div>
+    <div class="chart-card-body">
+      <canvas id="donationsChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Event Types Distribution -->
+  <div class="chart-card">
+    <div class="chart-card-header">
+      <h3><i class="fas fa-chart-pie"></i> Event Types</h3>
+    </div>
+    <div class="chart-card-body">
+      <canvas id="eventTypesChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Donation Sources -->
+  <div class="chart-card">
+    <div class="chart-card-header">
+      <h3><i class="fas fa-hand-holding-usd"></i> Donation Sources</h3>
+    </div>
+    <div class="chart-card-body">
+      <canvas id="donationSourcesChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Members and Officers by Council -->
+  <div class="chart-card chart-card--full">
+    <div class="chart-card-header">
+      <h3><i class="fas fa-users"></i> Members & Officers by Council</h3>
+    </div>
+    <div class="chart-card-body">
+      <canvas id="membersOfficersChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Member Activity -->
+  <div class="chart-card chart-card--full">
+    <div class="chart-card-header">
+      <h3><i class="fas fa-chart-area"></i> Member Activity</h3>
+    </div>
+    <div class="chart-card-body">
+      <canvas id="memberActivityChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Data Scripts -->
+<script id="eventsData" type="application/json">{{ events_data | safe }}</script>
+<script id="donationsData" type="application/json">{{ donations_data | safe }}</script>
+<script id="membersOfficersData" type="application/json">{{ members_officers_data | safe }}</script>
+<script id="eventTypesData" type="application/json">{{ event_types_data | safe }}</script>
+<script id="donationSourcesData" type="application/json">{{ donation_sources_data | safe }}</script>
+<script id="memberActivityData" type="application/json">{{ member_activity_data | safe }}</script>
+<input type="hidden" id="selectedCouncil" value="{{ selected_council|default:'' }}">
+{% endblock %}
+
+{% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
-<script src="{% static 'js/analytics.js' %}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Animate counters
+    const counters = document.querySelectorAll('.analytics-stat-value');
+    counters.forEach(counter => {
+      const target = parseInt(counter.getAttribute('data-target'));
+      if (isNaN(target)) return;
+
+      const isCurrency = counter.textContent.includes('₱');
+      let current = 0;
+      const duration = 1500;
+      const stepTime = 16;
+      const totalSteps = duration / stepTime;
+      const increment = target / totalSteps;
+
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+          counter.textContent = isCurrency ? '₱' + target.toLocaleString() : target.toLocaleString();
+          clearInterval(timer);
+        } else {
+          counter.textContent = isCurrency ? '₱' + Math.floor(current).toLocaleString() : Math.floor(current).toLocaleString();
+        }
+      }, stepTime);
+    });
+
+    // Modern chart styling
+    const chartColors = {
+      primary: '#0D3471',
+      primaryLight: '#3b82f6',
+      accent: '#f59e0b',
+      success: '#22c55e',
+      info: '#3b82f6',
+      purple: '#8b5cf6',
+      slate: '#64748b'
+    };
+
+    const modernGradient = (ctx, color1, color2) => {
+      const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+      gradient.addColorStop(0, color1);
+      gradient.addColorStop(1, color2);
+      return gradient;
+    };
+
+    Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
+    Chart.defaults.color = '#64748b';
+    Chart.defaults.plugins.legend.labels.padding = 20;
+    Chart.defaults.plugins.legend.labels.usePointStyle = true;
+
+    // Parse data
+    const eventsData = JSON.parse(document.getElementById('eventsData')?.textContent || '{}');
+    const donationsData = JSON.parse(document.getElementById('donationsData')?.textContent || '{}');
+    const membersOfficersData = JSON.parse(document.getElementById('membersOfficersData')?.textContent || '{}');
+    const eventTypesData = JSON.parse(document.getElementById('eventTypesData')?.textContent || '{}');
+    const donationSourcesData = JSON.parse(document.getElementById('donationSourcesData')?.textContent || '{}');
+    const memberActivityData = JSON.parse(document.getElementById('memberActivityData')?.textContent || '{}');
+
+    // Events Chart
+    if (eventsData.labels && eventsData.data) {
+      const ctx = document.getElementById('eventsChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: eventsData.labels,
+          datasets: [{
+            label: 'Events',
+            data: eventsData.data,
+            backgroundColor: modernGradient(ctx, chartColors.primary, chartColors.primaryLight),
+            borderRadius: 8,
+            borderSkipped: false
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    // Donations Chart
+    if (donationsData.labels && donationsData.data) {
+      const ctx = document.getElementById('donationsChart').getContext('2d');
+      const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+      gradient.addColorStop(0, 'rgba(245, 158, 11, 0.3)');
+      gradient.addColorStop(1, 'rgba(245, 158, 11, 0)');
+
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: donationsData.labels,
+          datasets: [{
+            label: 'Donations (PHP)',
+            data: donationsData.data,
+            borderColor: chartColors.accent,
+            backgroundColor: gradient,
+            fill: true,
+            tension: 0.4,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            pointBackgroundColor: chartColors.accent
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    // Event Types Chart
+    if (eventTypesData.labels && eventTypesData.data) {
+      new Chart(document.getElementById('eventTypesChart').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+          labels: eventTypesData.labels,
+          datasets: [{
+            data: eventTypesData.data,
+            backgroundColor: ['#0D3471', '#3b82f6', '#f59e0b', '#22c55e', '#8b5cf6', '#ef4444'],
+            borderWidth: 0,
+            hoverOffset: 10
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '60%',
+          plugins: {
+            legend: { position: 'bottom' }
+          }
+        }
+      });
+    }
+
+    // Donation Sources Chart
+    if (donationSourcesData.labels && donationSourcesData.data) {
+      new Chart(document.getElementById('donationSourcesChart').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+          labels: donationSourcesData.labels,
+          datasets: [{
+            data: donationSourcesData.data,
+            backgroundColor: ['#22c55e', '#f59e0b', '#3b82f6', '#8b5cf6'],
+            borderWidth: 0,
+            hoverOffset: 10
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '60%',
+          plugins: {
+            legend: { position: 'bottom' }
+          }
+        }
+      });
+    }
+
+    // Members/Officers Chart
+    if (membersOfficersData.labels && membersOfficersData.members) {
+      new Chart(document.getElementById('membersOfficersChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: membersOfficersData.labels,
+          datasets: [
+            {
+              label: 'Members',
+              data: membersOfficersData.members,
+              backgroundColor: '#3b82f6',
+              borderRadius: 6
+            },
+            {
+              label: 'Officers',
+              data: membersOfficersData.officers,
+              backgroundColor: '#f59e0b',
+              borderRadius: 6
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'top' } },
+          scales: {
+            y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    // Member Activity Chart
+    if (memberActivityData.labels && memberActivityData.data) {
+      const ctx = document.getElementById('memberActivityChart').getContext('2d');
+      const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+      gradient.addColorStop(0, 'rgba(59, 130, 246, 0.3)');
+      gradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
+
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: memberActivityData.labels,
+          datasets: [{
+            label: 'Active Members',
+            data: memberActivityData.data,
+            borderColor: '#3b82f6',
+            backgroundColor: gradient,
+            fill: true,
+            tension: 0.4,
+            pointRadius: 4,
+            pointBackgroundColor: '#3b82f6'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+    }
+  });
+</script>
 {% endblock %}
