@@ -16361,3 +16361,5 @@ DEBUG 2025-12-10 05:53:23,051 views Rendered form HTML: <p>
       
     
   </p>
+DEBUG 2025-12-10 06:02:16,536 views User Mr_Admin (role=admin, council=Council 3469): Found 1 pending manual donations
+DEBUG 2025-12-10 06:02:16,543 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469

@@ -213,13 +213,13 @@ endblock %}
           <label class="form-label form-label--required">Category</label>
           <select name="category" id="category" class="form-select" required onchange="loadSubcategories()">
             <option value="" disabled {% if not event %}selected{% endif %}>Select category</option>
-            <option value="Exemplification" {% if event %}{% if event.category == 'Exemplification' %}selected{% endif
+            <option value="Exemplification" {% if event %}{% if event.category=='Exemplification' %}selected{% endif
               %}{% endif %}>Exemplification</option>
-            <option value="Service Program" {% if event %}{% if event.category == 'Service Program' %}selected{% endif
+            <option value="Service Program" {% if event %}{% if event.category=='Service Program' %}selected{% endif
               %}{% endif %}>Service Program</option>
-            <option value="Council Meeting" {% if event %}{% if event.category == 'Council Meeting' %}selected{% endif
+            <option value="Council Meeting" {% if event %}{% if event.category=='Council Meeting' %}selected{% endif
               %}{% endif %}>Council Meeting</option>
-            <option value="Assembly Meeting" {% if event %}{% if event.category == 'Assembly Meeting' %}selected{% endif
+            <option value="Assembly Meeting" {% if event %}{% if event.category=='Assembly Meeting' %}selected{% endif
               %}{% endif %}>Assembly Meeting</option>
           </select>
         </div>
@@ -323,7 +323,7 @@ endblock %}
             <option value="" disabled {% if event %}{% if not event.council %}selected{% endif %}{% else %}selected{%
               endif %}>Select council</option>
             {% for council in councils %}
-            <option value="{{ council.id }}" {% if event %}{% if event.council.id == council.id %}selected{% endif %}{%
+            <option value="{{ council.id }}" {% if event %}{% if event.council.id==council.id %}selected{% endif %}{%
               endif %}>{{ council.name }}</option>
             {% endfor %}
           </select>
@@ -477,4 +477,3 @@ endblock %}
   {% endif %}
 </script>
 {% endblock %}
-
