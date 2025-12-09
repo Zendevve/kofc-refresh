@@ -1,27 +1,397 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block title %}
 Knights of Columbus - Councils
 {% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/council-style.css' %}?v={% now 'U' %}">
-<body>
-    <main>
-        <h1>Knights of Columbus <br> in Lucena District</h1>
-        <p>Councils</p>
+<style>
+  /* ============================================
+    LAYOUT RESET
+    Ensure full width regardless of parent constraints
+    ============================================ */
+  body,
+  html {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
 
-        <div class="councils-grid">
-            {% for council in councils %}
-            <a href="{% url 'council_detail' council_id=council.id %}" class="council-link">
-                <div class="council">
-                    <img src="{% static 'images/kofc-logo.png' %}" alt="Council Logo">
-                    <p>{{ council.name }}</p>
-                </div>
-            </a>
-            {% endfor %}
+  main {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+    overflow-x: hidden;
+  }
+
+  /* ============================================
+    PAGE CONTAINER (Like About Us)
+    ============================================ */
+  .councils-page {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #f8fafc;
+    width: 100%;
+    min-height: 100vh;
+    /* Removed display: flex to behave like standard block */
+  }
+
+  /* --------------------------------------------------
+       HERO SECTION
+    -------------------------------------------------- */
+  .hero-section {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    background: url("{% static 'images/kofc-bg.png' %}") no-repeat center center/cover;
+    margin-bottom: 0;
+  }
+
+  .hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(13, 52, 113, 0.9) 0%, rgba(15, 23, 42, 0.85) 100%);
+    z-index: 1;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    padding: 0 24px;
+    margin: 0 auto;
+  }
+
+  .section-badge {
+    display: inline-block;
+    background: rgba(251, 191, 36, 0.15);
+    color: #fbbf24;
+    padding: 6px 16px;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+  }
+
+  .hero-title {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 24px;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-subtitle {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* --------------------------------------------------
+       SEARCH & CONTENT
+    -------------------------------------------------- */
+  .search-container {
+    max-width: 900px;
+    margin: -32px auto 48px;
+    /* Negative margin to overlap hero */
+    padding: 0 24px;
+    position: relative;
+    z-index: 10;
+    width: 100%;
+  }
+
+  .search-input-wrapper {
+    background: white;
+    padding: 0 24px;
+    border-radius: 99px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border: 1px solid #e2e8f0;
+    height: 64px;
+    transition: all 0.3s ease;
+  }
+
+  .search-input-wrapper:focus-within {
+    transform: translateY(-2px);
+    box-shadow: 0 25px 50px rgba(13, 52, 113, 0.15);
+    border-color: #fbbf24;
+  }
+
+  .search-icon {
+    color: #0D3471;
+    font-size: 1.25rem;
+  }
+
+  .search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    color: #1e293b;
+    background: transparent;
+    height: 100%;
+  }
+
+  /* Grid Area */
+  .content-container {
+    max-width: 1200px;
+    margin: 0 auto 80px;
+    padding: 0 24px;
+    width: 100%;
+  }
+
+  .grid-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .results-count {
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .councils-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 32px;
+  }
+
+  /* Card System */
+  .council-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    height: 100%;
+  }
+
+  .council-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px -5px rgba(13, 52, 113, 0.12);
+    border-color: #fbbf24;
+  }
+
+  .card-banner {
+    height: 90px;
+    background: linear-gradient(135deg, #0D3471 0%, #1e40af 100%);
+    position: relative;
+  }
+
+  .card-logo-wrapper {
+    width: 72px;
+    height: 72px;
+    background: white;
+    border-radius: 50%;
+    margin: -36px auto 0;
+    padding: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid white;
+  }
+
+  .card-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .card-body {
+    padding: 16px 24px 24px;
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .council-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+
+  .council-district {
+    display: inline-block;
+    background: #f1f5f9;
+    color: #64748b;
+    padding: 4px 12px;
+    border-radius: 99px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+
+  .card-footer {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid #f1f5f9;
+  }
+
+  .view-btn {
+    color: #0D3471;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: gap 0.2s;
+  }
+
+  .council-card:hover .view-btn {
+    gap: 10px;
+    color: #ca8a04;
+  }
+
+  .no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px;
+    background: white;
+    border: 2px dashed #cbd5e1;
+    border-radius: 16px;
+    display: none;
+  }
+</style>
+
+<div class="councils-page">
+
+  <!-- Hero Section -->
+  <header class="hero-section">
+    <div class="hero-content">
+      <span class="section-badge"><i class="fas fa-users"></i> Our Community</span>
+      <h1 class="hero-title">Local Councils</h1>
+      <p class="hero-subtitle">
+        The network of local councils that drives our mission in every community.
+        Find a council near you in the Diocese of Lucena.
+      </p>
+    </div>
+  </header>
+
+  <!-- Search Bar -->
+  <div class="search-container">
+    <div class="search-input-wrapper">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" id="councilSearch" class="search-input" placeholder="Search councils by name, region, or ID..."
+        aria-label="Search councils">
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content-container">
+    <div class="grid-header">
+      <span class="results-count" id="resultsCount">Showing all {{ councils|length }} councils</span>
+    </div>
+
+    <div class="councils-grid" id="councilsGrid">
+      {% for council in councils %}
+      <a href="{% url 'council_detail' council_id=council.id %}" class="council-card"
+        data-name="{{ council.name|lower }}" data-district="{{ council.district|lower }}">
+        <div class="card-banner"></div>
+        <div class="card-logo-wrapper">
+          <img src="{% static 'images/kofc-logo.png' %}" alt="KofC Logo" class="card-logo">
         </div>
-    </main>
-</body>
-</html>
+        <div class="card-body">
+          <h3 class="council-name">{{ council.name }}</h3>
+          <div class="council-district">
+            <i class="fas fa-map-marker-alt"></i>
+            {{ council.district|default:"Local District" }}
+          </div>
+          <div class="card-footer">
+            <span class="view-btn">View Details <i class="fas fa-arrow-right"></i></span>
+          </div>
+        </div>
+      </a>
+      {% empty %}
+      <div class="no-results" style="display: block;">
+        <i class="fas fa-folder-open"></i>
+        <p>No councils found in the database.</p>
+      </div>
+      {% endfor %}
+
+      <!-- JS Search No Results State -->
+      <div class="no-results" id="searchNoResults">
+        <i class="fas fa-search"></i>
+        <p>No councils match your search query.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Search functionality
+    const searchInput = document.getElementById('councilSearch');
+    const cards = document.querySelectorAll('.council-card');
+    const noResults = document.getElementById('searchNoResults');
+    const resultsCount = document.getElementById('resultsCount');
+    const totalCouncils = cards.length;
+
+    if (searchInput) {
+      searchInput.addEventListener('input', function (e) {
+        const term = e.target.value.toLowerCase().trim();
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+          const name = card.getAttribute('data-name');
+          const district = card.getAttribute('data-district');
+
+          if (name.includes(term) || district.includes(term)) {
+            card.style.display = 'flex';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        // Update UI state
+        if (visibleCount === 0 && totalCouncils > 0) {
+          noResults.style.display = 'block';
+        } else {
+          noResults.style.display = 'none';
+        }
+
+        if (term === '') {
+          resultsCount.textContent = `Showing all ${totalCouncils} councils`;
+        } else {
+          resultsCount.textContent = `Found ${visibleCount} council${visibleCount !== 1 ? 's' : ''}`;
+        }
+      });
+    }
+  });
+</script>
 {% endblock %}
