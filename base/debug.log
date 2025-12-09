@@ -16422,3 +16422,5 @@ DEBUG 2025-12-10 06:39:58,581 views User Mr_Admin (role=admin, council=Council 3
 DEBUG 2025-12-10 06:39:58,637 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
 DEBUG 2025-12-10 06:40:01,733 views Fetching blockchain data
 INFO 2025-12-10 06:40:01,737 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 06:51:47,283 views Fetching blockchain data
+INFO 2025-12-10 06:51:47,286 views Blockchain data retrieved: 10 blocks, 0 pending transactions
