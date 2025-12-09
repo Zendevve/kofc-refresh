@@ -83,8 +83,7 @@
             <nav>
                 <ul>
                     <li><a href="{% url 'capstone_project' %}" {% if request.path == '/' %}class="active"{% endif %}>Home</a></li>
-                    <li><a href="{% url 'faith-action' %}" {% if request.path == '/faith-action/' %}class="active"{% endif %}>FAITH 'N ACTION</a></li>
-                    <li><a href="{% url 'mission_vision' %}" {% if request.path == '/mission_vision/' %}class="active"{% endif %}>Mission & Vision</a></li>
+
                     <li><a href="{% url 'councils' %}" {% if request.path == '/councils/' %}class="active"{% endif %}>Councils</a></li>
                     <li><a href="{% url 'donations' %}" {% if request.path == '/donations/' %}class="active"{% endif %}>Donations</a></li>
                     <li><a href="{% url 'about_us' %}" {% if request.path == '/about_us/' %}class="active"{% endif %}>About us</a></li>
@@ -109,8 +108,7 @@
             <div class="nav-container">
                 <nav>
                     <ul>
-                        <li><a href="{% url 'faith-action' %}" {% if request.path == '/faith-action/' %}class="active"{% endif %}>FAITH 'N ACTION</a></li>
-                        <li><a href="{% url 'mission_vision' %}" {% if request.path == '/mission_vision/' %}class="active"{% endif %}>Mission & Vision</a></li>
+
                         <li><a href="{% url 'councils' %}" {% if request.path == '/councils/' %}class="active"{% endif %}>Councils</a></li>
                         <li><a href="{% url 'donations' %}" {% if request.path == '/donations/' %}class="active"{% endif %}>Donations</a></li>
                         <li><a href="{% url 'about_us' %}" {% if request.path == '/about_us/' %}class="active"{% endif %}>About us</a></li>

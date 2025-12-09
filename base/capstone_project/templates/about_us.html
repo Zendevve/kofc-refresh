@@ -1,32 +1,450 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}
-Knights of Columbus - About Us
-{% endblock %}
+{% block title %}About Us - Knights of Columbus{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/about-style.css' %}?v={% now 'U' %}">
-<div class="background" style="background: url('{% static 'images/about-us.jpg' %}') no-repeat center/cover;">
-    <h1>About Us</h1>
-    <p style="color: white;">Learn about the history and impact of the Knights of Columbus.</p>
-</div>
-<div class="container">
-    <section class="hero">
-        <div class="content">
-            <h1>Our History</h1>
-            <p>Founded in 1882 by Blessed Michael McGivney in New Haven, Connecticut, the Knights of Columbus was created to provide financial support to Catholic families, particularly widows and orphans. What began as a small fraternal organization has grown into a global network of over 2 million members dedicated to charity, unity, fraternity, and patriotism.</p>
-        </div>
-    </section>
+<style>
+  /* ============================================
+   SHARED DESIGN SYSTEM (Matches Homepage)
+   ============================================ */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
-    <section class="section mission">
-        <div class="mission-overlay">
-            <h2>Our Founder</h2>
-            <p>Blessed Michael McGivney, a parish priest, saw the struggles of Catholic immigrant families in the late 19th century. He founded the Knights to offer mutual aid and insurance, ensuring that families would be cared for in times of need. His vision continues to inspire our work today.</p>
+  .about-page {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #fff;
+    color: #1a1a2e;
+    overflow-x: hidden;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ============================================
+   HERO SECTION - Full Width Image
+   ============================================ */
+  .about-hero {
+    position: relative;
+    padding: 140px 0 120px;
+    background: url('{% static "images/about-us.jpg" %}') no-repeat center/cover;
+    color: #fff;
+    text-align: center;
+    overflow: hidden;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Overlay for readability */
+  .about-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(13, 52, 113, 0.9) 0%, rgba(10, 42, 94, 0.8) 100%);
+    z-index: 1;
+  }
+
+  .about-hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .section-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 16px;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fbbf24;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 99px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .about-hero h1 {
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 700;
+    margin-bottom: 24px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .about-hero p {
+    font-size: 20px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 0;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ============================================
+   HISTORY & FOUNDER (Two Column)
+   ============================================ */
+  .history-section {
+    padding: 100px 0;
+    background: #fff;
+  }
+
+  .history-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+  }
+
+  @media (max-width: 900px) {
+    .history-grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+  }
+
+  .history-text h2 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 20px;
+  }
+
+  .history-text p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: #64748b;
+    margin-bottom: 24px;
+  }
+
+  .founder-card {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 40px;
+    border: 1px solid #e2e8f0;
+  }
+
+  .founder-card h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #0D3471;
+    margin-bottom: 12px;
+  }
+
+  .founder-quote {
+    font-style: italic;
+    color: #475569;
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .founder-citation {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .founder-citation img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #cbd5e1;
+  }
+
+  .founder-info strong {
+    display: block;
+    color: #0f172a;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .founder-info span {
+    font-size: 13px;
+    color: #64748b;
+  }
+
+  /* ============================================
+   MISSION & VISION (Value Cards)
+   ============================================ */
+  .mv-section {
+    padding: 100px 0;
+    background: #f8fafc;
+  }
+
+  .mv-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+
+  @media (max-width: 768px) {
+    .mv-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .mv-card {
+    background: #fff;
+    padding: 48px 32px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.25s ease;
+    text-align: center;
+  }
+
+  .mv-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+    border-color: #0D3471;
+  }
+
+  .mv-icon {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #0D3471 0%, #1e4a8e 100%);
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    color: #fff;
+    font-size: 24px;
+  }
+
+  .mv-card h3 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 16px;
+  }
+
+  .mv-card p {
+    font-size: 16px;
+    color: #64748b;
+    line-height: 1.6;
+  }
+
+  /* ============================================
+   FAITH 'N ACTION (Feature Highlight)
+   ============================================ */
+  .fna-section {
+    padding: 100px 0;
+    background: #0f172a;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .fna-section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(13, 52, 113, 0.1));
+    z-index: 1;
+  }
+
+  .fna-container {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    padding: 0 24px;
+  }
+
+  .fna-logo {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 32px;
+    background: #fff;
+    border-radius: 20px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .fna-logo img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .fna-title {
+    font-size: clamp(32px, 4vw, 42px);
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #fff;
+  }
+
+  .fna-tagline {
+    font-size: 18px;
+    color: #fbbf24;
+    font-weight: 600;
+    margin-bottom: 32px;
+    font-style: italic;
+  }
+
+  .fna-desc {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #cbd5e1;
+    margin-bottom: 40px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .fna-features {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .fna-tag {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 16px;
+    border-radius: 99px;
+    font-size: 13px;
+    color: #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* ============================================
+   FOOTER
+   ============================================ */
+  .simple-footer {
+    padding: 32px 24px;
+    background: #0b1120;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 14px;
+  }
+</style>
+
+<div class="about-page">
+
+  <!-- HERO -->
+  <section class="about-hero">
+    <div class="about-hero-content">
+      <div class="section-badge"><i class="fas fa-history"></i> Established 1882</div>
+      <h1>Our Legacy of Service</h1>
+      <p>Building a future on the foundation of charity, unity, and fraternity. Over 140 years of service to families
+        and communities worldwide.</p>
+    </div>
+  </section>
+
+  <!-- HISTORY & FOUNDER -->
+  <section class="history-section">
+    <div class="container">
+      <div class="history-grid">
+        <!-- History Column -->
+        <div class="history-text">
+          <div class="section-badge" style="background: #eff6ff; color: #0D3471; border: none;">Our Story</div>
+          <h2>Building on a Vision</h2>
+          <p>Founded in 1882 by Blessed Michael McGivney in New Haven, Connecticut, the Knights of Columbus was created
+            to provide financial support to Catholic families, particularly widows and orphans.</p>
+          <p>What began as a small fraternal organization has grown into a global network of over 2 million members
+            dedicated to charity, unity, fraternity, and patriotism. Today, we continue to stand as a pillar of support
+            for our communities and the Church.</p>
         </div>
-    </section>
+
+        <!-- Founder Column -->
+        <div class="founder-card">
+          <h3>Our Founder</h3>
+          <div class="founder-quote">
+            "We were created to offer mutual aid and ensure that families would be cared for in times of need."
+          </div>
+          <div class="founder-citation">
+            <div class="founder-img-placeholder"
+              style="width:48px; height:48px; background:#0D3471; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white;">
+              <i class="fas fa-cross"></i></div>
+            <div class="founder-info">
+              <strong>Blessed Michael McGivney</strong>
+              <span>Parish Priest & Founder</span>
+            </div>
+          </div>
+          <p style="margin-top:20px; font-size:14px; color:#64748b; line-height:1.6;">
+            Seeing the struggles of Catholic immigrant families in the late 19th century, Fr. McGivney's vision
+            continues to inspire our work today.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MISSION & VISION -->
+  <section class="mv-section">
+    <div class="container">
+      <div class="mv-grid">
+        <!-- Mission -->
+        <div class="mv-card">
+          <div class="mv-icon"><i class="fas fa-heart"></i></div>
+          <h3>Our Mission</h3>
+          <p>We are committed to charity, unity, fraternity, and patriotism. Our mission is to strengthen faith, support
+            our communities, and provide aid to those in need through acts of service and generosity.</p>
+        </div>
+
+        <!-- Vision -->
+        <div class="mv-card">
+          <div class="mv-icon"><i class="fas fa-eye"></i></div>
+          <h3>Our Vision</h3>
+          <p>We envision a world where Catholic men lead their families and communities in faith and service. We strive
+            to be a global force for good, supporting the Church and bringing light to the world.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAITH 'N ACTION -->
+  <section class="fna-section">
+    <div class="fna-container">
+      <div class="fna-logo">
+        <img src="{% static 'images/main-logo.png' %}" alt="Logo">
+      </div>
+      <h2 class="fna-title">Faith 'N Action</h2>
+      <p class="fna-tagline">"Serving Faith, Community, and Charity with Transparency"</p>
+
+      <p class="fna-desc">
+        A modern initiative to enhance transparency, engagement, and efficacy. This platform serves as a centralized hub
+        for members, officers, and the public, empowering the KoFC Lucena District to strengthen trust and amplify
+        impact via digital innovation.
+      </p>
+
+      <div class="fna-features">
+        <span class="fna-tag">Blockchain Transparency</span>
+        <span class="fna-tag">Donation Tracking</span>
+        <span class="fna-tag">Member Coordination</span>
+        <span class="fna-tag">Event Management</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="simple-footer">
+    <p>&copy; 2025 Knights of Columbus — Diocese of Lucena. All rights reserved.</p>
+  </footer>
 </div>
-<footer class="footer">
-    <p>&copy; 2025 Knights of Columbus. All rights reserved.</p>
-</footer>
 {% endblock %}
