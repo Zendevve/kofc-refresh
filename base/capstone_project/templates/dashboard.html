@@ -8,7 +8,11 @@
 Dashboard{% endif %}
 {% endblock %}
 
-{% block page_subtitle %}Welcome back, {{ user.first_name }}. Here's your overview.{% endblock %}
+{% block page_subtitle %}{% endblock %}
+{% block breadcrumbs %}
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item current">Overview</span>
+{% endblock %}
 
 {% block extra_css %}
 <style>

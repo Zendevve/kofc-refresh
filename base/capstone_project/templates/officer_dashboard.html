@@ -2,7 +2,10 @@
 {% load static %}
 
 {% block page_title %}Officer Dashboard{% endblock %}
-{% block page_subtitle %}Welcome, {{ user.first_name }} {{ user.last_name }}{% endblock %}
+{% block breadcrumbs %}
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item current">Overview</span>
+{% endblock %}
 
 {% block content %}
 <!-- Stats Row -->

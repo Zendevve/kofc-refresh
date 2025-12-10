@@ -4,8 +4,12 @@
 {% block title %}{% if event %}Edit Event{% else %}Create Event{% endif %} - Knights of Columbus{% endblock %}
 
 {% block page_title %}{% if event %}Edit Event{% else %}Create Event{% endif %}{% endblock %}
-{% block page_subtitle %}{% if event %}Update event details{% else %}Add a new event to the calendar{% endif %}{%
-endblock %}
+{% block breadcrumbs %}
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item">Events</span>
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item current">{% if event %}Edit Event{% else %}Create Event{% endif %}</span>
+{% endblock %}
 
 {% block header_actions %}
 <a href="{% url 'event_list' %}" class="btn btn--ghost">
