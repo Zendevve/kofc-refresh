@@ -903,7 +903,7 @@ def analytics_view(request):
 
     activity_ranking = []
     for user in users_for_ranking:
-        events_attended = EventAttendance.objects.filter(user=user, is_present=True).count()
+        events_attended = EventAttendance.objects.filter(member=user, is_present=True).count()
         total_donated = Donation.objects.filter(submitted_by=user, status='completed').aggregate(total=DjSum('amount'))['total'] or 0
         score = (events_attended * 10) + (float(total_donated) / 100)
         activity_ranking.append({
