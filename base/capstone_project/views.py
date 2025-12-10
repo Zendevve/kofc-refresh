@@ -869,6 +869,155 @@ def analytics_view(request):
         'data': [item.get('count', 0) for item in member_activity_data]
     }
 
+    # ===== NEW ANALYTICS (Sir Mesiera's Suggestions) =====
+
+    # 8. Event Participation - Users who attended vs didn't for recent events
+    from django.db.models import Count
+    recent_events = Event.objects.filter(status='approved').order_by('-date_from')[:10]
+    if council_id:
+        recent_events = recent_events.filter(council_id=council_id)
+
+    event_participation_data = []
+    for event in recent_events:
+        total_attended = EventAttendance.objects.filter(event=event, is_present=True).count()
+        total_eligible = User.objects.filter(is_archived=False, role__in=['member', 'officer']).count()
+        if council_id:
+            total_eligible = User.objects.filter(is_archived=False, role__in=['member', 'officer'], council_id=council_id).count()
+        event_participation_data.append({
+            'event_name': event.name[:20] + '...' if len(event.name) > 20 else event.name,
+            'attended': total_attended,
+            'not_attended': max(0, total_eligible - total_attended)
+        })
+
+    event_participation_chart_data = {
+        'labels': [e['event_name'] for e in event_participation_data],
+        'attended': [e['attended'] for e in event_participation_data],
+        'not_attended': [e['not_attended'] for e in event_participation_data]
+    }
+
+    # 9. Activity Ranking - Score: events × 10 + donations/100, sorted desc
+    from django.db.models import Sum as DjSum, Count as DjCount
+    users_for_ranking = User.objects.filter(is_archived=False, role__in=['member', 'officer'])
+    if council_id:
+        users_for_ranking = users_for_ranking.filter(council_id=council_id)
+
+    activity_ranking = []
+    for user in users_for_ranking:
+        events_attended = EventAttendance.objects.filter(user=user, is_present=True).count()
+        total_donated = Donation.objects.filter(submitted_by=user, status='completed').aggregate(total=DjSum('amount'))['total'] or 0
+        score = (events_attended * 10) + (float(total_donated) / 100)
+        activity_ranking.append({
+            'id': user.id,
+            'name': f"{user.first_name} {user.last_name}",
+            'role': user.role,
+            'events_attended': events_attended,
+            'total_donated': float(total_donated),
+            'score': round(score, 2)
+        })
+
+    # Sort by score descending
+    activity_ranking = sorted(activity_ranking, key=lambda x: x['score'], reverse=True)[:20]  # Top 20
+
+    # 10. Predictive Analytics - Simple linear trend for next 6 months
+    from datetime import datetime, timedelta
+    import numpy as np
+
+    # Get last 12 months of donation data
+    twelve_months_ago = datetime.now() - timedelta(days=365)
+    monthly_donations = Donation.objects.filter(
+        status='completed',
+        donation_date__gte=twelve_months_ago
+    )
+    if council_id:
+        monthly_donations = monthly_donations.filter(submitted_by__council_id=council_id)
+
+    monthly_donations = monthly_donations.extra(
+        select={'month': "strftime('%%Y-%%m', donation_date)"}
+    ).values('month').annotate(total=DjSum('amount')).order_by('month')
+
+    historical_amounts = [float(m['total'] or 0) for m in monthly_donations]
+    historical_months = [m['month'] for m in monthly_donations]
+
+    # Simple linear regression for forecast
+    if len(historical_amounts) >= 3:
+        x = np.arange(len(historical_amounts))
+        y = np.array(historical_amounts)
+        slope, intercept = np.polyfit(x, y, 1)
+
+        # Forecast next 6 months
+        forecast_months = []
+        forecast_values = []
+        current_date = datetime.now()
+        for i in range(1, 7):
+            future_date = current_date + timedelta(days=30*i)
+            forecast_months.append(future_date.strftime('%b %Y'))
+            predicted = max(0, intercept + slope * (len(historical_amounts) + i - 1))
+            forecast_values.append(round(predicted, 2))
+    else:
+        forecast_months = []
+        forecast_values = []
+
+    predictive_chart_data = {
+        'historical_labels': historical_months,
+        'historical_data': historical_amounts,
+        'forecast_labels': forecast_months,
+        'forecast_data': forecast_values
+    }
+
+    # 11. Donation Sources by Role (not payment method)
+    role_donations = {}
+    for role in ['member', 'officer', 'admin']:
+        donations_by_role = Donation.objects.filter(status='completed', submitted_by__role=role)
+        if council_id:
+            donations_by_role = donations_by_role.filter(submitted_by__council_id=council_id)
+        role_total = donations_by_role.aggregate(total=DjSum('amount'))['total'] or 0
+        role_donations[role.title()] = float(role_total)
+
+    # Non-member donations (submitted_by is null or not a recognized role)
+    non_member_donations = Donation.objects.filter(status='completed', submitted_by__isnull=True)
+    if council_id:
+        non_member_donations = non_member_donations.filter(council_id=council_id)
+    role_donations['Non-Member'] = float(non_member_donations.aggregate(total=DjSum('amount'))['total'] or 0)
+
+    donation_by_role_chart_data = {
+        'labels': list(role_donations.keys()),
+        'data': list(role_donations.values())
+    }
+
+    # 12. Blockchain Metrics
+    blockchain_metrics = {
+        'total_blocks': Block.objects.count(),
+        'total_transactions': Donation.objects.filter(status='completed').count(),
+        'last_block_time': Block.objects.order_by('-timestamp').first().timestamp.strftime('%b %d, %Y %H:%M') if Block.objects.exists() else 'N/A',
+        'chain_valid': blockchain.is_chain_valid() if hasattr(blockchain, 'is_chain_valid') else True
+    }
+
+    # 13. Data Summaries (insights)
+    total_donations_amount = summary_stats['total_donations']
+    avg_donation_amount = summary_stats['avg_donation']
+
+    # Calculate month-over-month growth
+    if len(historical_amounts) >= 2:
+        last_month = historical_amounts[-1]
+        prev_month = historical_amounts[-2]
+        if prev_month > 0:
+            donation_growth = round(((last_month - prev_month) / prev_month) * 100, 1)
+        else:
+            donation_growth = 100.0
+    else:
+        donation_growth = 0
+
+    top_active = activity_ranking[0]['name'] if activity_ranking else 'N/A'
+    inactive_count = total_members - active_members
+
+    data_summaries = {
+        'donation_trend': f"{'↑' if donation_growth >= 0 else '↓'} {abs(donation_growth)}% vs last month",
+        'top_contributor': f"Most active: {top_active}",
+        'inactive_alert': f"{inactive_count} members have no recent activity" if inactive_count > 0 else "All members are active!",
+        'avg_donation_note': f"Average donation is ₱{avg_donation_amount:,.2f}",
+        'blockchain_note': f"{blockchain_metrics['total_blocks']} blocks securing {blockchain_metrics['total_transactions']} transactions"
+    }
+
     context = {
         'councils': councils,
         'selected_council': council_id,
@@ -879,7 +1028,14 @@ def analytics_view(request):
         'donation_sources_data': json.dumps(donation_sources_chart_data),
         'member_activity_data': json.dumps(member_activity_chart_data),
         'summary_stats': summary_stats,
-        'is_officer': request.user.role == 'officer'
+        'is_officer': request.user.role == 'officer',
+        # New analytics data
+        'event_participation_data': json.dumps(event_participation_chart_data),
+        'activity_ranking': activity_ranking,
+        'predictive_data': json.dumps(predictive_chart_data),
+        'donation_by_role_data': json.dumps(donation_by_role_chart_data),
+        'blockchain_metrics': blockchain_metrics,
+        'data_summaries': data_summaries,
     }
     return render(request, 'analytics_view.html', context)
 @never_cache

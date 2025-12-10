@@ -8,31 +8,28 @@
 {% if is_officer %}
 Analytics for {{ councils.first.name }}
 {% else %}
-Council performance and insights overview
+Comprehensive insights and performance metrics
 {% endif %}
 {% endblock %}
 
 {% block extra_css %}
 <style>
-  /* Analytics Page Specific Styles */
-
-  /* Summary Stats */
+  /* Analytics Page Styles */
   .analytics-stats {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: var(--space-4);
-    margin-bottom: var(--space-8);
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
   }
 
   .analytics-stat {
     background: white;
-    border-radius: var(--radius-xl);
-    padding: var(--space-5);
-    border: 1px solid var(--neutral-200);
-    box-shadow: var(--shadow-sm);
-    transition: all var(--transition-base);
+    border-radius: 12px;
+    padding: 1.25rem;
+    border: 1px solid #e5e7eb;
     position: relative;
     overflow: hidden;
+    transition: all 0.2s;
   }
 
   .analytics-stat::before {
@@ -41,177 +38,219 @@ Council performance and insights overview
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--primary-600), var(--primary-400));
+    height: 3px;
+    background: linear-gradient(90deg, #2563eb, #3b82f6);
   }
 
-  .analytics-stat:nth-child(2)::before {
-    background: linear-gradient(90deg, var(--accent-500), var(--accent-300));
-  }
+  .analytics-stat:nth-child(2)::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+  .analytics-stat:nth-child(3)::before { background: linear-gradient(90deg, #22c55e, #4ade80); }
+  .analytics-stat:nth-child(4)::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+  .analytics-stat:nth-child(5)::before { background: linear-gradient(90deg, #06b6d4, #22d3ee); }
+  .analytics-stat:nth-child(6)::before { background: linear-gradient(90deg, #ec4899, #f472b6); }
 
-  .analytics-stat:nth-child(3)::before {
-    background: linear-gradient(90deg, var(--success-500), #4ade80);
-  }
-
-  .analytics-stat:nth-child(4)::before {
-    background: linear-gradient(90deg, var(--info-500), #60a5fa);
-  }
-
-  .analytics-stat:nth-child(5)::before {
-    background: linear-gradient(90deg, #8b5cf6, #a78bfa);
-  }
-
-  .analytics-stat:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
-  }
+  .analytics-stat:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 
   .analytics-stat h4 {
-    font-size: var(--text-xs);
-    font-weight: var(--font-semibold);
-    color: var(--neutral-500);
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #6b7280;
     text-transform: uppercase;
-    letter-spacing: var(--tracking-wide);
-    margin-bottom: var(--space-2);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
   }
 
   .analytics-stat-value {
-    font-size: var(--text-3xl);
-    font-weight: var(--font-bold);
-    color: var(--neutral-900);
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #111827;
     line-height: 1;
   }
 
-  /* Filter Section */
+  .stat-trend {
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .stat-trend.up { color: #22c55e; }
+  .stat-trend.down { color: #ef4444; }
+
+  /* Filter */
   .analytics-filter {
     display: flex;
     align-items: center;
-    gap: var(--space-4);
-    margin-bottom: var(--space-6);
-    padding: var(--space-4) var(--space-6);
-    background: white;
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--neutral-200);
-  }
-
-  .analytics-filter label {
-    font-size: var(--text-sm);
-    font-weight: var(--font-medium);
-    color: var(--neutral-600);
+    gap: 1rem;
+    padding: 0.5rem 1rem;
+    background: transparent;
   }
 
   .analytics-filter select {
-    padding: var(--space-2) var(--space-4);
-    font-size: var(--text-sm);
-    border: 1px solid var(--neutral-300);
-    border-radius: var(--radius-lg);
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
     background: white;
-    color: var(--neutral-800);
-    cursor: pointer;
-    min-width: 200px;
-  }
-
-  .analytics-filter select:focus {
-    outline: none;
-    border-color: var(--primary-500);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
   }
 
   /* Charts Grid */
   .charts-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-6);
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
   }
 
   @media (max-width: 1200px) {
-    .charts-grid {
-      grid-template-columns: 1fr;
-    }
+    .charts-grid { grid-template-columns: 1fr; }
   }
 
   /* Chart Card */
   .chart-card {
     background: white;
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--neutral-200);
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
     overflow: hidden;
   }
+
+  .chart-card--full { grid-column: span 2; }
+  @media (max-width: 1200px) { .chart-card--full { grid-column: span 1; } }
 
   .chart-card-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--space-5) var(--space-6);
-    border-bottom: 1px solid var(--neutral-100);
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #f3f4f6;
   }
 
   .chart-card-header h3 {
-    font-size: var(--text-base);
-    font-weight: var(--font-semibold);
-    color: var(--neutral-900);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #111827;
     margin: 0;
     display: flex;
     align-items: center;
-    gap: var(--space-2);
+    gap: 0.5rem;
   }
 
-  .chart-card-header h3 i {
-    color: var(--primary-600);
-    font-size: var(--text-lg);
-  }
+  .chart-card-header h3 i { color: #2563eb; font-size: 1rem; }
 
   .chart-card-body {
-    padding: var(--space-6);
-    height: 300px;
+    padding: 1.25rem;
+    height: 280px;
     position: relative;
   }
 
-  .chart-card-body canvas {
-    width: 100% !important;
-    height: 100% !important;
-  }
-
-  /* Full Width Chart */
-  .chart-card--full {
-    grid-column: span 2;
-  }
-
-  @media (max-width: 1200px) {
-    .chart-card--full {
-      grid-column: span 1;
-    }
-  }
-
-  /* Empty State */
-  .chart-empty {
+  .chart-summary {
+    padding: 0.75rem 1.25rem;
+    background: #f9fafb;
+    border-top: 1px solid #f3f4f6;
+    font-size: 0.8rem;
+    color: #6b7280;
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .chart-summary i { color: #2563eb; }
+
+  /* Activity Ranking Table */
+  .ranking-card { grid-column: span 2; }
+  @media (max-width: 1200px) { .ranking-card { grid-column: span 1; } }
+
+  .ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+
+  .ranking-table th {
+    background: #f9fafb;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #374151;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .ranking-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    color: #4b5563;
+  }
+
+  .ranking-table tr:hover { background: #f9fafb; }
+
+  .rank-badge {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
-    color: var(--neutral-400);
+    font-weight: 700;
+    font-size: 0.75rem;
   }
 
-  .chart-empty i {
-    font-size: var(--text-4xl);
-    margin-bottom: var(--space-3);
+  .rank-1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: white; }
+  .rank-2 { background: linear-gradient(135deg, #94a3b8, #64748b); color: white; }
+  .rank-3 { background: linear-gradient(135deg, #f97316, #ea580c); color: white; }
+  .rank-default { background: #f3f4f6; color: #374151; }
+
+  .score-badge {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 99px;
+    font-weight: 600;
+    font-size: 0.75rem;
   }
 
-  .chart-empty p {
-    font-size: var(--text-sm);
+  .role-badge {
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
   }
+
+  .role-member { background: #dbeafe; color: #1d4ed8; }
+  .role-officer { background: #fef3c7; color: #92400e; }
+
+  /* Blockchain Metrics */
+  .blockchain-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 768px) { .blockchain-metrics { grid-template-columns: repeat(2, 1fr); } }
+
+  .blockchain-metric {
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    color: white;
+    padding: 1.25rem;
+    border-radius: 12px;
+    text-align: center;
+  }
+
+  .blockchain-metric i { font-size: 1.5rem; margin-bottom: 0.5rem; opacity: 0.8; }
+  .blockchain-metric-value { font-size: 1.5rem; font-weight: 700; }
+  .blockchain-metric-label { font-size: 0.75rem; opacity: 0.8; }
+
+  .chain-valid { background: linear-gradient(135deg, #15803d, #22c55e); }
+  .chain-invalid { background: linear-gradient(135deg, #b91c1c, #ef4444); }
 </style>
 {% endblock %}
 
 {% block header_actions %}
-<div class="analytics-filter"
-  style="margin: 0; padding: var(--space-2) var(--space-4); background: transparent; border: none; box-shadow: none;">
+<div class="analytics-filter">
   {% if not is_officer %}
-  <form method="get" action="{% url 'analytics_view' %}" class="flex items-center gap-3">
-    <label for="council_id">Council:</label>
+  <form method="get" action="{% url 'analytics_view' %}" style="display: flex; align-items: center; gap: 0.5rem;">
+    <label for="council_id" style="font-size: 0.875rem; color: #6b7280;">Council:</label>
     <select name="council_id" id="council_id" onchange="this.form.submit()">
       <option value="">All Councils</option>
       {% for council in councils %}
@@ -230,28 +269,111 @@ Council performance and insights overview
 <div class="analytics-stats">
   <div class="analytics-stat">
     <h4>Total Events</h4>
-    <div class="analytics-stat-value" data-target="{{ summary_stats.total_events }}">0</div>
+    <div class="analytics-stat-value">{{ summary_stats.total_events|floatformat:0 }}</div>
   </div>
   <div class="analytics-stat">
     <h4>Total Donations</h4>
-    <div class="analytics-stat-value" data-target="{{ summary_stats.total_donations }}">₱0</div>
+    <div class="analytics-stat-value">₱{{ summary_stats.total_donations|floatformat:0 }}</div>
+    <div class="stat-trend {% if data_summaries.donation_trend.0 == '↑' %}up{% else %}down{% endif %}">
+      {{ data_summaries.donation_trend }}
+    </div>
   </div>
   <div class="analytics-stat">
     <h4>Total Members</h4>
-    <div class="analytics-stat-value" data-target="{{ summary_stats.total_members }}">0</div>
+    <div class="analytics-stat-value">{{ summary_stats.total_members|floatformat:0 }}</div>
   </div>
   <div class="analytics-stat">
     <h4>Total Officers</h4>
-    <div class="analytics-stat-value" data-target="{{ summary_stats.total_officers }}">0</div>
+    <div class="analytics-stat-value">{{ summary_stats.total_officers|floatformat:0 }}</div>
   </div>
   <div class="analytics-stat">
     <h4>Avg. Donation</h4>
-    <div class="analytics-stat-value" data-target="{{ summary_stats.avg_donation|floatformat:0 }}">₱0</div>
+    <div class="analytics-stat-value">₱{{ summary_stats.avg_donation|floatformat:0 }}</div>
+  </div>
+  <div class="analytics-stat">
+    <h4>Blockchain Blocks</h4>
+    <div class="analytics-stat-value">{{ blockchain_metrics.total_blocks }}</div>
+  </div>
+</div>
+
+<!-- Blockchain Metrics -->
+<div class="blockchain-metrics">
+  <div class="blockchain-metric">
+    <i class="fas fa-cubes"></i>
+    <div class="blockchain-metric-value">{{ blockchain_metrics.total_blocks }}</div>
+    <div class="blockchain-metric-label">Total Blocks</div>
+  </div>
+  <div class="blockchain-metric">
+    <i class="fas fa-exchange-alt"></i>
+    <div class="blockchain-metric-value">{{ blockchain_metrics.total_transactions }}</div>
+    <div class="blockchain-metric-label">Transactions</div>
+  </div>
+  <div class="blockchain-metric">
+    <i class="fas fa-clock"></i>
+    <div class="blockchain-metric-value" style="font-size: 1rem;">{{ blockchain_metrics.last_block_time }}</div>
+    <div class="blockchain-metric-label">Last Block</div>
+  </div>
+  <div class="blockchain-metric {% if blockchain_metrics.chain_valid %}chain-valid{% else %}chain-invalid{% endif %}">
+    <i class="fas {% if blockchain_metrics.chain_valid %}fa-check-circle{% else %}fa-exclamation-triangle{% endif %}"></i>
+    <div class="blockchain-metric-value">{% if blockchain_metrics.chain_valid %}Valid{% else %}Invalid{% endif %}</div>
+    <div class="blockchain-metric-label">Chain Status</div>
   </div>
 </div>
 
 <!-- Charts Grid -->
 <div class="charts-grid">
+  <!-- Event Participation -->
+  <div class="chart-card chart-card--full">
+    <div class="chart-card-header">
+      <h3><i class="fas fa-user-check"></i> Event Participation</h3>
+    </div>
+    <div class="chart-card-body">
+      <canvas id="eventParticipationChart"></canvas>
+    </div>
+    <div class="chart-summary">
+      <i class="fas fa-info-circle"></i>
+      Shows attendance vs non-attendance for recent events
+    </div>
+  </div>
+
+  <!-- Predictive Analytics -->
+  <div class="chart-card chart-card--full">
+    <div class="chart-card-header">
+      <h3><i class="fas fa-chart-line"></i> Donation Forecast (6 Months)</h3>
+    </div>
+    <div class="chart-card-body">
+      <canvas id="predictiveChart"></canvas>
+    </div>
+    <div class="chart-summary">
+      <i class="fas fa-lightbulb"></i>
+      Dashed line shows predicted donations based on historical trends
+    </div>
+  </div>
+
+  <!-- Donation Sources by Role -->
+  <div class="chart-card">
+    <div class="chart-card-header">
+      <h3><i class="fas fa-users"></i> Donations by Role</h3>
+    </div>
+    <div class="chart-card-body">
+      <canvas id="donationByRoleChart"></canvas>
+    </div>
+    <div class="chart-summary">
+      <i class="fas fa-info-circle"></i>
+      Distribution of donations by member type
+    </div>
+  </div>
+
+  <!-- Event Types -->
+  <div class="chart-card">
+    <div class="chart-card-header">
+      <h3><i class="fas fa-chart-pie"></i> Event Types</h3>
+    </div>
+    <div class="chart-card-body">
+      <canvas id="eventTypesChart"></canvas>
+    </div>
+  </div>
+
   <!-- Events by Council -->
   <div class="chart-card">
     <div class="chart-card-header">
@@ -262,54 +384,64 @@ Council performance and insights overview
     </div>
   </div>
 
-  <!-- Donations Per Month -->
+  <!-- Members & Officers -->
   <div class="chart-card">
     <div class="chart-card-header">
-      <h3><i class="fas fa-chart-line"></i> Donations Trend</h3>
-    </div>
-    <div class="chart-card-body">
-      <canvas id="donationsChart"></canvas>
-    </div>
-  </div>
-
-  <!-- Event Types Distribution -->
-  <div class="chart-card">
-    <div class="chart-card-header">
-      <h3><i class="fas fa-chart-pie"></i> Event Types</h3>
-    </div>
-    <div class="chart-card-body">
-      <canvas id="eventTypesChart"></canvas>
-    </div>
-  </div>
-
-  <!-- Donation Sources -->
-  <div class="chart-card">
-    <div class="chart-card-header">
-      <h3><i class="fas fa-hand-holding-usd"></i> Donation Sources</h3>
-    </div>
-    <div class="chart-card-body">
-      <canvas id="donationSourcesChart"></canvas>
-    </div>
-  </div>
-
-  <!-- Members and Officers by Council -->
-  <div class="chart-card chart-card--full">
-    <div class="chart-card-header">
-      <h3><i class="fas fa-users"></i> Members & Officers by Council</h3>
+      <h3><i class="fas fa-users"></i> Members & Officers</h3>
     </div>
     <div class="chart-card-body">
       <canvas id="membersOfficersChart"></canvas>
     </div>
   </div>
+</div>
 
-  <!-- Member Activity -->
-  <div class="chart-card chart-card--full">
-    <div class="chart-card-header">
-      <h3><i class="fas fa-chart-area"></i> Member Activity</h3>
-    </div>
-    <div class="chart-card-body">
-      <canvas id="memberActivityChart"></canvas>
-    </div>
+<!-- Activity Ranking Table -->
+<div class="chart-card ranking-card">
+  <div class="chart-card-header">
+    <h3><i class="fas fa-trophy"></i> Activity Ranking (Top 20)</h3>
+    <span style="font-size: 0.75rem; color: #6b7280;">{{ data_summaries.top_contributor }}</span>
+  </div>
+  <div style="overflow-x: auto;">
+    <table class="ranking-table">
+      <thead>
+        <tr>
+          <th style="width: 60px;">Rank</th>
+          <th>Name</th>
+          <th>Role</th>
+          <th style="text-align: center;">Events</th>
+          <th style="text-align: right;">Donations</th>
+          <th style="text-align: center;">Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for member in activity_ranking %}
+        <tr>
+          <td>
+            <div class="rank-badge {% if forloop.counter == 1 %}rank-1{% elif forloop.counter == 2 %}rank-2{% elif forloop.counter == 3 %}rank-3{% else %}rank-default{% endif %}">
+              {{ forloop.counter }}
+            </div>
+          </td>
+          <td><strong>{{ member.name }}</strong></td>
+          <td>
+            <span class="role-badge role-{{ member.role }}">{{ member.role }}</span>
+          </td>
+          <td style="text-align: center;">{{ member.events_attended }}</td>
+          <td style="text-align: right;">₱{{ member.total_donated|floatformat:0 }}</td>
+          <td style="text-align: center;">
+            <span class="score-badge">{{ member.score }}</span>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" style="text-align: center; color: #9ca3af; padding: 2rem;">No activity data available</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="chart-summary">
+    <i class="fas fa-info-circle"></i>
+    Score = (Events × 10) + (Donations ÷ 100) | {{ data_summaries.inactive_alert }}
   </div>
 </div>
 
@@ -318,198 +450,89 @@ Council performance and insights overview
 <script id="donationsData" type="application/json">{{ donations_data | safe }}</script>
 <script id="membersOfficersData" type="application/json">{{ members_officers_data | safe }}</script>
 <script id="eventTypesData" type="application/json">{{ event_types_data | safe }}</script>
-<script id="donationSourcesData" type="application/json">{{ donation_sources_data | safe }}</script>
-<script id="memberActivityData" type="application/json">{{ member_activity_data | safe }}</script>
-<input type="hidden" id="selectedCouncil" value="{{ selected_council|default:'' }}">
+<script id="eventParticipationData" type="application/json">{{ event_participation_data | safe }}</script>
+<script id="predictiveData" type="application/json">{{ predictive_data | safe }}</script>
+<script id="donationByRoleData" type="application/json">{{ donation_by_role_data | safe }}</script>
 {% endblock %}
 
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    // Animate counters
-    const counters = document.querySelectorAll('.analytics-stat-value');
-    counters.forEach(counter => {
-      const target = parseInt(counter.getAttribute('data-target'));
-      if (isNaN(target)) return;
-
-      const isCurrency = counter.textContent.includes('₱');
-      let current = 0;
-      const duration = 1500;
-      const stepTime = 16;
-      const totalSteps = duration / stepTime;
-      const increment = target / totalSteps;
-
-      const timer = setInterval(() => {
-        current += increment;
-        if (current >= target) {
-          counter.textContent = isCurrency ? '₱' + target.toLocaleString() : target.toLocaleString();
-          clearInterval(timer);
-        } else {
-          counter.textContent = isCurrency ? '₱' + Math.floor(current).toLocaleString() : Math.floor(current).toLocaleString();
-        }
-      }, stepTime);
-    });
-
-    // Modern chart styling
-    const chartColors = {
-      primary: '#0D3471',
-      primaryLight: '#3b82f6',
-      accent: '#f59e0b',
-      success: '#22c55e',
-      info: '#3b82f6',
-      purple: '#8b5cf6',
-      slate: '#64748b'
-    };
-
-    const modernGradient = (ctx, color1, color2) => {
-      const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-      gradient.addColorStop(0, color1);
-      gradient.addColorStop(1, color2);
-      return gradient;
-    };
-
+  document.addEventListener('DOMContentLoaded', function() {
     Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
     Chart.defaults.color = '#64748b';
-    Chart.defaults.plugins.legend.labels.padding = 20;
     Chart.defaults.plugins.legend.labels.usePointStyle = true;
+
+    const colors = {
+      primary: '#2563eb',
+      secondary: '#f59e0b',
+      success: '#22c55e',
+      danger: '#ef4444',
+      purple: '#8b5cf6',
+      cyan: '#06b6d4'
+    };
 
     // Parse data
     const eventsData = JSON.parse(document.getElementById('eventsData')?.textContent || '{}');
     const donationsData = JSON.parse(document.getElementById('donationsData')?.textContent || '{}');
     const membersOfficersData = JSON.parse(document.getElementById('membersOfficersData')?.textContent || '{}');
     const eventTypesData = JSON.parse(document.getElementById('eventTypesData')?.textContent || '{}');
-    const donationSourcesData = JSON.parse(document.getElementById('donationSourcesData')?.textContent || '{}');
-    const memberActivityData = JSON.parse(document.getElementById('memberActivityData')?.textContent || '{}');
+    const eventParticipationData = JSON.parse(document.getElementById('eventParticipationData')?.textContent || '{}');
+    const predictiveData = JSON.parse(document.getElementById('predictiveData')?.textContent || '{}');
+    const donationByRoleData = JSON.parse(document.getElementById('donationByRoleData')?.textContent || '{}');
 
-    // Events Chart
-    if (eventsData.labels && eventsData.data) {
-      const ctx = document.getElementById('eventsChart').getContext('2d');
-      new Chart(ctx, {
+    // Event Participation Chart (Stacked Bar)
+    if (eventParticipationData.labels?.length) {
+      new Chart(document.getElementById('eventParticipationChart').getContext('2d'), {
         type: 'bar',
         data: {
-          labels: eventsData.labels,
-          datasets: [{
-            label: 'Events',
-            data: eventsData.data,
-            backgroundColor: modernGradient(ctx, chartColors.primary, chartColors.primaryLight),
-            borderRadius: 8,
-            borderSkipped: false
-          }]
+          labels: eventParticipationData.labels,
+          datasets: [
+            { label: 'Attended', data: eventParticipationData.attended, backgroundColor: colors.success, borderRadius: 4 },
+            { label: 'Did Not Attend', data: eventParticipationData.not_attended, backgroundColor: '#e5e7eb', borderRadius: 4 }
+          ]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
+          plugins: { legend: { position: 'top' } },
           scales: {
-            y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
-            x: { grid: { display: false } }
+            x: { stacked: true, grid: { display: false } },
+            y: { stacked: true, beginAtZero: true, grid: { color: '#f1f5f9' } }
           }
         }
       });
     }
 
-    // Donations Chart
-    if (donationsData.labels && donationsData.data) {
-      const ctx = document.getElementById('donationsChart').getContext('2d');
-      const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-      gradient.addColorStop(0, 'rgba(245, 158, 11, 0.3)');
-      gradient.addColorStop(1, 'rgba(245, 158, 11, 0)');
+    // Predictive Chart (Line with forecast)
+    if (predictiveData.historical_labels?.length || predictiveData.forecast_labels?.length) {
+      const allLabels = [...(predictiveData.historical_labels || []), ...(predictiveData.forecast_labels || [])];
+      const historicalData = [...(predictiveData.historical_data || []), ...Array(predictiveData.forecast_labels?.length || 0).fill(null)];
+      const forecastData = [...Array(predictiveData.historical_data?.length || 0).fill(null), ...(predictiveData.forecast_data || [])];
 
-      new Chart(ctx, {
+      new Chart(document.getElementById('predictiveChart').getContext('2d'), {
         type: 'line',
         data: {
-          labels: donationsData.labels,
-          datasets: [{
-            label: 'Donations (PHP)',
-            data: donationsData.data,
-            borderColor: chartColors.accent,
-            backgroundColor: gradient,
-            fill: true,
-            tension: 0.4,
-            pointRadius: 4,
-            pointHoverRadius: 6,
-            pointBackgroundColor: chartColors.accent
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
-            x: { grid: { display: false } }
-          }
-        }
-      });
-    }
-
-    // Event Types Chart
-    if (eventTypesData.labels && eventTypesData.data) {
-      new Chart(document.getElementById('eventTypesChart').getContext('2d'), {
-        type: 'doughnut',
-        data: {
-          labels: eventTypesData.labels,
-          datasets: [{
-            data: eventTypesData.data,
-            backgroundColor: ['#0D3471', '#3b82f6', '#f59e0b', '#22c55e', '#8b5cf6', '#ef4444'],
-            borderWidth: 0,
-            hoverOffset: 10
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: '60%',
-          plugins: {
-            legend: { position: 'bottom' }
-          }
-        }
-      });
-    }
-
-    // Donation Sources Chart
-    if (donationSourcesData.labels && donationSourcesData.data) {
-      new Chart(document.getElementById('donationSourcesChart').getContext('2d'), {
-        type: 'doughnut',
-        data: {
-          labels: donationSourcesData.labels,
-          datasets: [{
-            data: donationSourcesData.data,
-            backgroundColor: ['#22c55e', '#f59e0b', '#3b82f6', '#8b5cf6'],
-            borderWidth: 0,
-            hoverOffset: 10
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: '60%',
-          plugins: {
-            legend: { position: 'bottom' }
-          }
-        }
-      });
-    }
-
-    // Members/Officers Chart
-    if (membersOfficersData.labels && membersOfficersData.members) {
-      new Chart(document.getElementById('membersOfficersChart').getContext('2d'), {
-        type: 'bar',
-        data: {
-          labels: membersOfficersData.labels,
+          labels: allLabels,
           datasets: [
             {
-              label: 'Members',
-              data: membersOfficersData.members,
-              backgroundColor: '#3b82f6',
-              borderRadius: 6
+              label: 'Historical',
+              data: historicalData,
+              borderColor: colors.primary,
+              backgroundColor: 'rgba(37, 99, 235, 0.1)',
+              fill: true,
+              tension: 0.4,
+              pointRadius: 4
             },
             {
-              label: 'Officers',
-              data: membersOfficersData.officers,
-              backgroundColor: '#f59e0b',
-              borderRadius: 6
+              label: 'Forecast',
+              data: forecastData,
+              borderColor: colors.secondary,
+              borderDash: [5, 5],
+              backgroundColor: 'rgba(245, 158, 11, 0.1)',
+              fill: true,
+              tension: 0.4,
+              pointRadius: 4
             }
           ]
         },
@@ -525,32 +548,90 @@ Council performance and insights overview
       });
     }
 
-    // Member Activity Chart
-    if (memberActivityData.labels && memberActivityData.data) {
-      const ctx = document.getElementById('memberActivityChart').getContext('2d');
-      const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-      gradient.addColorStop(0, 'rgba(59, 130, 246, 0.3)');
-      gradient.addColorStop(1, 'rgba(59, 130, 246, 0)');
-
-      new Chart(ctx, {
-        type: 'line',
+    // Donation by Role Chart (Doughnut)
+    if (donationByRoleData.labels?.length) {
+      new Chart(document.getElementById('donationByRoleChart').getContext('2d'), {
+        type: 'doughnut',
         data: {
-          labels: memberActivityData.labels,
+          labels: donationByRoleData.labels,
           datasets: [{
-            label: 'Active Members',
-            data: memberActivityData.data,
-            borderColor: '#3b82f6',
-            backgroundColor: gradient,
-            fill: true,
-            tension: 0.4,
-            pointRadius: 4,
-            pointBackgroundColor: '#3b82f6'
+            data: donationByRoleData.data,
+            backgroundColor: [colors.primary, colors.secondary, colors.purple, colors.success],
+            borderWidth: 0,
+            hoverOffset: 10
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '60%',
+          plugins: { legend: { position: 'bottom' } }
+        }
+      });
+    }
+
+    // Event Types Chart
+    if (eventTypesData.labels?.length) {
+      new Chart(document.getElementById('eventTypesChart').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+          labels: eventTypesData.labels,
+          datasets: [{
+            data: eventTypesData.data,
+            backgroundColor: [colors.primary, colors.secondary, colors.success, colors.purple, colors.cyan, colors.danger],
+            borderWidth: 0,
+            hoverOffset: 10
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '60%',
+          plugins: { legend: { position: 'bottom' } }
+        }
+      });
+    }
+
+    // Events Chart
+    if (eventsData.labels?.length) {
+      new Chart(document.getElementById('eventsChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: eventsData.labels,
+          datasets: [{
+            label: 'Events',
+            data: eventsData.data,
+            backgroundColor: colors.primary,
+            borderRadius: 6
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    // Members/Officers Chart
+    if (membersOfficersData.labels?.length) {
+      new Chart(document.getElementById('membersOfficersChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: membersOfficersData.labels,
+          datasets: [
+            { label: 'Members', data: membersOfficersData.members, backgroundColor: colors.primary, borderRadius: 4 },
+            { label: 'Officers', data: membersOfficersData.officers, backgroundColor: colors.secondary, borderRadius: 4 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'top' } },
           scales: {
             y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
             x: { grid: { display: false } }
