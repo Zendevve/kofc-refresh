@@ -49,33 +49,24 @@
       </thead>
       <tbody>
         {% for data in council_data %}
-        <tr data-name="{{ data.council.name }}" data-district="{{ data.council.district }}">
+        <tr>
           <td>
-            <div style="font-weight: 600; color: var(--text-primary);">{{ data.council.name }}</div>
+            <div style="font-weight: 600;">{{ data.council.name }}</div>
           </td>
-          <td>
-            {% if data.council.location_city %}<div style="color: var(--text-primary);">{{ data.council.location_city
-              }}, {{ data.council.location_province }}</div>{% if data.council.location_barangay %}<div
-              style="font-size: 0.75rem; color: var(--text-muted);">{{ data.council.location_barangay }}</div>{% endif
-            %}{% else %}<span style="color: var(--text-muted); font-style: italic;">Not set</span>{% endif %}
+          <td>{% if data.council.location_city %}{{ data.council.location_city }}, {{ data.council.location_province
+            }}{% if data.council.location_barangay %}<br><small style="color:#999;">{{ data.council.location_barangay
+              }}</small>{% endif %}{% else %}<span style="color:#999;font-style:italic;">Not set</span>{% endif %}</td>
+          <td><span class="badge badge--primary">{{ data.member_count }} member{{ data.member_count|pluralize }}</span>
           </td>
-          <td>
-            <span class="badge badge--primary">{{ data.member_count }} member{{ data.member_count|pluralize }}</span>
-          </td>
-          <td>
-            <div class="flex items-center justify-center gap-2">
-              <button class="btn btn--ghost btn--sm"
-                onclick="openEditCouncilModal({{ data.council.pk }}, '{{ data.council.name|escapejs }}', '{{ data.council.location_street|escapejs }}', '{{ data.council.location_barangay|escapejs }}', '{{ data.council.location_city|escapejs }}', '{{ data.council.location_province|escapejs }}', '{{ data.council.location_zip_code|escapejs }}')"
-                title="Edit Council"><i class="fas fa-edit"></i></button>
-              <button class="btn btn--ghost btn--sm"
-                onclick="confirmDeleteCouncil({{ data.council.pk }}, '{{ data.council.name|escapejs }}', {{ data.member_count }})"
-                title="Delete Council" style="color: var(--danger-500);"><i class="fas fa-trash"></i></button>
-            </div>
-          </td>
+          <td style="text-align:center;"><button class="btn btn--ghost btn--sm"
+              onclick="openEditCouncilModal({{ data.council.pk }},'{{ data.council.name|escapejs }}','{{ data.council.location_street|escapejs }}','{{ data.council.location_barangay|escapejs }}','{{ data.council.location_city|escapejs }}','{{ data.council.location_province|escapejs }}','{{ data.council.location_zip_code|escapejs }}')"
+              title="Edit"><i class="fas fa-edit"></i></button> <button class="btn btn--ghost btn--sm"
+              onclick="confirmDeleteCouncil({{ data.council.pk }},'{{ data.council.name|escapejs }}',{{ data.member_count }})"
+              title="Delete" style="color:#ef4444;"><i class="fas fa-trash"></i></button></td>
         </tr>
         {% empty %}
         <tr>
-          <td colspan="4" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+          <td colspan="4" style="text-align: center; padding: 3rem; color: #999;">
             <i class="fas fa-landmark" style="font-size: 2rem; opacity: 0.3; display: block; margin-bottom: 1rem;"></i>
             No councils found. Click "Add New Council" to create one.
           </td>
