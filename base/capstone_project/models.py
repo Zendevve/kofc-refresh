@@ -26,9 +26,13 @@ def generate_transaction_id():
     return f"GCASH-{uuid.uuid4().hex[:8]}"
 
 class Council(models.Model):
-    id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=100)
     district = models.CharField(max_length=100)
+    location_street = models.CharField(max_length=255, null=True, blank=True)
+    location_barangay = models.CharField(max_length=100, null=True, blank=True)
+    location_city = models.CharField(max_length=100, null=True, blank=True)
+    location_province = models.CharField(max_length=100, null=True, blank=True)
+    location_zip_code = models.CharField(max_length=10, null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -66,7 +70,7 @@ class User(AbstractUser):
     second_name = models.CharField(max_length=100, null=True, blank=True)
     middle_name = models.CharField(max_length=100, null=True, blank=True)
     middle_initial = models.CharField(max_length=5, null=True, blank=True)
-    suffix = models.CharField(max_length=5, null=True, blank=True) 
+    suffix = models.CharField(max_length=5, null=True, blank=True)
     street = models.CharField(max_length=255, null=True, blank=True)
     barangay = models.CharField(max_length=100, null=True, blank=True)
     city = models.CharField(max_length=100, null=True, blank=True)
@@ -86,6 +90,7 @@ class User(AbstractUser):
     voluntary_join = models.BooleanField(default=False)
     e_signature = models.ImageField(upload_to='e_signatures/', null=True, blank=True)
     join_reason = models.TextField(null=True, blank=True)
+    dark_mode = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if self.username == 'Mr_Admin' and self.role != 'admin':
@@ -93,51 +98,51 @@ class User(AbstractUser):
         if self.birthday:  # Calculate age if birthday is set
             today = timezone.now().date()
             self.age = today.year - self.birthday.year - ((today.month, today.day) < (self.birthday.month, self.birthday.day))
-            
+
         # Generate middle_initial from middle_name if provided
         if self.middle_name and not self.middle_initial:
             self.middle_initial = self.middle_name[0] + "."
-            
+
         super().save(*args, **kwargs)
         if self.profile_picture:
             img = Image.open(self.profile_picture.path)
             output_size = (200, 200)
             img = img.resize(output_size, Image.Resampling.LANCZOS)
             img.save(self.profile_picture.path)
-    
+
     def get_current_degree_display(self):
         """Return the display value for current degree"""
         if self.current_degree:
             return dict(self.DEGREE_CHOICES)[self.current_degree]
         return "Not specified"
-    
+
     def is_inactive_member(self):
         """Check if member is inactive (no activity for 30 days)"""
         from datetime import timedelta
-        
+
         # Only check for members and officers, not admin or pending
         if self.role not in ['member', 'officer']:
             return False
-        
+
         # Grace period: newly accepted members get 30 days before being considered for inactivity
         thirty_days_ago = timezone.now().date() - timedelta(days=30)
-        
+
         # If user was approved/joined within the last 30 days, they're not inactive
         if self.date_joined and self.date_joined.date() > thirty_days_ago:
             return False
-            
+
         # Check for recent recruitment activity
         recent_recruitments = self.recruitments.filter(date_recruited__gte=thirty_days_ago).exists()
-        
+
         # Check for recent event attendance
         recent_attendance = self.event_attendances.filter(
             event__date_from__gte=thirty_days_ago,
             is_present=True
         ).exists()
-        
+
         # Member is inactive if they have no recent recruitment or attendance activity
         return not (recent_recruitments or recent_attendance)
-    
+
     def get_activity_status(self):
         """Get activity status with warning level"""
         if self.is_inactive_member():
@@ -161,7 +166,7 @@ class Event(models.Model):
         ('approved', 'Approved'),
         ('rejected', 'Rejected'),
     )
-    
+
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     description = models.TextField()
@@ -181,7 +186,9 @@ class Event(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     rejection_reason = models.TextField(blank=True, null=True)
-    
+    raised_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, help_text="Total amount raised for this event")
+    enable_attendance = models.BooleanField(default=True, help_text="Enable attendance tracking for this event")
+
     def __str__(self):
         return self.name
 
@@ -191,12 +198,12 @@ class EventAttendance(models.Model):
     is_present = models.BooleanField(default=False)
     recorded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='recorded_attendances')
     recorded_at = models.DateTimeField(auto_now=True)
-    
+
     class Meta:
         unique_together = ['event', 'member']
         verbose_name = 'Event Attendance'
         verbose_name_plural = 'Event Attendances'
-        
+
     def __str__(self):
         status = "Present" if self.is_present else "Absent"
         return f"{self.member.username} - {self.event.name} - {status}"
@@ -210,13 +217,13 @@ class ForumCategory(models.Model):
         ('questions', 'Questions'),
         ('urgent', 'Urgent'),
     ]
-    
+
     name = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
     description = models.TextField(blank=True)
-    
+
     def __str__(self):
         return self.get_name_display()
-    
+
     class Meta:
         verbose_name_plural = "Forum Categories"
 
@@ -229,10 +236,10 @@ class ForumMessage(models.Model):
     council = models.ForeignKey(Council, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='forum_images/', null=True, blank=True)
     is_district_forum = models.BooleanField(default=False)
-    
+
     def __str__(self):
         return f"{self.sender.username} - {self.timestamp.strftime('%Y-%m-%d %H:%M')}"
-    
+
     class Meta:
         ordering = ['-is_pinned', '-timestamp']
 
@@ -241,24 +248,59 @@ class Analytics(models.Model):
     events_count = models.IntegerField(default=0)
     donations_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    date_updated = models.DateTimeField(auto_now=True)  
+    date_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"Analytics for {self.council.name} on {self.date_updated}"
-    
+
 class Notification(models.Model):
+    # Notification types
+    NOTIFICATION_TYPES = (
+        # Admin notifications
+        ('pending_proposal', 'Pending Proposal/Member'),
+        ('donation_received', 'Donation Received'),
+        ('event_today', 'Event Happening Today'),
+        ('donation_quota_reached', 'Donation Quota Reached'),
+
+        # Officer notifications
+        ('proposal_accepted', 'Proposal Accepted'),
+        ('proposal_rejected', 'Proposal Rejected'),
+        ('pending_member_approval', 'Pending Member Approval'),
+        ('officer_inactive', 'Officer Inactive'),
+        ('council_moved', 'Moved to New Council'),
+        ('promoted_to_officer', 'Promoted to Officer'),
+        ('demoted_to_member', 'Demoted to Member'),
+        ('recruiter_assigned', 'Assigned as Recruiter'),
+        ('event_attended', 'Event Attended'),
+
+        # Member notifications
+        ('member_inactive', 'Member Inactive'),
+        ('member_moved', 'Moved to New Council'),
+        ('member_promoted', 'Promoted to Officer'),
+        ('member_demoted', 'Demoted to Member'),
+        ('member_recruiter', 'Assigned as Recruiter'),
+        ('member_attended', 'Event Attended'),
+
+        # Forum notifications
+        ('forum_message', 'Forum Message'),
+    )
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
     message = models.ForeignKey(ForumMessage, on_delete=models.CASCADE, null=True, blank=True)
     title = models.CharField(max_length=255, null=True, blank=True)
     content = models.TextField(null=True, blank=True)
+    notification_type = models.CharField(max_length=50, choices=NOTIFICATION_TYPES, default='forum_message')
     is_read = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now_add=True)
-    
+    related_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='notifications_about_user')
+    related_event = models.ForeignKey('Event', on_delete=models.SET_NULL, null=True, blank=True, related_name='notifications')
+    related_council = models.ForeignKey('Council', on_delete=models.SET_NULL, null=True, blank=True, related_name='notifications')
+
     def __str__(self):
         if self.message:
             return f"Forum notification for {self.user.username} - {self.timestamp.strftime('%Y-%m-%d %H:%M')}"
         return f"Notification for {self.user.username}: {self.title} - {self.timestamp.strftime('%Y-%m-%d %H:%M')}"
-    
+
     class Meta:
         ordering = ['-timestamp']
 
@@ -301,7 +343,7 @@ def block_pre_save(sender, instance, **kwargs):
     if instance.pk:
         logger.error(f"Attempt to modify Block {instance.index} rejected")
         raise ValidationError("Block modifications are not allowed")
-pre_save.connect(block_pre_save, sender=Block)  
+pre_save.connect(block_pre_save, sender=Block)
 
 class Blockchain(models.Model):
     pending_transactions = models.JSONField(default=list)
@@ -350,7 +392,7 @@ class Blockchain(models.Model):
                 'status': donation.status,  # Add status field
                 'timestamp': timezone.now().isoformat()
             }
-            
+
             self.pending_transactions.append(transaction)
             self.save()
             logger.info(f"Transaction {donation.transaction_id} added to pending transactions")
@@ -358,7 +400,7 @@ class Blockchain(models.Model):
         except Exception as e:
             logger.error(f"Error adding transaction: {str(e)}")
             return False
-    
+
     def get_previous_block(self):
         try:
             latest_block = Block.objects.latest('index')
@@ -376,7 +418,7 @@ class Blockchain(models.Model):
     def proof_of_work(self, previous_proof):
         new_proof = 1
         check_proof = False
-        
+
         while check_proof is False:
             hash_operation = hashlib.sha256(str(new_proof**2 - previous_proof**2).encode()).hexdigest()
             if hash_operation[:4] == '0000':
@@ -388,7 +430,7 @@ class Blockchain(models.Model):
     def hash_block(self, block):
         if not isinstance(block['timestamp'], str):
             block['timestamp'] = block['timestamp'].isoformat() if isinstance(block['timestamp'], datetime) else str(block['timestamp'])
-            
+
         encoded_block = json.dumps(block, sort_keys=True).encode()
         return hashlib.sha256(encoded_block).hexdigest()
 
@@ -396,20 +438,20 @@ class Blockchain(models.Model):
         blocks = Block.objects.all().order_by('index')
         if not blocks:
             return True
-            
+
         previous_block = None
         for block in blocks:
             if previous_block:
                 if block.previous_hash != previous_block.hash:
                     logger.error(f"Invalid hash link at block {block.index}")
                     return False
-                    
+
                 hash_operation = hashlib.sha256(str(block.proof**2 - previous_block.proof**2).encode()).hexdigest()
                 if hash_operation[:4] != '0000':
                     logger.error(f"Invalid proof of work at block {block.index}")
                     return False
             previous_block = block
-            
+
         return True
 
     def create_block(self, proof, previous_hash=None):
@@ -421,9 +463,9 @@ class Blockchain(models.Model):
             else:
                 index = previous_block['index'] + 1
                 previous_hash = previous_hash or previous_block['hash']
-                
+
             timestamp = timezone.now()
-            
+
             block = Block(
                 index=index,
                 timestamp=timestamp,
@@ -433,10 +475,10 @@ class Blockchain(models.Model):
                 hash=''  # Will be calculated in save()
             )
             block.save()
-            
+
             self.pending_transactions = []
             self.save()
-            
+
             logger.info(f"Block {index} created successfully")
             return {
                 'index': block.index,
@@ -493,6 +535,7 @@ class Donation(models.Model):
     source_id = models.CharField(max_length=100, blank=True, null=True)
     signature = models.TextField(blank=True, null=True)
     council = models.ForeignKey('Council', on_delete=models.SET_NULL, null=True, blank=True)
+    is_anonymous = models.BooleanField(default=False, help_text="Whether the donor wishes to remain anonymous in public records.")
     submitted_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -509,6 +552,7 @@ class Donation(models.Model):
     )
     rejection_reason = models.TextField(blank=True, null=True)
     receipt = models.ImageField(upload_to='donation_receipts/', null=True, blank=True)
+    event = models.ForeignKey('Event', on_delete=models.SET_NULL, null=True, blank=True, related_name='donations')
 
     def sign_donation(self, private_key):
         """Sign the donation data with the provided private key"""
@@ -516,9 +560,9 @@ class Donation(models.Model):
             first_name = self.first_name if self.first_name != "Anonymous" else "Anonymous"
             last_name = self.last_name if self.last_name else ""
             email = self.email if self.email else "anonymous@example.com"
-            
+
             donation_data = f"{self.transaction_id}:{first_name}:{last_name}:{email}:{self.amount}:{self.donation_date.isoformat() if isinstance(self.donation_date, date) else str(self.donation_date)}:{self.payment_method}"
-            
+
             signature = private_key.sign(
                 donation_data.encode(),
                 padding.PSS(
@@ -527,7 +571,7 @@ class Donation(models.Model):
                 ),
                 hashes.SHA256()
             )
-            
+
             self.signature = base64.b64encode(signature).decode('utf-8')
             return True
         except Exception as e:
@@ -539,16 +583,16 @@ class Donation(models.Model):
         if not self.signature:
             logger.error(f"No signature found for donation {self.transaction_id}")
             return False
-            
+
         try:
             first_name = self.first_name if self.first_name != "Anonymous" else "Anonymous"
             last_name = self.last_name if self.last_name else ""
             email = self.email if self.email else "anonymous@example.com"
-            
+
             donation_data = f"{self.transaction_id}:{first_name}:{last_name}:{email}:{self.amount}:{self.donation_date.isoformat() if isinstance(self.donation_date, date) else str(self.donation_date)}:{self.payment_method}"
-            
+
             signature = base64.b64decode(self.signature)
-            
+
             public_key.verify(
                 signature,
                 donation_data.encode(),
@@ -568,7 +612,7 @@ class Donation(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} - {self.amount} - {self.get_status_display()}"
-        
+
 def receipt_upload_path(instance, filename):
     ext = filename.split('.')[-1]
     new_filename = f"{instance.transaction_id}.{ext}"
@@ -581,9 +625,9 @@ class Recruitment(models.Model):
     date_recruited = models.DateField(default=timezone.now)
     is_manual = models.BooleanField(default=False)  # True if manually added by admin
     added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='added_recruitments')
-    
+
     class Meta:
         unique_together = ('recruiter', 'recruited')
-        
+
     def __str__(self):
         return f"{self.recruiter.username} recruited {self.recruited.username} on {self.date_recruited}"
