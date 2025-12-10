@@ -71,14 +71,10 @@
             <div class="flex items-center justify-center gap-2">
               <button class="btn btn--ghost btn--sm"
                 onclick="openEditCouncilModal({{ data.council.pk }}, '{{ data.council.name|escapejs }}', '{{ data.council.location_street|escapejs }}', '{{ data.council.location_barangay|escapejs }}', '{{ data.council.location_city|escapejs }}', '{{ data.council.location_province|escapejs }}', '{{ data.council.location_zip_code|escapejs }}')"
-                title="Edit Council">
-                <i class="fas fa-edit"></i>
-              </button>
+                title="Edit Council"><i class="fas fa-edit"></i></button>
               <button class="btn btn--ghost btn--sm"
                 onclick="confirmDeleteCouncil({{ data.council.pk }}, '{{ data.council.name|escapejs }}', {{ data.member_count }})"
-                title="Delete Council" style="color: var(--danger-500);">
-                <i class="fas fa-trash"></i>
-              </button>
+                title="Delete Council" style="color: var(--danger-500);"><i class="fas fa-trash"></i></button>
             </div>
           </td>
         </tr>
