@@ -2,187 +2,234 @@
 {% load static %}
 {% block title %}My QR Code - Knights of Columbus{% endblock %}
 {% block page_title %}My QR Code{% endblock %}
-{% block page_subtitle %}Show this to an officer to record your attendance{% endblock %}
+{% block page_subtitle %}Present this to an officer to record your event attendance{% endblock %}
 
 {% block extra_css %}
 <style>
-  .qr-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-8);
-    padding: var(--space-6);
-    max-width: 500px;
-    margin: 0 auto;
+  .attendance-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+    align-items: start;
   }
 
-  .qr-card {
+  .qr-section {
     background: white;
     border-radius: var(--radius-2xl);
     padding: var(--space-8);
     text-align: center;
-    box-shadow: var(--shadow-lg);
-    border: 1px solid var(--neutral-100);
-    width: 100%;
+    border: 1px solid var(--neutral-200);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
-  .qr-wrapper {
-    display: inline-block;
-    padding: var(--space-4);
-    background: white;
+  .qr-section h3 {
+    margin: 0 0 var(--space-4);
+    font-size: var(--text-lg);
+    color: var(--neutral-900);
+  }
+
+  .qr-frame {
+    position: relative;
+    padding: var(--space-5);
+    background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
     border-radius: var(--radius-xl);
-    border: 4px solid var(--primary-500);
-    box-shadow: 0 0 0 8px var(--primary-100);
-    animation: pulse-border 2s ease-in-out infinite;
+    box-shadow: var(--shadow-xl);
   }
 
-  @keyframes pulse-border {
-    0%, 100% { box-shadow: 0 0 0 8px var(--primary-100); }
-    50% { box-shadow: 0 0 0 12px var(--primary-50); }
+  .qr-frame::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 2px dashed rgba(255,255,255,0.3);
+    border-radius: var(--radius-lg);
+    pointer-events: none;
+  }
+
+  .qr-inner {
+    background: white;
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
   }
 
   .qr-code-img {
-    width: 200px;
-    height: 200px;
+    width: 180px;
+    height: 180px;
     display: block;
   }
 
   .qr-instruction {
     margin-top: var(--space-4);
-    color: var(--neutral-600);
+    color: var(--neutral-500);
     font-size: var(--text-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+  }
+
+  .qr-instruction i {
+    color: var(--primary-500);
   }
 
   .qr-placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     padding: var(--space-12);
     background: var(--neutral-100);
     border-radius: var(--radius-xl);
     color: var(--neutral-400);
+    text-align: center;
   }
 
   .qr-placeholder i {
-    font-size: 5rem;
+    font-size: 4rem;
     margin-bottom: var(--space-3);
   }
 
-  .member-card {
+  .profile-section {
     background: white;
-    border-radius: var(--radius-xl);
-    padding: var(--space-6);
-    width: 100%;
+    border-radius: var(--radius-2xl);
+    overflow: hidden;
     border: 1px solid var(--neutral-200);
   }
 
-  .member-card-header {
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
-    margin-bottom: var(--space-4);
-    padding-bottom: var(--space-4);
-    border-bottom: 1px solid var(--neutral-100);
+  .profile-header {
+    background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+    padding: var(--space-6);
+    text-align: center;
+    color: white;
   }
 
-  .member-avatar {
-    width: 64px;
-    height: 64px;
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
     border-radius: var(--radius-full);
-    background: linear-gradient(135deg, var(--primary-100), var(--primary-200));
+    margin: 0 auto var(--space-3);
+    background: white;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    border: 3px solid var(--primary-300);
+    border: 3px solid rgba(255,255,255,0.3);
   }
 
-  .member-avatar img {
+  .profile-avatar img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
 
-  .member-avatar i {
-    font-size: var(--text-2xl);
+  .profile-avatar i {
+    font-size: var(--text-3xl);
     color: var(--primary-600);
   }
 
-  .member-name {
+  .profile-name {
     font-size: var(--text-xl);
     font-weight: var(--font-bold);
-    color: var(--neutral-900);
+    margin-bottom: var(--space-1);
   }
 
-  .member-role {
+  .profile-role {
     display: inline-flex;
     padding: var(--space-1) var(--space-3);
-    background: var(--primary-100);
-    color: var(--primary-700);
+    background: rgba(255,255,255,0.2);
     border-radius: var(--radius-full);
-    font-size: var(--text-xs);
-    font-weight: var(--font-semibold);
-    margin-top: var(--space-1);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
   }
 
-  .member-details {
-    display: grid;
-    gap: var(--space-3);
+  .profile-details {
+    padding: var(--space-5);
   }
 
-  .detail-row {
+  .detail-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--space-3);
-    background: var(--neutral-50);
-    border-radius: var(--radius-md);
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--neutral-100);
+  }
+
+  .detail-item:last-child {
+    border-bottom: none;
   }
 
   .detail-label {
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    color: var(--neutral-600);
+    color: var(--neutral-500);
     font-size: var(--text-sm);
   }
 
   .detail-label i {
+    width: 18px;
     color: var(--primary-500);
-    width: 16px;
   }
 
   .detail-value {
     font-weight: var(--font-semibold);
-    color: var(--neutral-800);
+    color: var(--neutral-900);
     font-size: var(--text-sm);
   }
 
-  @media (max-width: 480px) {
+  .attendance-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--neutral-100);
+  }
+
+  .stat-box {
+    text-align: center;
+    padding: var(--space-3);
+    background: var(--primary-50);
+    border-radius: var(--radius-lg);
+  }
+
+  .stat-value {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: var(--primary-600);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: var(--text-xs);
+    color: var(--primary-700);
+    margin-top: var(--space-1);
+  }
+
+  @media (max-width: 768px) {
+    .attendance-layout {
+      grid-template-columns: 1fr;
+    }
+
     .qr-code-img {
       width: 160px;
       height: 160px;
-    }
-
-    .qr-container {
-      padding: var(--space-4);
     }
   }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="qr-container">
-  <!-- QR Code Card -->
-  <div class="qr-card">
+<div class="attendance-layout">
+  <!-- QR Code Section -->
+  <div class="qr-section">
+    <h3><i class="fas fa-qrcode"></i> Your Attendance QR Code</h3>
     {% if qr_code_url %}
-    <div class="qr-wrapper">
-      <img src="{{ qr_code_url }}" alt="Your QR Code" class="qr-code-img">
+    <div class="qr-frame">
+      <div class="qr-inner">
+        <img src="{{ qr_code_url }}" alt="Your QR Code" class="qr-code-img">
+      </div>
     </div>
     <p class="qr-instruction">
-      <i class="fas fa-info-circle"></i>
-      Present this QR code to the attendance officer
+      <i class="fas fa-hand-point-right"></i>
+      Show this code to the attendance officer
     </p>
     {% else %}
     <div class="qr-placeholder">
@@ -192,33 +239,45 @@
     {% endif %}
   </div>
 
-  <!-- Member Info Card -->
-  <div class="member-card">
-    <div class="member-card-header">
-      <div class="member-avatar">
+  <!-- Profile Section -->
+  <div class="profile-section">
+    <div class="profile-header">
+      <div class="profile-avatar">
         {% if user.profile_picture %}
         <img src="{{ user.profile_picture.url }}" alt="{{ user.first_name }}">
         {% else %}
         <i class="fas fa-user"></i>
         {% endif %}
       </div>
-      <div>
-        <div class="member-name">{{ user.get_full_name }}</div>
-        <span class="member-role">{{ user.get_role_display }}</span>
-      </div>
+      <div class="profile-name">{{ user.get_full_name }}</div>
+      <span class="profile-role">{{ user.get_role_display }}</span>
     </div>
-    <div class="member-details">
-      <div class="detail-row">
+    <div class="profile-details">
+      <div class="detail-item">
         <span class="detail-label"><i class="fas fa-id-badge"></i> Member ID</span>
         <span class="detail-value">#{{ user.id }}</span>
       </div>
-      <div class="detail-row">
+      <div class="detail-item">
         <span class="detail-label"><i class="fas fa-shield-alt"></i> Council</span>
         <span class="detail-value">{{ user.council.name|default:"Not assigned" }}</span>
       </div>
-      <div class="detail-row">
+      <div class="detail-item">
         <span class="detail-label"><i class="fas fa-award"></i> Degree</span>
         <span class="detail-value">{{ user.get_current_degree_display|default:"1st Degree" }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label"><i class="fas fa-envelope"></i> Email</span>
+        <span class="detail-value">{{ user.email }}</span>
+      </div>
+      <div class="attendance-stats">
+        <div class="stat-box">
+          <div class="stat-value">{{ user.event_attendances.count|default:0 }}</div>
+          <div class="stat-label">Events Attended</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">{{ user.recruitments.count|default:0 }}</div>
+          <div class="stat-label">Recruits</div>
+        </div>
       </div>
     </div>
   </div>

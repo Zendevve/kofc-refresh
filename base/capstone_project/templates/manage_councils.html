@@ -10,48 +10,347 @@
 </button>
 {% endblock %}
 
-{% block content %}
+{% block extra_css %}
+<style>
+  .councils-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-4) var(--space-5);
+    border-bottom: 1px solid var(--neutral-100);
+  }
 
+  .search-box {
+    position: relative;
+    width: 280px;
+  }
+
+  .search-box input {
+    width: 100%;
+    padding: var(--space-2) var(--space-4);
+    padding-left: var(--space-9);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+  }
+
+  .search-box input:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+
+  .search-box i {
+    position: absolute;
+    left: var(--space-3);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--neutral-400);
+  }
+
+  .count-badge {
+    background: var(--primary-100);
+    color: var(--primary-700);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+  }
+
+  .councils-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .councils-table thead {
+    background: var(--neutral-50);
+  }
+
+  .councils-table th {
+    padding: var(--space-3) var(--space-4);
+    text-align: left;
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--neutral-200);
+  }
+
+  .councils-table td {
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--neutral-100);
+    font-size: var(--text-sm);
+    color: var(--neutral-700);
+  }
+
+  .councils-table tbody tr {
+    transition: background var(--transition-fast);
+  }
+
+  .councils-table tbody tr:hover {
+    background: var(--neutral-50);
+  }
+
+  .council-name {
+    font-weight: var(--font-semibold);
+    color: var(--neutral-900);
+  }
+
+  .location-text {
+    color: var(--neutral-500);
+    font-size: var(--text-sm);
+  }
+
+  .member-count {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-3);
+    background: var(--primary-50);
+    color: var(--primary-700);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: var(--space-2);
+    justify-content: center;
+  }
+
+  .action-btn {
+    padding: var(--space-2) var(--space-3);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  .action-btn.edit {
+    background: var(--info-50);
+    color: var(--info-700);
+  }
+
+  .action-btn.edit:hover {
+    background: var(--info-100);
+  }
+
+  .action-btn.delete {
+    background: var(--error-50);
+    color: var(--error-700);
+  }
+
+  .action-btn.delete:hover {
+    background: var(--error-100);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: var(--space-12);
+    color: var(--neutral-400);
+  }
+
+  .empty-state i {
+    font-size: var(--text-4xl);
+    margin-bottom: var(--space-3);
+  }
+
+  /* Modal Styles */
+  .modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal.show {
+    display: flex;
+  }
+
+  .modal-content {
+    background: white;
+    border-radius: var(--radius-2xl);
+    max-width: 560px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-2xl);
+    animation: modalSlideIn 0.3s ease;
+  }
+
+  @keyframes modalSlideIn {
+    from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .modal-header {
+    padding: var(--space-5);
+    border-bottom: 1px solid var(--neutral-100);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .modal-header h3 {
+    margin: 0;
+    font-size: var(--text-lg);
+    color: var(--neutral-900);
+  }
+
+  .modal-close {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: var(--neutral-100);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-lg);
+    color: var(--neutral-600);
+    transition: all var(--transition-fast);
+  }
+
+  .modal-close:hover {
+    background: var(--neutral-200);
+  }
+
+  .modal-body {
+    padding: var(--space-5);
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .form-group.full-width {
+    grid-column: 1 / -1;
+  }
+
+  .form-group label {
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--neutral-700);
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: var(--space-3);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+  }
+
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+
+  .modal-footer {
+    padding: var(--space-4) var(--space-5);
+    border-top: 1px solid var(--neutral-100);
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-3);
+  }
+
+  .warning-message {
+    padding: var(--space-4);
+    background: var(--warning-50);
+    border: 1px solid var(--warning-200);
+    border-radius: var(--radius-lg);
+    color: var(--warning-700);
+    text-align: center;
+  }
+
+  .warning-message i {
+    font-size: var(--text-2xl);
+    color: var(--warning-500);
+    margin-bottom: var(--space-2);
+  }
+
+  .warning-text {
+    color: var(--error-600);
+    font-size: var(--text-sm);
+  }
+
+  @media (max-width: 768px) {
+    .councils-header {
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .search-box {
+      width: 100%;
+    }
+
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
 <div class="dashboard-card">
-  <div
-    style="padding: var(--space-4); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--neutral-100);">
-    <div class="search-container">
+  <div class="councils-header">
+    <div class="search-box">
       <i class="fas fa-search"></i>
-      <input type="text" id="councilSearchInput" placeholder="Search councils..." class="search-input">
+      <input type="text" id="councilSearchInput" placeholder="Search councils...">
     </div>
-    <div style="font-size: var(--text-sm); color: var(--neutral-500); font-weight: var(--font-medium);">
-      Total: {{ council_data|length }}
-    </div>
+    <span class="count-badge">{{ council_data|length }} Councils</span>
   </div>
   <div class="dashboard-card-body" style="padding: 0;">
-    <table class="event-table">
+    <table class="councils-table">
       <thead>
         <tr>
           <th>Council Name</th>
           <th>Location</th>
           <th>Members</th>
-          <th class="action-header">Actions</th>
+          <th style="text-align: center;">Actions</th>
         </tr>
       </thead>
       <tbody>
         {% for data in council_data %}
-        <tr data-name="{{ data.council.name }}" data-district="{{ data.council.district }}">
-          <td>{{ data.council.name }}</td>
+        <tr data-name="{{ data.council.name }}">
+          <td><span class="council-name">{{ data.council.name }}</span></td>
           <td>
             {% if data.council.location_city %}
-            {{ data.council.location_city }}, {{ data.council.location_province }}
+            <span>{{ data.council.location_city }}, {{ data.council.location_province }}</span>
             {% else %}
-            <span style="color: #999;">Not set</span>
+            <span class="location-text">Not set</span>
             {% endif %}
           </td>
-          <td>{{ data.member_count }}</td>
+          <td><span class="member-count"><i class="fas fa-users"></i> {{ data.member_count }}</span></td>
           <td>
-            <div class="action-cell">
-              <button class="action-btn edit-btn"
+            <div class="action-buttons">
+              <button class="action-btn edit"
                 onclick="openEditCouncilModal({{ data.council.pk }}, '{{ data.council.name|escapejs }}', '{{ data.council.location_street|escapejs }}', '{{ data.council.location_barangay|escapejs }}', '{{ data.council.location_city|escapejs }}', '{{ data.council.location_province|escapejs }}', '{{ data.council.location_zip_code|escapejs }}')">
                 <i class="fas fa-edit"></i> Edit
               </button>
-              <button class="action-btn delete-btn"
+              <button class="action-btn delete"
                 onclick="confirmDeleteCouncil({{ data.council.pk }}, '{{ data.council.name|escapejs }}', {{ data.member_count }})">
                 <i class="fas fa-trash"></i> Delete
               </button>
@@ -60,7 +359,12 @@
         </tr>
         {% empty %}
         <tr>
-          <td colspan="5" style="text-align: center; padding: 2rem;">No councils found.</td>
+          <td colspan="4">
+            <div class="empty-state">
+              <i class="fas fa-building"></i>
+              <p>No councils found. Add your first council!</p>
+            </div>
+          </td>
         </tr>
         {% endfor %}
       </tbody>
@@ -72,54 +376,53 @@
 <div id="addCouncilModal" class="modal">
   <div class="modal-content">
     <div class="modal-header">
-      <h3>Add New Council</h3>
-      <span class="close" onclick="closeAddCouncilModal()">&times;</span>
+      <h3><i class="fas fa-plus-circle"></i> Add New Council</h3>
+      <button class="modal-close" onclick="closeAddCouncilModal()">&times;</button>
     </div>
     <form method="POST" action="{% url 'add_council' %}">
       {% csrf_token %}
-      <div class="modal-event-details-grid">
-        <div class="modal-detail-item full-width">
-          <label for="council_name"><strong>Council Name:</strong></label>
-          <input type="text" id="council_name" name="council_name" class="form-input" required>
-        </div>
-        <div class="modal-detail-item full-width">
-          <label for="add_province"><strong>Province:</strong></label>
-          <select id="add_province" name="location_province" class="form-select" onchange="loadAddCities()">
-            <option value="">-- Select Province --</option>
-            <option value="Batangas">Batangas</option>
-            <option value="Cavite">Cavite</option>
-            <option value="Laguna">Laguna</option>
-            <option value="Quezon">Quezon</option>
-            <option value="Rizal">Rizal</option>
-          </select>
-        </div>
-        <div class="modal-detail-item">
-          <label for="add_city"><strong>City/Municipality:</strong></label>
-          <select id="add_city" name="location_city" class="form-select"
-            onchange="loadAddBarangays(); updateAddZipCode()" disabled>
-            <option value="">-- Select City --</option>
-          </select>
-        </div>
-        <div class="modal-detail-item">
-          <label for="add_barangay"><strong>Barangay:</strong></label>
-          <select id="add_barangay" name="location_barangay" class="form-select" disabled>
-            <option value="">-- Select Barangay --</option>
-          </select>
-        </div>
-        <div class="modal-detail-item">
-          <label for="add_zip_code"><strong>ZIP Code:</strong></label>
-          <input type="text" id="add_zip_code" name="location_zip_code" class="form-input"
-            placeholder="ZIP Code (auto-filled)" readonly>
-        </div>
-        <div class="modal-detail-item full-width">
-          <label for="location_street"><strong>Street Address:</strong></label>
-          <input type="text" id="location_street" name="location_street" class="form-input"
-            placeholder="Street address (optional)">
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label for="council_name">Council Name</label>
+            <input type="text" id="council_name" name="council_name" placeholder="Enter council name" required>
+          </div>
+          <div class="form-group full-width">
+            <label for="add_province">Province</label>
+            <select id="add_province" name="location_province" onchange="loadAddCities()">
+              <option value="">-- Select Province --</option>
+              <option value="Batangas">Batangas</option>
+              <option value="Cavite">Cavite</option>
+              <option value="Laguna">Laguna</option>
+              <option value="Quezon">Quezon</option>
+              <option value="Rizal">Rizal</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="add_city">City/Municipality</label>
+            <select id="add_city" name="location_city" onchange="loadAddBarangays(); updateAddZipCode()" disabled>
+              <option value="">-- Select City --</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="add_barangay">Barangay</label>
+            <select id="add_barangay" name="location_barangay" disabled>
+              <option value="">-- Select Barangay --</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="add_zip_code">ZIP Code</label>
+            <input type="text" id="add_zip_code" name="location_zip_code" placeholder="Auto-filled" readonly>
+          </div>
+          <div class="form-group">
+            <label for="location_street">Street Address</label>
+            <input type="text" id="location_street" name="location_street" placeholder="Street (optional)">
+          </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="secondary-btn" onclick="closeAddCouncilModal()">Cancel</button>
-        <button type="submit" class="secondary-btn">Add Council</button>
+        <button type="button" class="btn btn--ghost" onclick="closeAddCouncilModal()">Cancel</button>
+        <button type="submit" class="btn btn--primary">Add Council</button>
       </div>
     </form>
   </div>
@@ -129,54 +432,53 @@
 <div id="editCouncilModal" class="modal">
   <div class="modal-content">
     <div class="modal-header">
-      <h3>Edit Council</h3>
-      <span class="close" onclick="closeEditCouncilModal()">&times;</span>
+      <h3><i class="fas fa-edit"></i> Edit Council</h3>
+      <button class="modal-close" onclick="closeEditCouncilModal()">&times;</button>
     </div>
     <form method="POST" id="editCouncilForm">
       {% csrf_token %}
-      <div class="modal-event-details-grid">
-        <div class="modal-detail-item full-width">
-          <label for="edit_council_name"><strong>Council Name:</strong></label>
-          <input type="text" id="edit_council_name" name="council_name" class="form-input" required>
-        </div>
-        <div class="modal-detail-item full-width">
-          <label for="edit_province"><strong>Province:</strong></label>
-          <select id="edit_province" name="location_province" class="form-select" onchange="loadEditCities()">
-            <option value="">-- Select Province --</option>
-            <option value="Batangas">Batangas</option>
-            <option value="Cavite">Cavite</option>
-            <option value="Laguna">Laguna</option>
-            <option value="Quezon">Quezon</option>
-            <option value="Rizal">Rizal</option>
-          </select>
-        </div>
-        <div class="modal-detail-item">
-          <label for="edit_city"><strong>City/Municipality:</strong></label>
-          <select id="edit_city" name="location_city" class="form-select"
-            onchange="loadEditBarangays(); updateEditZipCode()" disabled>
-            <option value="">-- Select City --</option>
-          </select>
-        </div>
-        <div class="modal-detail-item">
-          <label for="edit_barangay"><strong>Barangay:</strong></label>
-          <select id="edit_barangay" name="location_barangay" class="form-select" disabled>
-            <option value="">-- Select Barangay --</option>
-          </select>
-        </div>
-        <div class="modal-detail-item">
-          <label for="edit_zip_code"><strong>ZIP Code:</strong></label>
-          <input type="text" id="edit_zip_code" name="location_zip_code" class="form-input"
-            placeholder="ZIP Code (auto-filled)" readonly>
-        </div>
-        <div class="modal-detail-item full-width">
-          <label for="edit_location_street"><strong>Street Address:</strong></label>
-          <input type="text" id="edit_location_street" name="location_street" class="form-input"
-            placeholder="Street address (optional)">
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label for="edit_council_name">Council Name</label>
+            <input type="text" id="edit_council_name" name="council_name" required>
+          </div>
+          <div class="form-group full-width">
+            <label for="edit_province">Province</label>
+            <select id="edit_province" name="location_province" onchange="loadEditCities()">
+              <option value="">-- Select Province --</option>
+              <option value="Batangas">Batangas</option>
+              <option value="Cavite">Cavite</option>
+              <option value="Laguna">Laguna</option>
+              <option value="Quezon">Quezon</option>
+              <option value="Rizal">Rizal</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="edit_city">City/Municipality</label>
+            <select id="edit_city" name="location_city" onchange="loadEditBarangays(); updateEditZipCode()" disabled>
+              <option value="">-- Select City --</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="edit_barangay">Barangay</label>
+            <select id="edit_barangay" name="location_barangay" disabled>
+              <option value="">-- Select Barangay --</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="edit_zip_code">ZIP Code</label>
+            <input type="text" id="edit_zip_code" name="location_zip_code" readonly>
+          </div>
+          <div class="form-group">
+            <label for="edit_location_street">Street Address</label>
+            <input type="text" id="edit_location_street" name="location_street" placeholder="Street (optional)">
+          </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="secondary-btn" onclick="closeEditCouncilModal()">Cancel</button>
-        <button type="submit" class="secondary-btn">Update Council</button>
+        <button type="button" class="btn btn--ghost" onclick="closeEditCouncilModal()">Cancel</button>
+        <button type="submit" class="btn btn--primary">Update Council</button>
       </div>
     </form>
   </div>
@@ -186,371 +488,259 @@
 <div id="deleteCouncilModal" class="modal">
   <div class="modal-content">
     <div class="modal-header">
-      <h3>Confirm Delete</h3>
-      <span class="close" onclick="closeDeleteCouncilModal()">&times;</span>
+      <h3><i class="fas fa-exclamation-triangle" style="color: var(--error-500);"></i> Confirm Delete</h3>
+      <button class="modal-close" onclick="closeDeleteCouncilModal()">&times;</button>
     </div>
-    <div id="deleteCouncilContent">
+    <div class="modal-body" id="deleteCouncilContent">
       <p>Are you sure you want to delete this council?</p>
     </div>
     <div class="modal-footer">
-      <button type="button" class="secondary-btn" onclick="closeDeleteCouncilModal()">Cancel</button>
+      <button type="button" class="btn btn--ghost" onclick="closeDeleteCouncilModal()">Cancel</button>
       <form method="POST" id="deleteCouncilForm" style="display: inline;">
         {% csrf_token %}
-        <button type="submit" class="secondary-btn">Delete</button>
+        <button type="submit" class="btn btn--error">Delete</button>
       </form>
     </div>
   </div>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    // Make notification messages disappear after 5 seconds
-    const alerts = document.querySelectorAll('.alert');
-    if (alerts.length > 0) {
-      setTimeout(function () {
-        alerts.forEach(function (alert) {
-          alert.style.transition = 'opacity 1s ease';
-          alert.style.opacity = '0';
-          setTimeout(function () {
-            alert.style.display = 'none';
-          }, 1000);
-        });
-      }, 5000);
-    }
-
-    // Search functionality
-    const searchInput = document.getElementById('councilSearchInput');
-    searchInput.addEventListener('input', function () {
-      const searchTerm = this.value.toLowerCase();
-      const rows = document.querySelectorAll('.event-table tbody tr');
-
-      rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        row.style.display = text.includes(searchTerm) ? '' : 'none';
-      });
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('councilSearchInput');
+  searchInput.addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const rows = document.querySelectorAll('.councils-table tbody tr');
+    rows.forEach(row => {
+      const text = row.textContent.toLowerCase();
+      row.style.display = text.includes(searchTerm) ? '' : 'none';
     });
   });
+});
 
-  // Add Council Modal Functions
-  function openAddCouncilModal() {
-    const modal = document.getElementById('addCouncilModal');
-    modal.style.display = 'flex';
-    modal.classList.add('show');
-  }
+function openAddCouncilModal() {
+  const modal = document.getElementById('addCouncilModal');
+  modal.style.display = 'flex';
+  modal.classList.add('show');
+}
 
-  function closeAddCouncilModal() {
-    const modal = document.getElementById('addCouncilModal');
-    modal.classList.remove('show');
+function closeAddCouncilModal() {
+  const modal = document.getElementById('addCouncilModal');
+  modal.classList.remove('show');
+  setTimeout(() => modal.style.display = 'none', 300);
+}
+
+function openEditCouncilModal(councilId, councilName, locationStreet, locationBarangay, locationCity, locationProvince, locationZipCode) {
+  const modal = document.getElementById('editCouncilModal');
+  const form = document.getElementById('editCouncilForm');
+
+  form.action = `/edit-council/${councilId}/`;
+  document.getElementById('edit_council_name').value = councilName;
+  document.getElementById('edit_location_street').value = locationStreet || '';
+
+  const provinceSelect = document.getElementById('edit_province');
+  provinceSelect.value = locationProvince || '';
+
+  if (locationProvince) {
+    loadEditCities();
     setTimeout(() => {
-      modal.style.display = 'none';
-    }, 300);
+      document.getElementById('edit_city').value = locationCity || '';
+      if (locationCity) {
+        loadEditBarangays();
+        setTimeout(() => {
+          document.getElementById('edit_barangay').value = locationBarangay || '';
+          updateEditZipCode();
+        }, 100);
+      }
+    }, 100);
   }
 
-  // Edit Council Modal Functions
-  function openEditCouncilModal(councilId, councilName, locationStreet, locationBarangay, locationCity, locationProvince, locationZipCode) {
-    const modal = document.getElementById('editCouncilModal');
-    const form = document.getElementById('editCouncilForm');
+  modal.style.display = 'flex';
+  modal.classList.add('show');
+}
 
-    // Set form action
-    form.action = `/edit-council/${councilId}/`;
+function closeEditCouncilModal() {
+  const modal = document.getElementById('editCouncilModal');
+  modal.classList.remove('show');
+  setTimeout(() => modal.style.display = 'none', 300);
+}
 
-    // Populate form fields
-    document.getElementById('edit_council_name').value = councilName;
-    document.getElementById('edit_location_street').value = locationStreet || '';
+function confirmDeleteCouncil(councilId, councilName, memberCount) {
+  const modal = document.getElementById('deleteCouncilModal');
+  const content = document.getElementById('deleteCouncilContent');
+  const form = document.getElementById('deleteCouncilForm');
 
-    // Set province and trigger city/barangay updates
-    const provinceSelect = document.getElementById('edit_province');
-    const citySelect = document.getElementById('edit_city');
-    const barangaySelect = document.getElementById('edit_barangay');
-    const zipCodeInput = document.getElementById('edit_zip_code');
-
-    provinceSelect.value = locationProvince || '';
-
-    if (locationProvince) {
-      // Update city dropdown
-      loadEditCities();
-
-      // Use setTimeout to ensure city dropdown is populated before setting city
-      setTimeout(() => {
-        citySelect.value = locationCity || '';
-
-        if (locationCity) {
-          // Update barangay dropdown
-          loadEditBarangays();
-
-          // Use setTimeout to ensure barangay dropdown is populated before setting barangay
-          setTimeout(() => {
-            barangaySelect.value = locationBarangay || '';
-            updateEditZipCode();
-          }, 100);
-        } else {
-          zipCodeInput.value = locationZipCode || '';
-        }
-      }, 100);
-    } else {
-      zipCodeInput.value = '';
-    }
-
-    modal.style.display = 'flex';
-    modal.classList.add('show');
+  if (memberCount > 0) {
+    content.innerHTML = `
+      <div class="warning-message">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p>Cannot delete "<strong>${councilName}</strong>" because it has <strong>${memberCount}</strong> active member(s).</p>
+        <p style="margin-top: var(--space-2); font-size: var(--text-sm);">Please reassign members to another council first.</p>
+      </div>
+    `;
+    form.style.display = 'none';
+  } else {
+    content.innerHTML = `
+      <p>Are you sure you want to delete "<strong>${councilName}</strong>"?</p>
+      <p class="warning-text">This action cannot be undone.</p>
+    `;
+    form.action = `/delete-council/${councilId}/`;
+    form.style.display = 'inline';
   }
 
-  function closeEditCouncilModal() {
-    const modal = document.getElementById('editCouncilModal');
-    modal.classList.remove('show');
-    setTimeout(() => {
-      modal.style.display = 'none';
-    }, 300);
+  modal.style.display = 'flex';
+  modal.classList.add('show');
+}
+
+function closeDeleteCouncilModal() {
+  const modal = document.getElementById('deleteCouncilModal');
+  modal.classList.remove('show');
+  setTimeout(() => modal.style.display = 'none', 300);
+}
+
+window.addEventListener('click', function(event) {
+  if (event.target.classList.contains('modal')) {
+    event.target.classList.remove('show');
+    setTimeout(() => event.target.style.display = 'none', 300);
   }
+});
 
-  // Delete Council Modal Functions
-  function confirmDeleteCouncil(councilId, councilName, memberCount) {
-    const modal = document.getElementById('deleteCouncilModal');
-    const content = document.getElementById('deleteCouncilContent');
-    const form = document.getElementById('deleteCouncilForm');
-
-    if (memberCount > 0) {
-      content.innerHTML = `
-                <div class="warning-message">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <p>Cannot delete council "<strong>${councilName}</strong>" because it has <strong>${memberCount}</strong> active member(s).</p>
-                    <p>Please reassign members to another council before deleting.</p>
-                </div>
-            `;
-      form.style.display = 'none';
-    } else {
-      content.innerHTML = `
-                <p>Are you sure you want to delete council "<strong>${councilName}</strong>"?</p>
-                <p class="warning-text">This action cannot be undone.</p>
-            `;
-      form.action = `/delete-council/${councilId}/`;
-      form.style.display = 'inline';
-    }
-
-    modal.style.display = 'flex';
-    modal.classList.add('show');
+// CALABARZON Location Data
+const locationData = {
+  "Batangas": {
+    "Batangas City": { "zip": "4200", "barangays": ["Alangilan", "Balagtas", "Balete", "Banaba Center", "Bilogo", "Bolbok", "Bukal", "Calicanto", "Concepcion", "Cuta", "Dalig", "Dumantay"] },
+    "Lipa City": { "zip": "4217", "barangays": ["Adya", "Anilao", "Balele", "Bolbok", "Canlubang", "Halang", "Marauoy", "Mataas Na Lupa", "Poblacion"] },
+    "Tanauan City": { "zip": "4232", "barangays": ["Altura Bata", "Ambulong", "Boot", "Cale", "Darasa", "Gonzales", "Laurel", "Mabini", "Natatas", "Poblacion"] }
+  },
+  "Cavite": {
+    "Bacoor": { "zip": "4102", "barangays": ["Alima", "Aniban I", "Bayanan", "Habay I", "Mabolo I", "Molino I", "Niog I", "Salinas I", "Talaba I", "Zapote I"] },
+    "Dasmariñas": { "zip": "4114", "barangays": ["Burol I", "Langkaan I", "Paliparan I", "Sabang", "Salawag", "Salitran I", "San Agustin I", "San Jose", "Santa Fe"] },
+    "Tagaytay": { "zip": "4120", "barangays": ["Asisan", "Bagong Tubig", "Francisco", "Iruhin East", "Kaybagal", "Maharlika", "Neogan", "San Jose", "Sungay"] }
+  },
+  "Laguna": {
+    "Calamba": { "zip": "4027", "barangays": ["Bagong Kalsada", "Banadero", "Canlubang", "Halang", "Makiling", "Mayapa", "Pansol", "Real", "Turbina"] },
+    "San Pablo": { "zip": "4000", "barangays": ["Concepcion", "Dolores", "San Antonio", "San Jose", "San Lucas", "San Roque", "Santa Cruz", "Santo Niño"] },
+    "Santa Rosa": { "zip": "4026", "barangays": ["Aplaya", "Balibago", "Dila", "Ibaba", "Macabling", "Market Area", "Santo Domingo", "Tagapo"] }
+  },
+  "Quezon": {
+    "Lucena": { "zip": "4301", "barangays": ["Barangay 1", "Barra", "Cotta", "Dalahican", "Ibabang Dupay", "Isabang", "Market View", "Ransohan"] },
+    "Tayabas": { "zip": "4327", "barangays": ["Alitao", "Angeles", "Baguio", "Calumpang", "Gibanga", "Poblacion", "San Diego", "Tamlong"] }
+  },
+  "Rizal": {
+    "Antipolo": { "zip": "1870", "barangays": ["Beverly Hills", "Cupang", "Dela Paz", "Mambugan", "Mayamot", "San Isidro", "San Jose", "San Roque"] },
+    "Cainta": { "zip": "1900", "barangays": ["San Andres", "San Isidro", "San Juan", "San Roque", "Santa Rosa", "Santo Domingo", "Santo Niño"] },
+    "Taytay": { "zip": "1920", "barangays": ["Dolores", "Muzon", "San Isidro", "San Juan", "Santa Ana", "Tatlong Kawayan"] }
   }
+};
 
-  function closeDeleteCouncilModal() {
-    const modal = document.getElementById('deleteCouncilModal');
-    modal.classList.remove('show');
-    setTimeout(() => {
-      modal.style.display = 'none';
-    }, 300);
-  }
+function loadAddCities() {
+  const province = document.getElementById('add_province').value;
+  const citySelect = document.getElementById('add_city');
+  const barangaySelect = document.getElementById('add_barangay');
 
-  // Close modals when clicking outside
-  window.addEventListener('click', function (event) {
-    const addModal = document.getElementById('addCouncilModal');
-    const editModal = document.getElementById('editCouncilModal');
-    const deleteModal = document.getElementById('deleteCouncilModal');
+  citySelect.innerHTML = '<option value="">-- Select City --</option>';
+  barangaySelect.innerHTML = '<option value="">-- Select Barangay --</option>';
+  barangaySelect.disabled = true;
 
-    if (event.target === addModal) {
-      closeAddCouncilModal();
-    } else if (event.target === editModal) {
-      closeEditCouncilModal();
-    } else if (event.target === deleteModal) {
-      closeDeleteCouncilModal();
-    }
-  });
-
-  // CALABARZON Location Data (same as add_event.html)
-  const locationData = {
-    "Batangas": {
-      "Batangas City": { "zip": "4200", "barangays": ["Alangilan", "Balagtas", "Balete", "Banaba Center", "Banaba East", "Banaba West", "Barangay 1", "Barangay 2", "Barangay 3", "Barangay 4", "Barangay 5", "Barangay 6", "Barangay 7", "Barangay 8", "Barangay 9", "Barangay 10", "Barangay 11", "Barangay 12", "Barangay 13", "Barangay 14", "Barangay 15", "Barangay 16", "Barangay 17", "Barangay 18", "Barangay 19", "Barangay 20", "Barangay 21", "Barangay 22", "Barangay 23", "Barangay 24", "Bilogo", "Bolbok", "Bukal", "Calicanto", "Concepcion", "Conde Itaas", "Conde Labac", "Cuta", "Dalig", "Dela Paz", "Dela Paz Pulot Aplaya", "Dela Paz Pulot Itaas", "Dumantay", "Dumuclay", "Gulod Itaas", "Gulod Labac", "Haligue Kanluran", "Haligue Silangan", "Ilijan", "Kumintang Ibaba", "Kumintang Ilaya", "Libjo", "Liponpon", "Maapas", "Mahabang Dahilig", "Mahabang Parang", "Mahacot Silangan", "Mahacot Kanluran", "Malibayo", "Malitam", "Maruclap", "Mabacong", "Pagkilatan", "Paharang Kanluran", "Paharang Silangan", "Pallocan Kanluran", "Pallocan Silangan", "Pinamucan", "Pinamucan Ibaba", "Pinamucan Silangan", "Sampaga", "San Agapito", "San Agustin", "San Andres", "San Isidro", "San Jose", "San Pedro", "Santa Clara", "Santa Rita Aplaya", "Santa Rita Karsada", "Santo Domingo", "Santo Niño", "Simlong", "Sirang Lupa", "Sorosoro Ibaba", "Sorosoro Ilaya", "Sorosoro Karsada", "Tabangao Aplaya", "Tabangao Ambulong", "Tabangao Dao", "Talahib Pandayan", "Talahib Payapa", "Talumpok Kanluran", "Talumpok Silangan", "Tinga Itaas", "Tinga Labac", "Tulo"] },
-      "Lipa City": { "zip": "4217", "barangays": ["Adya", "Anilao", "Anilao-Labac", "Antipolo Del Norte", "Antipolo Del Sur", "Bagong Pook", "Balele", "Balintawak", "Banay-banay", "Bolbok", "Bugtong na Pulo", "Bulacnin", "Bulaklakan", "Calamias", "Cumba", "Dagatan", "Duhatan", "Halang", "Inosloban", "Kayumanggi", "Labac", "Latag", "Lodlod", "Lumbang", "Mabini", "Malagonlong", "Malitlit", "Marauoy", "Mataas Na Lupa", "Munting Pulo", "Pagolingin Bata", "Pagolingin East", "Pagolingin West", "Pangao", "Pinagkawitan", "Pinagtongulan", "Plaridel", "Poblacion Barangay 1", "Poblacion Barangay 2", "Poblacion Barangay 3", "Poblacion Barangay 4", "Poblacion Barangay 5", "Poblacion Barangay 6", "Poblacion Barangay 7", "Poblacion Barangay 8", "Poblacion Barangay 9", "Poblacion Barangay 9-A", "Poblacion Barangay 10", "Poblacion Barangay 11", "Poblacion Barangay 12", "Pusil", "Quezon", "Rizal", "Sabang", "Sampaguita", "San Benito", "San Carlos", "San Celestino", "San Francisco", "San Guillermo", "San Jose", "San Lucas", "San Salvador", "San Sebastian", "Santo Niño", "Santo Toribio", "Sapac", "Sico", "Talisay", "Tambo", "Tangob", "Tanguay", "Tibig", "Tipacan"] },
-      "Tanauan City": { "zip": "4232", "barangays": ["Altura Bata", "Altura Matanda", "Altura-South", "Ambulong", "Bagbag", "Bagumbayan", "Balele", "Banjo East", "Banjo Laurel", "Banjo West", "Barangay 1", "Barangay 2", "Barangay 3", "Barangay 4", "Barangay 5", "Barangay 6", "Barangay 7", "Bilog-Bilog", "Boot", "Cale", "Darasa", "Gonzales", "Janopol", "Janopol Oriental", "Laurel", "Luyos", "Mabini", "Malaking Pulo", "Maria Paz", "Maugat", "Montaña", "Natatas", "Pagaspas", "Pantay Bata", "Pantay Matanda", "Poblacion Barangay 1", "Poblacion Barangay 2", "Poblacion Barangay 3", "Poblacion Barangay 4", "Poblacion Barangay 5", "Poblacion Barangay 6", "Poblacion Barangay 7", "Sala", "Sambat", "San Jose", "Santol", "Santor", "Sulpoc", "Suplang", "Talaga", "Tinurik", "Trapiche", "Ulango", "Wawa"] }
-    },
-    "Cavite": {
-      "Bacoor": { "zip": "4102", "barangays": ["Alima", "Aniban I", "Aniban II", "Aniban III", "Aniban IV", "Aniban V", "Banalo", "Bayanan", "Campo Santo", "Daang Bukid", "Digman", "Dulong Bayan", "Habay I", "Habay II", "Kaingin", "Ligas I", "Ligas II", "Ligas III", "Mabolo I", "Mabolo II", "Mabolo III", "Maliksi I", "Maliksi II", "Maliksi III", "Mambog I", "Mambog II", "Mambog III", "Mambog IV", "Mambog V", "Molino I", "Molino II", "Molino III", "Molino IV", "Molino V", "Molino VI", "Molino VII", "Niog I", "Niog II", "Niog III", "P.F. Espiritu I (Panapaan I)", "P.F. Espiritu II (Panapaan II)", "P.F. Espiritu III (Panapaan III)", "P.F. Espiritu IV (Panapaan IV)", "P.F. Espiritu V (Panapaan V)", "P.F. Espiritu VI (Panapaan VI)", "P.F. Espiritu VII (Panapaan VII)", "P.F. Espiritu VIII (Panapaan VIII)", "Queens Row Central", "Queens Row East", "Queens Row West", "Real I", "Real II", "Salinas I", "Salinas II", "Salinas III", "Salinas IV", "San Nicolas I", "San Nicolas II", "San Nicolas III", "Sineguelasan", "Talaba I", "Talaba II", "Talaba III", "Talaba IV", "Talaba V", "Talaba VI", "Talaba VII", "Tabing Dagat", "Zapote I", "Zapote II", "Zapote III", "Zapote IV", "Zapote V"] },
-      "Dasmariñas": { "zip": "4114", "barangays": ["Burol I", "Burol II", "Burol III", "Burol Main", "Datu Esmael (Bago-A-Ingud)", "Emmanuel Bergado I (Langkaan I)", "Emmanuel Bergado II (Langkaan II)", "H-2 (Pala-Pala)", "Paliparan I", "Paliparan II", "Paliparan III", "Sabang", "Salawag", "Salitran I", "Salitran II", "Salitran III", "Salitran IV", "Sampaloc I", "Sampaloc II", "Sampaloc III", "Sampaloc IV", "San Agustin I", "San Agustin II", "San Agustin III", "San Andres I", "San Andres II", "San Esteban", "San Isidro Labrador I", "San Isidro Labrador II", "San Jose", "San Luis I", "San Luis II", "San Miguel I", "San Miguel II", "San Simon", "Santa Cristina I", "Santa Cristina II", "Santa Fe", "Victoria Reyes", "Zone I", "Zone I-A", "Zone II", "Zone III", "Zone IV", "Zone IV-A"] },
-      "Tagaytay": { "zip": "4120", "barangays": ["Asisan", "Bagong Tubig", "Dapdap East", "Dapdap West", "Francisco", "Guinhawa South", "Iruhin East", "Iruhin South", "Iruhin West", "Kaybagal Central", "Kaybagal East", "Kaybagal North", "Kaybagal South", "Maharlika East", "Maharlika West", "Maitim II Central", "Maitim II East", "Maitim II West", "Mendez Crossing East", "Mendez Crossing West", "Neogan", "Patutong Malaki North", "Patutong Malaki South", "Sambong", "San Jose", "Silang Junction North", "Silang Junction South", "Sungay East", "Sungay West", "Tolentino East", "Tolentino West", "Zambal"] }
-    },
-    "Laguna": {
-      "Calamba": { "zip": "4027", "barangays": ["Bagong Kalsada", "Banadero", "Banlic", "Barandal", "Batino", "Bubuyan", "Bucal", "Bunggo", "Burol", "Camaligan", "Canlubang", "Halang", "Hornalan", "Kay-Anlog", "La Mesa", "Laguerta", "Lawa", "Lecheria", "Lingga", "Looc", "Mabato", "Majada Labas", "Makiling", "Mapagong", "Masili", "Maunong", "Mayapa", "Milagrosa", "Paciano Rizal", "Palingon", "Palo-Alto", "Pansol", "Parian", "Prinza", "Punta", "Puting Lupa", "Real", "Saimsim", "Sampiruhan", "San Cristobal", "San Jose", "San Juan", "Sirang Lupa", "Sucol", "Tulo", "Turbina", "Ulango", "Uwisan", "Barangay 1", "Barangay 2", "Barangay 3", "Barangay 4", "Barangay 5", "Barangay 6", "Barangay 7"] },
-      "San Pablo": { "zip": "4000", "barangays": ["Atisan", "Bagong Pook", "Bautista", "Concepcion", "Del Remedio", "Dolores", "Estrella", "Ilayang Bayan", "Libertad", "Malinaw", "Pila", "Rizal", "San Antonio 1", "San Antonio 2", "San Bartolome", "San Buenaventura", "San Crispin", "San Cristobal", "San Diego", "San Francisco", "San Gabriel", "San Gregorio", "San Ignacio", "San Isidro", "San Joaquin", "San Jose", "San Juan", "San Lorenzo", "San Lucas 1", "San Lucas 2", "San Marcos", "San Mateo", "San Miguel", "San Nicolas", "San Pedro", "San Rafael", "San Roque", "San Vicente", "Santa Ana", "Santa Catalina", "Santa Cruz", "Santa Elena", "Santa Felomina", "Santa Filomena", "Santa Isabel", "Santa Maria", "Santa Maria Magdalena", "Santa Monica", "Santa Veronica", "Santiago I", "Santiago II", "Santo Angel", "Santo Cristo", "Santo Niño", "Santisimo Rosario", "Soledad", "Timugan", "VII-A", "VII-B", "VII-C", "VII-D", "VII-E"] },
-      "Santa Rosa": { "zip": "4026", "barangays": ["Aplaya", "Balibago", "Caingin", "Dila", "Dita", "Don Jose", "Ibaba", "Kanluran", "Labas", "Macabling", "Malitlit", "Malusak", "Market Area", "Pooc", "Pulong Santa Cruz", "Santo Domingo", "Sinalhan", "Tagapo"] }
-    },
-    "Quezon": {
-      "Lucena": { "zip": "4301", "barangays": ["Barangay 1", "Barangay 2", "Barangay 3", "Barangay 4", "Barangay 5", "Barangay 6", "Barangay 7", "Barangay 8", "Barangay 9", "Barangay 10", "Barangay 11", "Barra", "Cotta", "Dalahican", "Domoit", "Gulang-Gulang", "Ibabang Dupay", "Ibabang Iyam", "Ibabang Talim", "Ilayang Dupay", "Ilayang Iyam", "Ilayang Talim", "Isabang", "Mayao Crossing", "Mayao Kanluran", "Mayao Parada", "Mayao Silangan", "Market View", "Ransohan", "Salinas", "Silangang Mayao", "Talao-Talao"] },
-      "Tayabas": { "zip": "4327", "barangays": ["Alitao", "Angeles", "Arias", "Ayaas", "Baguio", "Bangyas", "Calumpang", "Camaysa", "Dapdap", "Domoit Kanluran", "Domoit Silangan", "Gibanga", "Ilasan", "Ipilan", "Isabang", "Katigan", "Kinatihan I", "Kinatihan II", "Lakawan", "Lalo", "Lawigue", "Lita", "Malaoa", "Mate", "Mayabobo", "Nangkaan", "Opias", "Palola", "Pook", "Potol", "San Diego", "San Isidro", "San Roque", "Silangang Katigan", "Talolong", "Tamlong", "Tongko"] },
-      "Agdangan": { "zip": "4304", "barangays": ["Binagbag", "Dayap", "Ibabang Kinagunan", "Ilayang Kinagunan", "Kanluran Calutan", "Magsaysay", "Poblacion", "Salvacion", "Silangang Calutan", "Sildora"] },
-      "Alabat": { "zip": "4333", "barangays": ["Angeles", "Bacong", "Balungay", "Buenavista", "Camagong", "Gordon", "Pambilan", "Villa Norte", "Villa Sur"] },
-      "Atimonan": { "zip": "4331", "barangays": ["Balubad", "Balugohin", "Barangay Zone 1 (Pob.)", "Barangay Zone 2 (Pob.)", "Barangay Zone 3 (Pob.)", "Barangay Zone 4 (Pob.)", "Buhangin", "Caridad Ilaya", "Caridad Ibaba", "Habingan", "Inaclagan", "Kilait", "Kulawit", "Lakip", "Lubi", "Lumutan", "Malinao Ibaba", "Malinao Ilaya", "Malusak", "Manggalayan Labak", "Manggalayan Tagpuan", "Maypulot", "Ponon", "San Andres", "San Isidro", "San Jose Balatok", "San Rafael", "Santa Catalina", "Tagbakin", "Talaba"] },
-      "Candelaria": { "zip": "4323", "barangays": ["Buenavista", "Bukal Norte", "Bukal Sur", "Dayap", "Kinatihan I", "Kinatihan II", "Malabanban Norte", "Malabanban Sur", "Mangilag Norte", "Mangilag Sur", "Masalukot I", "Masalukot II", "Masalukot III", "Masalukot IV", "Masalukot V", "Masin Norte", "Masin Sur", "Mayabobo", "Pahinga Norte", "Pahinga Sur", "Poblacion", "San Andres", "San Isidro", "Santa Catalina Norte", "Santa Catalina Sur", "Taguan"] },
-      "Sariaya": { "zip": "4322", "barangays": ["Balugo", "Bignay I", "Bignay II", "Castillas", "Concepcion I", "Concepcion II", "Cuyaoyao", "Guis-Guis Talon", "Guis-Guis San Jose", "Janagdong I", "Janagdong II", "Limbon", "Lutucan I", "Lutucan II", "Mamala I", "Mamala II", "Manggalang I", "Manggalang II", "Montecillo", "Morong", "Pili", "Poblacion I", "Poblacion II", "Poblacion III", "Poblacion IV", "Poblacion V", "Sampaloc I", "Sampaloc II", "Sampaloc III", "Sampaloc IV", "San Andres", "San Roque", "Tala", "Tumbaga I", "Tumbaga II", "Talaan I", "Talaan II"] },
-      "Tiaong": { "zip": "4325", "barangays": ["Anastacio", "Ayusan I", "Ayusan II", "Behia", "Bukal", "Cabatang", "Cabay", "Del Rosario", "Lagalag", "Lalig", "Lusacan", "Paiisa", "Palagaran", "Poblacion I", "Poblacion II", "Poblacion III", "Poblacion IV", "Quipot", "San Francisco", "San Jose", "San Juan", "San Pedro", "Talisay", "Tamisian"] }
-    },
-    "Rizal": {
-      "Antipolo": { "zip": "1870", "barangays": ["Bagong Nayon", "Beverly Hills", "Calawis", "Cupang", "Dalig", "Dela Paz", "Inarawan", "Mambugan", "Mayamot", "Muntindilaw", "San Isidro", "San Jose", "San Juan", "San Luis", "San Roque", "Santa Cruz"] },
-      "Cainta": { "zip": "1900", "barangays": ["San Andres", "San Isidro", "San Juan", "San Roque", "Santa Rosa", "Santo Domingo", "Santo Niño"] },
-      "Taytay": { "zip": "1920", "barangays": ["Dolores", "Muzon", "San Isidro", "San Juan", "Santa Ana", "Tatlong Kawayan"] }
-    }
-  };
-
-  // Add Council Modal - Load Cities
-  function loadAddCities() {
-    const provinceSelect = document.getElementById('add_province');
-    const citySelect = document.getElementById('add_city');
-    const barangaySelect = document.getElementById('add_barangay');
-
-    // Reset city dropdown
-    citySelect.innerHTML = '<option value="">-- Select City --</option>';
+  if (province && locationData[province]) {
     citySelect.disabled = false;
-
-    // Reset barangay dropdown
-    barangaySelect.innerHTML = '<option value="">-- Select Barangay --</option>';
-    barangaySelect.disabled = true;
-
-    const selectedProvince = provinceSelect.value;
-
-    // If a province is selected, populate cities
-    if (selectedProvince && locationData[selectedProvince]) {
-      const cities = Object.keys(locationData[selectedProvince]);
-
-      cities.forEach(city => {
-        const option = document.createElement('option');
-        option.value = city;
-        option.textContent = city;
-        citySelect.appendChild(option);
-      });
-    }
+    Object.keys(locationData[province]).forEach(city => {
+      const option = document.createElement('option');
+      option.value = city;
+      option.textContent = city;
+      citySelect.appendChild(option);
+    });
+  } else {
+    citySelect.disabled = true;
   }
+}
 
-  // Add Council Modal - Load Barangays
-  function loadAddBarangays() {
-    const provinceSelect = document.getElementById('add_province');
-    const citySelect = document.getElementById('add_city');
-    const barangaySelect = document.getElementById('add_barangay');
+function loadAddBarangays() {
+  const province = document.getElementById('add_province').value;
+  const city = document.getElementById('add_city').value;
+  const barangaySelect = document.getElementById('add_barangay');
 
-    // Reset barangay dropdown
-    barangaySelect.innerHTML = '<option value="">-- Select Barangay --</option>';
+  barangaySelect.innerHTML = '<option value="">-- Select Barangay --</option>';
+
+  if (province && city && locationData[province] && locationData[province][city]) {
     barangaySelect.disabled = false;
-
-    const selectedProvince = provinceSelect.value;
-    const selectedCity = citySelect.value;
-
-    // If both province and city are selected, populate barangays
-    if (selectedProvince && selectedCity &&
-      locationData[selectedProvince] &&
-      locationData[selectedProvince][selectedCity]) {
-
-      const barangays = locationData[selectedProvince][selectedCity].barangays;
-
-      barangays.forEach(barangay => {
-        const option = document.createElement('option');
-        option.value = barangay;
-        option.textContent = barangay;
-        barangaySelect.appendChild(option);
-      });
-    }
+    locationData[province][city].barangays.forEach(brgy => {
+      const option = document.createElement('option');
+      option.value = brgy;
+      option.textContent = brgy;
+      barangaySelect.appendChild(option);
+    });
+  } else {
+    barangaySelect.disabled = true;
   }
+}
 
-  // Add Council Modal - Update ZIP Code
-  function updateAddZipCode() {
-    const provinceSelect = document.getElementById('add_province');
-    const citySelect = document.getElementById('add_city');
-    const zipCodeInput = document.getElementById('add_zip_code');
+function updateAddZipCode() {
+  const province = document.getElementById('add_province').value;
+  const city = document.getElementById('add_city').value;
+  const zipInput = document.getElementById('add_zip_code');
 
-    const selectedProvince = provinceSelect.value;
-    const selectedCity = citySelect.value;
-
-    if (selectedProvince && selectedCity &&
-      locationData[selectedProvince] &&
-      locationData[selectedProvince][selectedCity]) {
-
-      const zipCode = locationData[selectedProvince][selectedCity].zip;
-      if (zipCodeInput) {
-        zipCodeInput.value = zipCode;
-      }
-    } else {
-      if (zipCodeInput) {
-        zipCodeInput.value = '';
-      }
-    }
+  if (province && city && locationData[province] && locationData[province][city]) {
+    zipInput.value = locationData[province][city].zip;
+  } else {
+    zipInput.value = '';
   }
+}
 
-  // Edit Council Modal - Load Cities
-  function loadEditCities() {
-    const provinceSelect = document.getElementById('edit_province');
-    const citySelect = document.getElementById('edit_city');
-    const barangaySelect = document.getElementById('edit_barangay');
+function loadEditCities() {
+  const province = document.getElementById('edit_province').value;
+  const citySelect = document.getElementById('edit_city');
+  const barangaySelect = document.getElementById('edit_barangay');
 
-    // Reset city dropdown
-    citySelect.innerHTML = '<option value="">-- Select City --</option>';
+  citySelect.innerHTML = '<option value="">-- Select City --</option>';
+  barangaySelect.innerHTML = '<option value="">-- Select Barangay --</option>';
+  barangaySelect.disabled = true;
+
+  if (province && locationData[province]) {
     citySelect.disabled = false;
-
-    // Reset barangay dropdown
-    barangaySelect.innerHTML = '<option value="">-- Select Barangay --</option>';
-    barangaySelect.disabled = true;
-
-    const selectedProvince = provinceSelect.value;
-
-    // If a province is selected, populate cities
-    if (selectedProvince && locationData[selectedProvince]) {
-      const cities = Object.keys(locationData[selectedProvince]);
-
-      cities.forEach(city => {
-        const option = document.createElement('option');
-        option.value = city;
-        option.textContent = city;
-        citySelect.appendChild(option);
-      });
-    }
+    Object.keys(locationData[province]).forEach(city => {
+      const option = document.createElement('option');
+      option.value = city;
+      option.textContent = city;
+      citySelect.appendChild(option);
+    });
+  } else {
+    citySelect.disabled = true;
   }
+}
 
-  // Edit Council Modal - Load Barangays
-  function loadEditBarangays() {
-    const provinceSelect = document.getElementById('edit_province');
-    const citySelect = document.getElementById('edit_city');
-    const barangaySelect = document.getElementById('edit_barangay');
+function loadEditBarangays() {
+  const province = document.getElementById('edit_province').value;
+  const city = document.getElementById('edit_city').value;
+  const barangaySelect = document.getElementById('edit_barangay');
 
-    // Reset barangay dropdown
-    barangaySelect.innerHTML = '<option value="">-- Select Barangay --</option>';
+  barangaySelect.innerHTML = '<option value="">-- Select Barangay --</option>';
+
+  if (province && city && locationData[province] && locationData[province][city]) {
     barangaySelect.disabled = false;
-
-    const selectedProvince = provinceSelect.value;
-    const selectedCity = citySelect.value;
-
-    // If both province and city are selected, populate barangays
-    if (selectedProvince && selectedCity &&
-      locationData[selectedProvince] &&
-      locationData[selectedProvince][selectedCity]) {
-
-      const barangays = locationData[selectedProvince][selectedCity].barangays;
-
-      barangays.forEach(barangay => {
-        const option = document.createElement('option');
-        option.value = barangay;
-        option.textContent = barangay;
-        barangaySelect.appendChild(option);
-      });
-    }
+    locationData[province][city].barangays.forEach(brgy => {
+      const option = document.createElement('option');
+      option.value = brgy;
+      option.textContent = brgy;
+      barangaySelect.appendChild(option);
+    });
+  } else {
+    barangaySelect.disabled = true;
   }
+}
 
-  // Edit Council Modal - Update ZIP Code
-  function updateEditZipCode() {
-    const provinceSelect = document.getElementById('edit_province');
-    const citySelect = document.getElementById('edit_city');
-    const zipCodeInput = document.getElementById('edit_zip_code');
+function updateEditZipCode() {
+  const province = document.getElementById('edit_province').value;
+  const city = document.getElementById('edit_city').value;
+  const zipInput = document.getElementById('edit_zip_code');
 
-    const selectedProvince = provinceSelect.value;
-    const selectedCity = citySelect.value;
-
-    if (selectedProvince && selectedCity &&
-      locationData[selectedProvince] &&
-      locationData[selectedProvince][selectedCity]) {
-
-      const zipCode = locationData[selectedProvince][selectedCity].zip;
-      if (zipCodeInput) {
-        zipCodeInput.value = zipCode;
-      }
-    } else {
-      if (zipCodeInput) {
-        zipCodeInput.value = '';
-      }
-    }
+  if (province && city && locationData[province] && locationData[province][city]) {
+    zipInput.value = locationData[province][city].zip;
+  } else {
+    zipInput.value = '';
   }
+}
 </script>
-
 {% endblock %}

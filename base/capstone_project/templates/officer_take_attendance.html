@@ -2,88 +2,243 @@
 {% load static %}
 {% block title %}Take Attendance{% endblock %}
 {% block page_title %}Take Attendance{% endblock %}
-{% block page_subtitle %}Scan member QR codes to record attendance{% endblock %}
+{% block page_subtitle %}Scan member QR codes to record event attendance{% endblock %}
 
-{% block content %}
-
-<div class="dashboard-card">
-  <div class="dashboard-card-body">
-    <div class="attendance-container">
-      <div class="event-selection-section">
-        <h3>Select an Event</h3>
-        <select id="eventSelect" class="form-select">
-          <option value="">Choose an event...</option>
-          {% for event in events %}
-          <option value="{{ event.id }}" data-event-name="{{ event.name }}">{{ event.name }} ({{ event.date_from|date:"M d, Y" }})</option>
-          {% empty %}
-          <option value="" disabled>No events available today</option>
-          {% endfor %}
-        </select>
-      </div>
-
-      <div class="scanner-section" style="display: none;">
-        <h3>Scan Member QR Code</h3>
-        <div class="scanner-wrapper">
-          <video id="scannerVideo" width="300" height="300" autoplay playsinline></video>
-          <canvas id="scannerCanvas" width="300" height="300" style="display: none;"></canvas>
-        </div>
-        <button id="startScanner" class="btn btn--primary">
-          <i class="fas fa-camera"></i> Start Scanner
-        </button>
-        <div id="scanResult" class="scan-result"></div>
-
-        <!-- Notification container for scan results -->
-        <div class="notification-container"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
+{% block extra_css %}
 <style>
-  .attendance-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: var(--space-6);
+  .attendance-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: var(--space-6);
+    align-items: start;
   }
 
-  .event-selection-section,
-  .scanner-section {
-    width: 100%;
-    max-width: 400px;
+  .scanner-card {
+    background: white;
+    border-radius: var(--radius-2xl);
+    overflow: hidden;
+    border: 1px solid var(--neutral-200);
   }
 
-  .event-selection-section h3,
-  .scanner-section h3 {
-    color: var(--primary-600);
+  .scanner-header {
+    background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+    padding: var(--space-5);
+    color: white;
+  }
+
+  .scanner-header h3 {
+    margin: 0;
     font-size: var(--text-lg);
-    margin-bottom: var(--space-4);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .scanner-body {
+    padding: var(--space-5);
+    text-align: center;
+  }
+
+  .event-selector {
+    margin-bottom: var(--space-5);
+  }
+
+  .event-selector label {
+    display: block;
+    text-align: left;
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--neutral-600);
+    margin-bottom: var(--space-2);
+  }
+
+  .event-selector select {
+    width: 100%;
+    padding: var(--space-3);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    background: white;
+  }
+
+  .event-selector select:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
   }
 
   .scanner-wrapper {
-    display: flex;
-    justify-content: center;
-    margin-bottom: var(--space-4);
+    margin: var(--space-4) 0;
+    display: none;
+  }
+
+  .scanner-wrapper.active {
+    display: block;
   }
 
   #scannerVideo {
-    border: 3px solid var(--primary-500);
-    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    aspect-ratio: 1;
+    border-radius: var(--radius-xl);
     background: var(--neutral-900);
+    border: 3px solid var(--primary-500);
   }
 
-  .scan-result {
+  .scanner-placeholder {
+    padding: var(--space-10);
+    background: var(--neutral-100);
+    border-radius: var(--radius-xl);
+    color: var(--neutral-400);
+  }
+
+  .scanner-placeholder i {
+    font-size: 3rem;
+    margin-bottom: var(--space-2);
+  }
+
+  .scanner-controls {
     margin-top: var(--space-4);
-    font-weight: var(--font-semibold);
-    color: var(--primary-600);
-    min-height: 1.5em;
   }
 
+  .info-card {
+    background: white;
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--neutral-200);
+    overflow: hidden;
+  }
+
+  .info-header {
+    padding: var(--space-4) var(--space-5);
+    border-bottom: 1px solid var(--neutral-100);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .info-header h3 {
+    margin: 0;
+    font-size: var(--text-base);
+    color: var(--neutral-900);
+  }
+
+  .info-header i {
+    color: var(--primary-500);
+  }
+
+  .info-body {
+    padding: var(--space-5);
+  }
+
+  .scan-log {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .scan-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background: var(--success-50);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-2);
+    border-left: 3px solid var(--success-500);
+    animation: slideIn 0.3s ease;
+  }
+
+  .scan-item.error {
+    background: var(--error-50);
+    border-left-color: var(--error-500);
+  }
+
+  .scan-item.warning {
+    background: var(--warning-50);
+    border-left-color: var(--warning-500);
+  }
+
+  .scan-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    background: var(--success-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .scan-avatar i {
+    color: var(--success-600);
+  }
+
+  .scan-item.error .scan-avatar {
+    background: var(--error-100);
+  }
+
+  .scan-item.error .scan-avatar i {
+    color: var(--error-600);
+  }
+
+  .scan-info {
+    flex: 1;
+    text-align: left;
+  }
+
+  .scan-name {
+    font-weight: var(--font-semibold);
+    color: var(--neutral-900);
+    font-size: var(--text-sm);
+  }
+
+  .scan-time {
+    font-size: var(--text-xs);
+    color: var(--neutral-500);
+  }
+
+  .empty-log {
+    text-align: center;
+    padding: var(--space-8);
+    color: var(--neutral-400);
+  }
+
+  .empty-log i {
+    font-size: var(--text-3xl);
+    margin-bottom: var(--space-2);
+  }
+
+  .attendance-summary {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--neutral-100);
+  }
+
+  .summary-stat {
+    text-align: center;
+    padding: var(--space-3);
+    background: var(--neutral-50);
+    border-radius: var(--radius-lg);
+  }
+
+  .summary-value {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: var(--primary-600);
+  }
+
+  .summary-label {
+    font-size: var(--text-xs);
+    color: var(--neutral-500);
+  }
+
+  /* Notification toast */
   .notification-container {
     position: fixed;
-    top: 100px;
+    top: 80px;
     right: 20px;
     z-index: 1000;
     display: flex;
@@ -93,40 +248,38 @@
 
   .notification {
     padding: var(--space-3) var(--space-4);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
-    gap: var(--space-2);
+    gap: var(--space-3);
     box-shadow: var(--shadow-lg);
     animation: slideIn 0.3s ease;
     min-width: 280px;
   }
 
   .notification.success {
-    background: var(--success-50);
-    border-left: 4px solid var(--success-500);
-    color: var(--success-700);
+    background: var(--success-500);
+    color: white;
   }
 
   .notification.error {
-    background: var(--error-50);
-    border-left: 4px solid var(--error-500);
-    color: var(--error-700);
+    background: var(--error-500);
+    color: white;
   }
 
   .notification.info {
-    background: var(--info-50);
-    border-left: 4px solid var(--info-500);
-    color: var(--info-700);
+    background: var(--info-500);
+    color: white;
   }
 
   .notification-close {
     margin-left: auto;
     background: none;
     border: none;
-    font-size: 1.2rem;
+    color: inherit;
+    opacity: 0.7;
     cursor: pointer;
-    opacity: 0.6;
+    font-size: 1.2rem;
   }
 
   .notification-close:hover {
@@ -138,213 +291,255 @@
   }
 
   @keyframes slideIn {
-    from {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
   }
 
   @keyframes fadeOut {
-    to {
-      transform: translateX(100%);
-      opacity: 0;
-    }
+    to { transform: translateX(100%); opacity: 0; }
   }
 
-  @media (max-width: 768px) {
-    #scannerVideo {
-      width: 250px;
-      height: 250px;
+  @media (max-width: 900px) {
+    .attendance-layout {
+      grid-template-columns: 1fr;
     }
   }
 </style>
+{% endblock %}
 
+{% block content %}
+<div class="attendance-layout">
+  <!-- Scanner Section -->
+  <div class="scanner-card">
+    <div class="scanner-header">
+      <h3><i class="fas fa-camera"></i> QR Scanner</h3>
+    </div>
+    <div class="scanner-body">
+      <div class="event-selector">
+        <label for="eventSelect">Select Event</label>
+        <select id="eventSelect">
+          <option value="">Choose an event...</option>
+          {% for event in events %}
+          <option value="{{ event.id }}" data-event-name="{{ event.name }}">{{ event.name }} ({{ event.date_from|date:"M d, Y" }})</option>
+          {% empty %}
+          <option value="" disabled>No events available today</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="scanner-wrapper" id="scannerContainer">
+        <video id="scannerVideo" autoplay playsinline></video>
+        <canvas id="scannerCanvas" style="display: none;"></canvas>
+      </div>
+
+      <div class="scanner-placeholder" id="scannerPlaceholder">
+        <i class="fas fa-qrcode"></i>
+        <p>Select an event and click Start to begin scanning</p>
+      </div>
+
+      <div class="scanner-controls">
+        <button id="startScanner" class="btn btn--primary" style="width: 100%;">
+          <i class="fas fa-play"></i> Start Scanner
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scan Log Section -->
+  <div class="info-card">
+    <div class="info-header">
+      <i class="fas fa-clipboard-list"></i>
+      <h3>Attendance Log</h3>
+    </div>
+    <div class="info-body">
+      <div id="scanLog" class="scan-log">
+        <div class="empty-log">
+          <i class="fas fa-user-check"></i>
+          <p>Scanned members will appear here</p>
+        </div>
+      </div>
+      <div class="attendance-summary">
+        <div class="summary-stat">
+          <div class="summary-value" id="scanCount">0</div>
+          <div class="summary-label">Scanned</div>
+        </div>
+        <div class="summary-stat">
+          <div class="summary-value" id="successCount">0</div>
+          <div class="summary-label">Recorded</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="notification-container" id="notificationContainer"></div>
+{% endblock %}
+
+{% block extra_js %}
 <script>
-  // Define the local jsQR path
   var localJsQRPath = "{% static 'js/jsQR.min.js' %}";
 </script>
-<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js" onload="console.log('jsQR loaded from CDN')"
-  onerror="console.error('Failed to load jsQR from CDN');
-                var s = document.createElement('script');
-                s.src = localJsQRPath;
-                document.body.appendChild(s);">
-                </script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js" onload="console.log('jsQR loaded')"
+  onerror="var s = document.createElement('script'); s.src = localJsQRPath; document.body.appendChild(s);"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const eventSelect = document.getElementById('eventSelect');
-    const scannerSection = document.querySelector('.scanner-section');
-    const startScannerBtn = document.getElementById('startScanner');
-    const video = document.getElementById('scannerVideo');
-    let canvas = document.getElementById('scannerCanvas');
-    let canvasContext = canvas ? canvas.getContext('2d') : null;
-    const scanResult = document.getElementById('scanResult');
-    let scanning = false;
-    let stream = null;
-    let lastQrData = null;
+document.addEventListener('DOMContentLoaded', function() {
+  const eventSelect = document.getElementById('eventSelect');
+  const startBtn = document.getElementById('startScanner');
+  const video = document.getElementById('scannerVideo');
+  const scannerContainer = document.getElementById('scannerContainer');
+  const placeholder = document.getElementById('scannerPlaceholder');
+  const scanLog = document.getElementById('scanLog');
+  const scanCountEl = document.getElementById('scanCount');
+  const successCountEl = document.getElementById('successCount');
 
-    if (!eventSelect || !scannerSection || !startScannerBtn || !video || !scanResult) {
-      console.error('Missing DOM elements');
+  let canvas = document.getElementById('scannerCanvas');
+  let canvasContext = canvas.getContext('2d');
+  let scanning = false;
+  let stream = null;
+  let lastQrData = null;
+  let scanCount = 0;
+  let successCount = 0;
+
+  startBtn.addEventListener('click', toggleScanner);
+  eventSelect.addEventListener('change', function() {
+    if (scanning) stopScanner();
+  });
+
+  function toggleScanner() {
+    if (scanning) {
+      stopScanner();
+    } else {
+      startScanner();
+    }
+  }
+
+  function startScanner() {
+    const eventId = eventSelect.value;
+    if (!eventId) {
+      showNotification('Please select an event first', 'error');
       return;
     }
 
-    if (!canvas || !canvasContext) {
-      canvas = document.createElement('canvas');
-      canvas.width = 300;
-      canvas.height = 300;
-      canvasContext = canvas.getContext('2d');
-    }
-
-    eventSelect.addEventListener('change', function () {
-      if (this.value) {
-        scannerSection.style.display = 'block';
-        scanResult.textContent = 'Select an event and start the scanner.';
-      } else {
-        scannerSection.style.display = 'none';
-      }
-    });
-
-    startScannerBtn.addEventListener('click', function () {
-      if (!scanning) {
-        startScanner();
-      } else {
-        stopScanner();
-      }
-    });
-
-    function startScanner() {
-      const eventId = eventSelect.value;
-      if (!eventId) {
-        scanResult.textContent = 'Please select an event first.';
-        return;
-      }
-
-      navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 } }
-      })
-        .then(function (mediaStream) {
-          stream = mediaStream;
-          video.srcObject = stream;
-          video.onloadedmetadata = function () {
-            video.play();
-            scanning = true;
-            startScannerBtn.innerHTML = '<i class="fas fa-stop"></i> Stop Scanner';
-            startScannerBtn.classList.remove('btn--primary');
-            startScannerBtn.classList.add('btn--danger');
-            scanResult.textContent = 'Scanning for QR codes...';
-            requestAnimationFrame(scan);
-          };
-        })
-        .catch(function (err) {
-          console.error("Camera Error:", err);
-          scanResult.textContent = `Error: ${err.message}. Check camera permissions.`;
-        });
-    }
-
-    function stopScanner() {
-      scanning = false;
-      startScannerBtn.innerHTML = '<i class="fas fa-camera"></i> Start Scanner';
-      startScannerBtn.classList.remove('btn--danger');
-      startScannerBtn.classList.add('btn--primary');
-      scanResult.textContent = 'Scanner stopped.';
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-        stream = null;
-      }
-      video.srcObject = null;
-      lastQrData = null;
-    }
-
-    function scan() {
-      if (scanning && video.readyState === video.HAVE_ENOUGH_DATA && canvasContext) {
-        if (typeof jsQR === 'undefined') {
-          scanResult.textContent = 'Error: QR library not loaded.';
-          return;
-        }
-
-        canvas.width = video.videoWidth || 640;
-        canvas.height = video.videoHeight || 480;
-        canvasContext.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const imageData = canvasContext.getImageData(0, 0, canvas.width, canvas.height);
-
-        const code = jsQR(imageData.data, imageData.width, imageData.height, {
-          inversionAttempts: 'attemptBoth'
-        });
-
-        if (code && code.data !== lastQrData) {
-          lastQrData = code.data;
-          scanResult.textContent = `Detected: ${code.data}`;
-          markAttendance(code.data);
-        }
-      }
-      if (scanning) {
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+      .then(function(s) {
+        stream = s;
+        video.srcObject = stream;
+        video.play();
+        scanning = true;
+        scannerContainer.classList.add('active');
+        placeholder.style.display = 'none';
+        startBtn.innerHTML = '<i class="fas fa-stop"></i> Stop Scanner';
+        startBtn.classList.remove('btn--primary');
+        startBtn.classList.add('btn--error');
         requestAnimationFrame(scan);
-      }
-    }
-
-    function markAttendance(qrData) {
-      const eventId = eventSelect.value;
-      const notificationContainer = document.querySelector('.notification-container');
-
-      // Show processing notification
-      showNotification('info', 'Processing attendance...', notificationContainer);
-
-      fetch('/scan-qr/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': '{{ csrf_token }}'
-        },
-        body: JSON.stringify({ qr_data: qrData, event_id: eventId })
       })
-        .then(response => response.json())
-        .then(data => {
-          // Clear processing notification
-          notificationContainer.innerHTML = '';
-
-          if (data.status === 'success') {
-            showNotification('success', data.message, notificationContainer);
-          } else {
-            showNotification('error', data.message || 'Failed to mark attendance', notificationContainer);
-          }
-
-          // Reset lastQrData after delay to allow re-scanning same QR
-          setTimeout(() => { lastQrData = null; }, 3000);
-        })
-        .catch(error => {
-          notificationContainer.innerHTML = '';
-          showNotification('error', `Error: ${error.message}`, notificationContainer);
-        });
-    }
-
-    function showNotification(type, message, container) {
-      const notification = document.createElement('div');
-      notification.className = `notification ${type}`;
-      const icon = type === 'success' ? 'check-circle' : (type === 'error' ? 'times-circle' : 'spinner fa-spin');
-      notification.innerHTML = `
-            <i class="fas fa-${icon}"></i>
-            <span>${message}</span>
-            <button class="notification-close">&times;</button>
-        `;
-      container.appendChild(notification);
-
-      notification.querySelector('.notification-close').addEventListener('click', () => {
-        notification.classList.add('fade-out');
-        setTimeout(() => notification.remove(), 300);
+      .catch(function(err) {
+        showNotification('Could not access camera: ' + err.message, 'error');
       });
+  }
 
-      if (type !== 'info') {
-        setTimeout(() => {
-          notification.classList.add('fade-out');
-          setTimeout(() => notification.remove(), 300);
-        }, 4000);
+  function stopScanner() {
+    scanning = false;
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+      stream = null;
+    }
+    scannerContainer.classList.remove('active');
+    placeholder.style.display = 'block';
+    startBtn.innerHTML = '<i class="fas fa-play"></i> Start Scanner';
+    startBtn.classList.remove('btn--error');
+    startBtn.classList.add('btn--primary');
+  }
+
+  function scan() {
+    if (!scanning) return;
+
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvasContext.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      const imageData = canvasContext.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+      if (code && code.data !== lastQrData) {
+        lastQrData = code.data;
+        scanCount++;
+        scanCountEl.textContent = scanCount;
+        processQrCode(code.data);
+        setTimeout(() => { lastQrData = null; }, 3000);
       }
     }
-  });
-</script>
 
+    requestAnimationFrame(scan);
+  }
+
+  function processQrCode(qrData) {
+    const eventId = eventSelect.value;
+    const eventName = eventSelect.options[eventSelect.selectedIndex].dataset.eventName;
+
+    fetch('{% url "scan_qr" %}', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token }}'
+      },
+      body: JSON.stringify({ qr_data: qrData, event_id: eventId })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === 'success') {
+        successCount++;
+        successCountEl.textContent = successCount;
+        addScanLog(data.member_name || 'Member', true);
+        showNotification(data.message || 'Attendance recorded!', 'success');
+      } else {
+        addScanLog(data.message || 'Error', false);
+        showNotification(data.message || 'Failed to record', 'error');
+      }
+    })
+    .catch(err => {
+      addScanLog('Connection error', false);
+      showNotification('Connection error', 'error');
+    });
+  }
+
+  function addScanLog(name, success) {
+    const emptyLog = scanLog.querySelector('.empty-log');
+    if (emptyLog) emptyLog.remove();
+
+    const now = new Date();
+    const time = now.toLocaleTimeString();
+
+    const item = document.createElement('div');
+    item.className = `scan-item ${success ? '' : 'error'}`;
+    item.innerHTML = `
+      <div class="scan-avatar">
+        <i class="fas fa-${success ? 'check' : 'times'}"></i>
+      </div>
+      <div class="scan-info">
+        <div class="scan-name">${name}</div>
+        <div class="scan-time">${time}</div>
+      </div>
+    `;
+    scanLog.insertBefore(item, scanLog.firstChild);
+  }
+
+  function showNotification(message, type) {
+    const container = document.getElementById('notificationContainer');
+    const notif = document.createElement('div');
+    notif.className = `notification ${type}`;
+    notif.innerHTML = `
+      <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+      <span>${message}</span>
+      <button class="notification-close" onclick="this.parentElement.remove()">&times;</button>
+    `;
+    container.appendChild(notif);
+    setTimeout(() => {
+      notif.classList.add('fade-out');
+      setTimeout(() => notif.remove(), 300);
+    }, 4000);
+  }
+});
+</script>
 {% endblock %}
