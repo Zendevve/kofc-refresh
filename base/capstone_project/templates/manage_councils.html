@@ -54,15 +54,10 @@
             <div style="font-weight: 600; color: var(--text-primary);">{{ data.council.name }}</div>
           </td>
           <td>
-            {% if data.council.location_city %}
-            <div style="color: var(--text-primary);">{{ data.council.location_city }}, {{ data.council.location_province
-              }}</div>
-            {% if data.council.location_barangay %}
-            <div style="font-size: 0.75rem; color: var(--text-muted);">{{ data.council.location_barangay }}</div>
-            {% endif %}
-            {% else %}
-            <span style="color: var(--text-muted); font-style: italic;">Not set</span>
-            {% endif %}
+            {% if data.council.location_city %}<div style="color: var(--text-primary);">{{ data.council.location_city
+              }}, {{ data.council.location_province }}</div>{% if data.council.location_barangay %}<div
+              style="font-size: 0.75rem; color: var(--text-muted);">{{ data.council.location_barangay }}</div>{% endif
+            %}{% else %}<span style="color: var(--text-muted); font-style: italic;">Not set</span>{% endif %}
           </td>
           <td>
             <span class="badge badge--primary">{{ data.member_count }} member{{ data.member_count|pluralize }}</span>
