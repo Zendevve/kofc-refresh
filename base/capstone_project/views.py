@@ -3254,3 +3254,133 @@ def mark_all_notifications_read(request):
     messages.success(request, "All notifications marked as read.")
     return redirect('notifications')
 
+
+@login_required
+def delete_notification(request, notification_id):
+    """Delete a single notification"""
+    notification = get_object_or_404(Notification, id=notification_id, user=request.user)
+    notification.delete()
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({'success': True})
+    messages.success(request, "Notification deleted.")
+    return redirect('notifications')
+
+
+@login_required
+def delete_all_notifications(request):
+    """Delete all notifications for the current user"""
+    Notification.objects.filter(user=request.user).delete()
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({'success': True})
+    messages.success(request, "All notifications deleted.")
+    return redirect('notifications')
+
+
+# ============================================================================
+# DOWNLOAD LEDGER (EXCEL EXPORT)
+# ============================================================================
+
+@login_required
+def download_ledger(request):
+    """Download the blockchain ledger as an Excel file (admin/officer only)"""
+    if request.user.role not in ['admin', 'officer']:
+        messages.error(request, "You do not have permission to download the ledger.")
+        return redirect('blockchain')
+
+    try:
+        from openpyxl import Workbook
+        from openpyxl.styles import Font
+
+        chain = blockchain.get_chain()
+        if not blockchain.is_chain_valid():
+            messages.error(request, "Blockchain integrity check failed.")
+            return redirect('blockchain')
+
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Donation Ledger"
+
+        headers = ['Block Index', 'Block Timestamp', 'Previous Hash', 'Block Hash',
+                   'Amount', 'Transaction ID', 'Donor', 'Email', 'Date', 'Method']
+        ws.append(headers)
+        for cell in ws[1]:
+            cell.font = Font(bold=True)
+
+        for block in chain:
+            for tx in block.get('transactions', []):
+                ws.append([
+                    block.get('index', 'N/A'),
+                    str(block.get('timestamp', 'N/A')),
+                    str(block.get('previous_hash', 'N/A'))[:20] + '...',
+                    str(block.get('hash', 'N/A'))[:20] + '...',
+                    float(tx.get('amount', 0)),
+                    tx.get('transaction_id', 'N/A'),
+                    tx.get('donor', 'N/A'),
+                    tx.get('email', 'N/A'),
+                    tx.get('date', 'N/A'),
+                    tx.get('payment_method', 'N/A')
+                ])
+
+        for column_cells in ws.columns:
+            max_length = max((len(str(cell.value)) for cell in column_cells if cell.value), default=0)
+            ws.column_dimensions[column_cells[0].column_letter].width = min(max_length + 2, 50)
+
+        output = BytesIO()
+        wb.save(output)
+        output.seek(0)
+
+        from django.http import HttpResponse
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        response = HttpResponse(
+            output,
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = f'attachment; filename="donation_ledger_{timestamp}.xlsx"'
+        return response
+
+    except Exception as e:
+        logger.error(f"Ledger download failed: {str(e)}")
+        messages.error(request, "Failed to generate ledger.")
+        return redirect('blockchain')
+
+
+# ============================================================================
+# APPROVED EVENTS (PUBLIC VIEW)
+# ============================================================================
+
+@never_cache
+def approved_events(request):
+    """View for displaying approved events to all users"""
+    today = date.today()
+
+    events = Event.objects.filter(
+        Q(date_from__gte=today) | Q(date_until__gte=today),
+        status='approved'
+    ).order_by('date_from')
+
+    category_filter = request.GET.get('category', None)
+    if category_filter and category_filter != 'all':
+        events = events.filter(category=category_filter)
+
+    council_filter = request.GET.get('council', None)
+    if council_filter and council_filter != 'all':
+        events = events.filter(council_id=council_filter)
+
+    search_query = request.GET.get('search', None)
+    if search_query:
+        events = events.filter(Q(name__icontains=search_query) | Q(description__icontains=search_query))
+
+    categories = Event.objects.filter(status='approved').values_list('category', flat=True).distinct()
+    councils = Council.objects.all()
+
+    return render(request, 'approved_events.html', {
+        'events': events,
+        'councils': councils,
+        'categories': categories,
+        'category_filter': category_filter,
+        'council_filter': council_filter,
+        'search_query': search_query,
+    })
+

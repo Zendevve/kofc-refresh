@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Upcoming Events - Knights of Columbus{% endblock %}
+
+{% block content %}
+<style>
+  .events-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .events-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .events-header h1 {
+    font-size: 2.5rem;
+    color: var(--primary-900);
+    margin-bottom: 0.5rem;
+  }
+
+  .events-header p {
+    color: var(--neutral-600);
+  }
+
+  .filter-bar {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+
+  .filter-bar input,
+  .filter-bar select {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--neutral-200);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    flex: 1;
+    min-width: 150px;
+  }
+
+  .filter-bar input:focus,
+  .filter-bar select:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+
+  .events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .event-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .event-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  }
+
+  .event-header {
+    background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+    padding: 1.25rem;
+    color: white;
+  }
+
+  .event-category {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: rgba(255,255,255,0.2);
+    border-radius: 99px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+
+  .event-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .event-body {
+    padding: 1.25rem;
+  }
+
+  .event-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .event-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--neutral-600);
+    font-size: 0.9rem;
+  }
+
+  .event-meta-item i {
+    width: 20px;
+    color: var(--primary-500);
+  }
+
+  .event-description {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--neutral-100);
+    color: var(--neutral-700);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .event-council-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--primary-50);
+    color: var(--primary-700);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-top: 1rem;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--neutral-400);
+  }
+
+  .empty-state i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+  }
+
+  .empty-state p {
+    font-size: 1.1rem;
+  }
+</style>
+
+<div class="events-container">
+  <div class="events-header">
+    <h1><i class="fas fa-calendar-check"></i> Upcoming Events</h1>
+    <p>Browse all approved Knights of Columbus events</p>
+  </div>
+
+  <form class="filter-bar" method="GET" action="{% url 'approved_events' %}">
+    <input type="text" name="search" placeholder="Search events..." value="{{ search_query|default:'' }}">
+    <select name="category" onchange="this.form.submit()">
+      <option value="all">All Categories</option>
+      {% for cat in categories %}
+      <option value="{{ cat }}" {% if category_filter == cat %}selected{% endif %}>{{ cat|title }}</option>
+      {% endfor %}
+    </select>
+    <select name="council" onchange="this.form.submit()">
+      <option value="all">All Councils</option>
+      {% for c in councils %}
+      <option value="{{ c.id }}" {% if council_filter == c.id|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>
+      {% endfor %}
+    </select>
+  </form>
+
+  {% if events %}
+  <div class="events-grid">
+    {% for event in events %}
+    <div class="event-card">
+      <div class="event-header">
+        <span class="event-category">{{ event.category|default:"Event" }}</span>
+        <h3 class="event-name">{{ event.name }}</h3>
+      </div>
+      <div class="event-body">
+        <div class="event-meta">
+          <div class="event-meta-item">
+            <i class="fas fa-calendar-alt"></i>
+            <span>
+              {{ event.date_from|date:"M d, Y" }}
+              {% if event.date_until and event.date_until != event.date_from %}
+              - {{ event.date_until|date:"M d, Y" }}
+              {% endif %}
+            </span>
+          </div>
+          {% if event.city %}
+          <div class="event-meta-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>{{ event.barangay|default:"" }}{% if event.barangay %}, {% endif %}{{ event.city }}, {{ event.province }}</span>
+          </div>
+          {% endif %}
+        </div>
+        {% if event.description %}
+        <p class="event-description">{{ event.description }}</p>
+        {% endif %}
+        {% if event.council %}
+        <div class="event-council-badge">
+          <i class="fas fa-shield-alt"></i>
+          {{ event.council.name }}
+        </div>
+        {% else %}
+        <div class="event-council-badge" style="background: var(--success-50); color: var(--success-700);">
+          <i class="fas fa-globe"></i>
+          Global Event
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <i class="fas fa-calendar-times"></i>
+    <p>No upcoming events found.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

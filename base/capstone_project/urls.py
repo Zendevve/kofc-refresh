@@ -97,6 +97,14 @@ urlpatterns = [
     path('notifications/count/', views.notifications_count, name='notifications_count'),
     path('notifications/mark-read/<int:notification_id>/', views.mark_notification_read, name='mark_notification_read'),
     path('notifications/mark-all-read/', views.mark_all_notifications_read, name='mark_all_notifications_read'),
+    path('notifications/delete/<int:notification_id>/', views.delete_notification, name='delete_notification'),
+    path('notifications/delete-all/', views.delete_all_notifications, name='delete_all_notifications'),
+
+    # Download Ledger
+    path('download-ledger/', views.download_ledger, name='download_ledger'),
+
+    # Approved Events (Public)
+    path('approved-events/', views.approved_events, name='approved_events'),
 
     # Council Management (NEW)
     path('manage-councils/', council.manage_councils, name='manage_councils'),
