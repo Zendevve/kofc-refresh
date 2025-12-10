@@ -873,9 +873,10 @@ def analytics_view(request):
 
     # 8. Event Participation - Users who attended vs didn't for recent events
     from django.db.models import Count
-    recent_events = Event.objects.filter(status='approved').order_by('-date_from')[:10]
+    recent_events_qs = Event.objects.filter(status='approved')
     if council_id:
-        recent_events = recent_events.filter(council_id=council_id)
+        recent_events_qs = recent_events_qs.filter(council_id=council_id)
+    recent_events = recent_events_qs.order_by('-date_from')[:10]
 
     event_participation_data = []
     for event in recent_events:
@@ -994,6 +995,24 @@ def analytics_view(request):
     donation_by_role_chart_data = {
         'labels': list(role_donations.keys()),
         'data': list(role_donations.values())
+    }
+
+    # 11b. Member Degree Distribution
+    degree_counts = {}
+    users_degree_qs = User.objects.filter(is_archived=False, role__in=['member', 'officer'])
+    if council_id:
+        users_degree_qs = users_degree_qs.filter(council_id=council_id)
+    for degree_code, degree_name in User.DEGREE_CHOICES:
+        count = users_degree_qs.filter(current_degree=degree_code).count()
+        degree_counts[degree_name] = count
+    # Add members without a degree
+    no_degree_count = users_degree_qs.filter(current_degree__isnull=True).count()
+    if no_degree_count > 0:
+        degree_counts['Not Assigned'] = no_degree_count
+
+    degree_distribution_chart_data = {
+        'labels': list(degree_counts.keys()),
+        'data': list(degree_counts.values())
     }
 
     # 12. Blockchain Metrics
@@ -1130,6 +1149,7 @@ def analytics_view(request):
         'activity_ranking': activity_ranking,
         'predictive_data': json.dumps(predictive_chart_data),
         'donation_by_role_data': json.dumps(donation_by_role_chart_data),
+        'degree_distribution_data': json.dumps(degree_distribution_chart_data),
         'blockchain_metrics': blockchain_metrics,
         'data_summaries': data_summaries,
     }

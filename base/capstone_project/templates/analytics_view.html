@@ -511,6 +511,15 @@
 
   <div class="chart-card">
     <div class="chart-card-header">
+      <h3><i class="fas fa-wallet"></i> Payment Methods</h3>
+    </div>
+    <div class="chart-card-body">
+      <canvas id="donationSourcesChart"></canvas>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-card-header">
       <h3><i class="fas fa-chart-pie"></i> Event Types</h3>
     </div>
     <div class="chart-card-body">
@@ -533,6 +542,15 @@
     </div>
     <div class="chart-card-body">
       <canvas id="membersOfficersChart"></canvas>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-card-header">
+      <h3><i class="fas fa-graduation-cap"></i> Member Degrees</h3>
+    </div>
+    <div class="chart-card-body">
+      <canvas id="degreeDistributionChart"></canvas>
     </div>
   </div>
 </div>
@@ -585,6 +603,8 @@
 <script id="eventParticipationData" type="application/json">{{ event_participation_data | safe }}</script>
 <script id="predictiveData" type="application/json">{{ predictive_data | safe }}</script>
 <script id="donationByRoleData" type="application/json">{{ donation_by_role_data | safe }}</script>
+<script id="donationSourcesData" type="application/json">{{ donation_sources_data | safe }}</script>
+<script id="degreeDistributionData" type="application/json">{{ degree_distribution_data | safe }}</script>
 {% endblock %}
 
 {% block extra_js %}
@@ -610,6 +630,29 @@
     const eventParticipationData = JSON.parse(document.getElementById('eventParticipationData')?.textContent || '{}');
     const predictiveData = JSON.parse(document.getElementById('predictiveData')?.textContent || '{}');
     const donationByRoleData = JSON.parse(document.getElementById('donationByRoleData')?.textContent || '{}');
+    const donationSourcesData = JSON.parse(document.getElementById('donationSourcesData')?.textContent || '{}');
+    const degreeDistributionData = JSON.parse(document.getElementById('degreeDistributionData')?.textContent || '{}');
+
+    // Payment Methods Chart (GCash vs Manual)
+    if (donationSourcesData.labels?.length) {
+      new Chart(document.getElementById('donationSourcesChart').getContext('2d'), {
+        type: 'doughnut',
+        data: { labels: donationSourcesData.labels, datasets: [{ data: donationSourcesData.data, backgroundColor: [colors.primary, colors.success], borderWidth: 0 }] },
+        options: { responsive: true, maintainAspectRatio: false, cutout: '60%', plugins: { legend: { position: 'bottom' } } }
+      });
+    }
+
+    // Member Degree Distribution Chart
+    if (degreeDistributionData.labels?.length) {
+      new Chart(document.getElementById('degreeDistributionChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: degreeDistributionData.labels,
+          datasets: [{ label: 'Members', data: degreeDistributionData.data, backgroundColor: [colors.primary, colors.secondary, colors.success, colors.purple, '#94a3b8'], borderRadius: 6 }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+      });
+    }
 
     // Event Participation
     if (eventParticipationData.labels?.length) {
