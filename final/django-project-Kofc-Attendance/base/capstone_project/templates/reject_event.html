@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+Knights of Columbus - Reject Event
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/dashboard_shared.css' %}?v={% now 'U' %}">
+<link rel="stylesheet" href="{% static 'css/event_management.css' %}?v={% now 'U' %}">
+
+<div class="dashboard-container">
+    <div class="content-card">
+        <div class="dashboard-header">
+            <h1 style="color: var(--primary-bg);">Reject Event</h1>
+            <h1 style="color: var(--primary-bg);">{{ event.name }}</h1>
+            
+            <div class="header-actions">
+                <a href="{% url 'event_proposals' %}" class="role-btn">
+                    <i class="fas fa-arrow-left"></i>Back to Proposals
+                </a>
+            </div>
+        </div>
+
+        <div class="event-summary">
+            <div class="event-details">
+                <div class="detail-column">
+                    <p><strong>Date:</strong> {{ event.date_from|date:"F d, Y" }} {% if event.date_until and event.date_until != event.date_from %} - {{ event.date_until|date:"F d, Y" }}{% endif %}</p>
+                    <p><strong>Category:</strong> {{ event.category }}{% if event.subcategory and event.subcategory != 'N/A' %} - {{ event.subcategory }}{% endif %}</p>
+                </div>
+                <div class="detail-column">
+                    <p><strong>Council:</strong> {{ event.council.name }}</p>
+                    <p><strong>Location:</strong> {{ event.city }}, {{ event.province }}</p>
+                </div>
+            </div>
+            
+            <div class="event-description">
+                <p><strong>Description:</strong> {{ event.description }}</p>
+            </div>
+        </div>
+
+        <div class="rejection-form-container">
+            <form method="post" action="{% url 'reject_event' event.id %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="rejection_category">Rejection Category:</label>
+                    <select id="rejection_category" name="rejection_category" class="form-control" required onchange="toggleCustomReason()">
+                        <option value="" disabled selected>Select a rejection reason</option>
+                        <option value="Insufficient Budget">Insufficient Budget</option>
+                        <option value="Scheduling Conflict">Scheduling Conflict</option>
+                        <option value="Inadequate Planning">Inadequate Planning</option>
+                        <option value="Resource Unavailability">Resource Unavailability</option>
+                        <option value="Policy Violation">Policy Violation</option>
+                        <option value="Safety Concerns">Safety Concerns</option>
+                        <option value="Venue Issues">Venue Issues</option>
+                        <option value="Low Expected Attendance">Low Expected Attendance</option>
+                        <option value="Duplicate Event">Duplicate Event</option>
+                        <option value="Inappropriate Content">Inappropriate Content</option>
+                        <option value="Missing Required Documentation">Missing Required Documentation</option>
+                        <option value="Timing Issues">Timing Issues</option>
+                        <option value="Others">Others (Please specify)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="custom-reason-group" style="display: none;">
+                    <label for="custom_reason">Please specify the reason:</label>
+                    <textarea id="custom_reason" name="custom_reason" rows="3" class="form-control" placeholder="Please provide specific details for the rejection..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="additional_notes">Additional Notes (Optional):</label>
+                    <textarea id="additional_notes" name="additional_notes" rows="2" class="form-control" placeholder="Any additional comments or suggestions for improvement..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="dashboard-btn primary">
+                        <i class="fas fa-times"></i> Confirm Rejection
+                    </button>
+                    <a href="{% url 'event_proposals' %}" class="dashboard-btn secondary">
+                        <i class="fas fa-ban"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .event-summary {
+        background-color: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: var(--border-radius);
+        margin-bottom: 2rem;
+    }
+    
+    .event-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        margin-bottom: 1rem;
+    }
+    
+    .detail-column {
+        flex: 1;
+        min-width: 200px;
+    }
+    
+    .detail-column p {
+        margin: 0.5rem 0;
+    }
+    
+    .event-description {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(0,0,0,0.1);
+    }
+    
+    .rejection-form-container {
+        margin-top: 2rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--heading-color);
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid rgba(13, 52, 113, 0.2);
+        border-radius: var(--border-radius);
+        font-size: 1rem;
+        background-color: white;
+    }
+    
+    .form-control:focus {
+        border-color: var(--primary-bg);
+        box-shadow: 0 0 0 3px rgba(13, 52, 113, 0.1);
+        outline: none;
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .primary {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+    
+    .primary:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+    }
+    
+    #custom-reason-group {
+        transition: all 0.3s ease;
+    }
+    
+    .form-control select {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230D3471' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 1.2em;
+        cursor: pointer;
+    }
+
+    /* Dark Mode Styling */
+    body.dark-mode .event-summary {
+        background-color: #252525 !important;
+        border: 1px solid #333 !important;
+    }
+
+    body.dark-mode .detail-column p,
+    body.dark-mode .event-description p {
+        color: #ffffff !important;
+    }
+
+    body.dark-mode .detail-column p strong,
+    body.dark-mode .event-description p strong {
+        color: #f4b41a !important;
+    }
+
+    body.dark-mode .event-description {
+        border-top-color: #333 !important;
+    }
+
+    body.dark-mode .form-control {
+        background-color: #3a3a3a !important;
+        color: #ffffff !important;
+        border-color: #333 !important;
+    }
+
+    body.dark-mode .form-control:focus {
+        border-color: #f4b41a !important;
+        box-shadow: 0 0 0 3px rgba(244, 180, 26, 0.1) !important;
+    }
+
+    body.dark-mode .form-group label {
+        color: #f4b41a !important;
+    }
+</style>
+
+<script>
+function toggleCustomReason() {
+    const categorySelect = document.getElementById('rejection_category');
+    const customReasonGroup = document.getElementById('custom-reason-group');
+    const customReasonTextarea = document.getElementById('custom_reason');
+    
+    if (categorySelect.value === 'Others') {
+        customReasonGroup.style.display = 'block';
+        customReasonTextarea.required = true;
+    } else {
+        customReasonGroup.style.display = 'none';
+        customReasonTextarea.required = false;
+        customReasonTextarea.value = '';
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    toggleCustomReason();
+});
+</script>
+{% endblock %} 

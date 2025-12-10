@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+Knights of Columbus - Member Dashboard
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/dashboard_shared.css' %}?v={% now 'U' %}">
+
+<div class="dashboard-container">
+    <div class="dashboard-title">
+        <div class="title-section">
+            <h1>Member Dashboard</h1>
+            <h2>Welcome, {{ user.first_name }} {{ user.last_name }}</h2>
+        </div>
+        <div class="bible-verse-section">
+            <div class="verse-header">
+                <i class="fas fa-book-open"></i>
+                <span>Daily Inspiration</span>
+            </div>
+            <blockquote class="bible-verse-inline">
+                <p>"{{ daily_verse.verse }}"</p>
+                <cite>- {{ daily_verse.reference }}</cite>
+            </blockquote>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- Profile Card -->
+        <div class="dashboard-card" style="animation-delay: 0.1s;">
+            <div class="card-header">
+                <h3>Profile Information</h3>
+            </div>
+            <div class="card-content">
+                <div class="profile-info">
+                    <div class="profile-pic{% if user.is_inactive_member %} inactive{% endif %}">
+                        {% if user.profile_picture %}
+                            <img src="{{ user.profile_picture.url }}" alt="Profile Picture">
+                        {% else %}
+                            <i class="fas fa-user" style="font-size: 3rem; color: #0D3471;"></i>
+                        {% endif %}
+                    </div>
+                    <h4>{{ user.first_name }} {{ user.last_name }}</h4>
+                    <p><span class="degree-badge degree-{{ user.current_degree|default:'1st' }}">{{ user.get_current_degree_display }}</span></p>
+                    <p>{{ user.council.name|default:"No council assigned" }}</p>
+                    <div class="action-buttons">
+                        <a href="{% url 'edit_profile' %}" class="dashboard-btn">
+                            <i class="fas fa-user-edit"></i>Edit Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- My Recruits Card -->
+        <div class="dashboard-card" style="animation-delay: 0.2s;">
+            <div class="card-header">
+                <h3>My Recruits</h3>
+            </div>
+            <div class="card-content">
+                <p>Track your recruitment progress.</p>
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" data-target="{{ user_recruitment_count|default:0 }}">0</div>
+                        <div class="stat-label">Your Recruits</div>
+                    </div>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <a href="{% url 'my_recruits' %}" class="dashboard-btn">
+                    <i class="fas fa-users"></i>View My Recruits
+                </a>
+            </div>
+        </div>
+
+        <!-- Upcoming Events Card -->
+        <div class="dashboard-card" style="animation-delay: 0.3s;">
+            <div class="card-header">
+                <h3>Upcoming Events</h3>
+            </div>
+            <div class="card-content">
+                <p>Find events to attend.</p>
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" data-target="{{ approved_events_count }}">0</div>
+                        <div class="stat-label">Available Events</div>
+                    </div>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <a href="{% url 'member_attend' %}" class="dashboard-btn"><i class="fa-solid fa-list-check"></i>Attend to an Event</a>                
+                <a href="{% url 'event_list' %}" class="dashboard-btn"><i class="fas fa-list"></i>View All Events</a>
+                <a href="{% url 'archived_events' %}" class="dashboard-btn"><i class="fas fa-archive"></i>Archived Events</a>
+            </div>
+        </div>
+
+        <!-- My Activities Card -->
+        <div class="dashboard-card" style="animation-delay: 0.4s;">
+            <div class="card-header">
+                <h3>My Activities</h3>
+            </div>
+            <div class="card-content">
+                <p>Track your completed activities.</p>
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" data-target="{{ activities_count }}">0</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <a href="{% url 'member_activities' %}" class="dashboard-btn">
+                    <i class="fas fa-tasks"></i>View Activities
+                </a>
+            </div>
+        </div>
+
+        <!-- Council Updates Card -->
+        <!-- <div class="dashboard-card" style="animation-delay: 0.5s;">
+            <div class="card-header">
+                <h3>Council Updates</h3>
+            </div>
+            <div class="card-content">
+                <p>Stay informed with the latest announcements.</p>
+            </div>
+            <div class="action-buttons">
+                <a href="#" class="dashboard-btn">
+                    <i class="fas fa-bullhorn"></i>View Updates
+                </a>
+            </div>
+        </div> -->
+
+        <!-- Leaderboard Card -->
+        <div class="dashboard-card" style="animation-delay: 0.6s;">
+            <div class="card-header">
+                <h3>Leaderboard</h3>
+            </div>
+            <div class="card-content">
+                <p>See top recruiters and your rank.</p>
+            </div>
+            <div class="action-buttons">
+                <a href="{% url 'leaderboard' %}" class="dashboard-btn">
+                    <i class="fas fa-trophy"></i>View Leaderboard
+                </a>
+            </div>
+        </div>
+
+        <!-- Community Chat Button -->
+        <div class="dashboard-card" style="animation-delay: 0.7s;">
+            <div class="card-header">
+                <h3>Community Chat</h3>
+            </div>
+            <div class="card-content">
+                <p>Join our community chat to connect with other members.</p>
+            </div>
+            <div class="action-buttons">
+                <a href="{% url 'forum' %}" class="dashboard-btn">
+                    <i class="fas fa-comments"></i>Community Chat
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate cards with staggered entrance
+    const cards = document.querySelectorAll('.dashboard-card');
+    cards.forEach((card, index) => {
+        setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, 100 + (index * 100));
+    });
+
+    // Animate counters
+    const counters = document.querySelectorAll('.stat-value');
+    counters.forEach(counter => {
+        const target = parseInt(counter.getAttribute('data-target'));
+        if (isNaN(target)) return;
+
+        let current = 0;
+        const duration = 1500; // 1.5 seconds
+        const stepTime = 20; // update every 20ms
+        const totalSteps = duration / stepTime;
+        const increment = target / totalSteps;
+
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                counter.textContent = target;
+                clearInterval(timer);
+            } else {
+                counter.textContent = Math.floor(current);
+            }
+        }, stepTime);
+    });
+});
+
+// Function to close inactive warning popup
+function closeInactiveWarning() {
+    const overlay = document.getElementById('inactiveWarningOverlay');
+    if (overlay) {
+        overlay.style.animation = 'fadeOut 0.3s ease-out';
+        setTimeout(() => {
+            overlay.remove();
+        }, 300);
+    }
+}
+</script>
+
+<!-- Inactive Warning Popup -->
+{% if show_inactive_warning %}
+<div class="inactive-warning-overlay" id="inactiveWarningOverlay">
+    <div class="inactive-warning-popup">
+        <div class="warning-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h3>Activity Warning</h3>
+        <p>Your account has been inactive for more than 30 days. To maintain your active status, please participate in council events or recruitment activities.</p>
+        <button class="warning-btn" onclick="closeInactiveWarning()">I Understand</button>
+    </div>
+</div>
+{% endif %}
+
+<style>
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+</style>
+{% endblock %}

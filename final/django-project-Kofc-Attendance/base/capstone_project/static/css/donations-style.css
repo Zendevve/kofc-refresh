@@ -1,0 +1,359 @@
+body {
+    background-color: #0d3471;
+    margin: 0;
+    padding: 0;
+    font-family: "Roboto", sans-serif;
+}
+
+.background {
+    width: 100%;
+    min-height: 50vh; /* Reduced for better balance */
+    padding: 3rem 1rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/static/images/donation-bg.jpg') no-repeat center/cover;
+    color: #f0f1f6;
+}
+
+.background h1 {
+    font-size: 3rem;
+    margin: 0 0 1rem;
+    font-weight: 700;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+    animation: slideInDown 1s ease-out;
+}
+
+.background p {
+    font-size: 1.2rem;
+    max-width: 800px;
+    margin: 0 auto;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+    animation: fadeIn 1s ease-out 0.4s both;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 4rem auto;
+    padding: 0 1.5rem;
+}
+
+.hero {
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.hero .content h1 {
+    font-size: 2.5rem;
+    color: #f4b41a;
+    margin-bottom: 1rem;
+}
+
+.hero .content p {
+    font-size: 1.1rem;
+    color: #f0f1f6;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.donation-form {
+    background-color: #ffffff; /* Changed to pure white for cleaner look */
+    padding: 3rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    max-width: 650px; /* Increased from 600px to prevent overflow in donation details container */
+    margin: 0 auto;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease-out;
+}
+
+body.dark-mode .donation-form {
+    background-color: #252525 !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.7) !important;
+}
+
+.donation-form.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.donation-form h2 {
+    font-size: 2rem;
+    color: #161b5f;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.donation-form form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-section {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-sizing: border-box; /* Ensures padding is included in width to avoid overflow */
+}
+
+body.dark-mode .form-section {
+    background-color: #3a3a3a !important;
+    border-color: #555 !important;
+    color: #ffffff !important;
+}
+
+.form-section legend {
+    font-weight: bold;
+    color: #161b5f;
+    padding: 0 0.5rem;
+}
+
+body.dark-mode .form-section legend {
+    color: #f4b41a !important;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-size: 1rem;
+    color: #161b5f;
+    font-weight: 500;
+}
+
+body.dark-mode .form-group label {
+    color: #ffffff !important;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="number"],
+.form-group input[type="date"],
+.form-group input[type="file"],
+.form-group select {
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    width: 100%;
+    box-sizing: border-box; 
+}
+
+body.dark-mode .form-group input[type="text"],
+body.dark-mode .form-group input[type="email"],
+body.dark-mode .form-group input[type="number"],
+body.dark-mode .form-group input[type="date"],
+body.dark-mode .form-group input[type="file"],
+body.dark-mode .form-group select {
+    background-color: #3a3a3a !important;
+    color: #ffffff !important;
+    border-color: #555 !important;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #f4b41a;
+    box-shadow: 0 0 0 3px rgba(244, 180, 26, 0.2);
+    outline: none;
+}
+
+.form-group input[type="checkbox"] {
+    appearance: none; /* Hide default checkbox */
+    width: 20px; /* Larger for better usability */
+    height: 20px;
+    border: 2px solid #161b5f; /* Theme border */
+    border-radius: 4px; /* Rounded corners */
+    background-color: #ffffff; /* White background */
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.form-group input[type="checkbox"]:checked::after {
+    content: '\2714'; /* Unicode checkmark */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    color: #161b5f;
+    animation: checkAppear 0.3s ease;
+}
+
+.form-group input[type="checkbox"]:checked {
+    background-color: #f0f1f6; 
+    border-color: #161b5f;
+}
+
+.form-group input[type="checkbox"]:hover {
+    border-color: #f4b41a; 
+}
+
+.form-group label[for="id_donate_anonymously"] {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem; /* Reduced gap to minimize white space */
+    cursor: pointer;
+    font-size: 1rem;
+    color: #161b5f;
+    margin-bottom: 0.25rem; /* Reduced bottom margin */
+    vertical-align: middle; /* Fallback for alignment */
+}
+
+.explanation-text {
+    font-size: 0.85rem; /* Smaller for terms-like feel */
+    color: #666;
+    margin: 0.25rem 0 0; /* Reduced margin to remove redundant space */
+    line-height: 1.4;
+    font-style: italic; /* Italic for fine print look */
+    background-color: #f0f1f6; /* Light background for boxed note */
+    border: 1px solid #e0e0e0; /* Subtle border */
+    border-radius: 4px;
+    padding: 0.75rem; /* Internal padding for readability */
+}
+
+.anonymous-row {
+    display: flex;
+    align-items: flex-start; /* Align top for multi-line text */
+    gap: 1rem; /* Space between checkbox and text */
+    margin-top: 0.5rem; /* Space under label */
+}
+
+/* Make explanation take remaining space */
+.anonymous-row .explanation-text {
+    flex: 1; /* Grow to fill row */
+    margin: 0; /* Remove extra margins to reduce white space */
+    padding: 0.5rem; /* Reduced padding for tighter look */
+}
+
+/* Adjust checkbox in row */
+.anonymous-row input[type="checkbox"] {
+    margin-top: 0.25rem; /* Slight vertical alignment tweak */
+}
+
+/* Stack on small screens for responsiveness */
+@media (max-width: 768px) {
+    .anonymous-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+}
+
+.suggested-amounts {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    justify-content: center;
+}
+
+.amount-btn {
+    background: #f0f1f6;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.amount-btn:hover {
+    background: #f4b41a;
+    color: #161b5f;
+}
+
+.explanation-text {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0.5rem 0 0;
+    line-height: 1.4;
+}
+
+.btn {
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    text-align: center;
+}
+
+.btn-primary {
+    background: linear-gradient(to right, #161b5f, #0d3471);
+    color: #f0f1f6;
+}
+
+.btn-primary:hover {
+    background: #f4b41a;
+    color: #161b5f;
+    transform: scale(1.05);
+}
+
+.btn-secondary {
+    background: #f0f1f6;
+    color: #161b5f;
+    border: 1px solid #161b5f;
+    margin-top: 1rem;
+}
+
+.btn-secondary:hover {
+    background: #161b5f;
+    color: #f0f1f6;
+}
+
+.donation-thermometer {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.progress-bar {
+    background: #e0e0e0;
+    border-radius: 12px;
+    height: 12px;
+    margin: 0.5rem 0;
+}
+
+.progress {
+    background: #f4b41a;
+    height: 100%;
+    border-radius: 12px;
+    transition: width 0.5s ease;
+}
+
+.warning {
+    color: #d9534f;
+    font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+    .donation-form {
+        padding: 2rem 1.5rem;
+        max-width: 90%;
+    }
+    .background h1 {
+        font-size: 2.5rem;
+    }
+    .suggested-amounts {
+        flex-wrap: wrap;
+    }
+}
+
+@keyframes slideInDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}

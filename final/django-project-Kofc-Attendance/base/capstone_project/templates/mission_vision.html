@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Knights of Columbus - Mission & Vision
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/mission-vision-style.css' %}?v={% now 'U' %}">
+
+<div class="background" style="background: url('{% static 'images/kofc-bg.jpg' %}') no-repeat center/cover">
+    <h1>Mission & Vision</h1>
+    <p>Join us in our mission to serve God and our communities.</p>
+</div>
+<div class="container">
+    <section class="hero">
+        <div class="content">
+            <h1>What is the Knights of Columbus?</h1>
+            <p>Founded in 1882 by Blessed Michael McGivney, the Knights of Columbus was established to support Catholic families, provide financial aid to widows and orphans, and promote spiritual growth. Over the years, we have grown into one of the world's largest Catholic fraternal organizations.</p>
+        </div>
+    </section>
+
+    <section class="section mission">
+        <div class="mission-overlay">
+            <h2>Mission</h2>
+            <p>As Knights of Columbus, we are committed to charity, unity, fraternity, and patriotism. Our mission is to strengthen faith, support our communities, and provide aid to those in need through acts of service and generosity.</p>
+        </div>
+    </section>
+
+    <section class="section-history">
+        <h2>Vision</h2>
+        <p>We envision a world where Catholic men lead their families and communities in faith and service, inspired by the principles of charity, unity, and fraternity. Our vision is to continue growing as a global force for good, supporting the Church and those in need.</p>
+    </section>
+
+    <footer class="footer">
+        <p>&copy; 2025 Knights of Columbus. All rights reserved.</p>
+    </footer>
+</div>
+{% endblock %}

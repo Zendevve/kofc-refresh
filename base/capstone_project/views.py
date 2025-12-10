@@ -944,12 +944,24 @@ def analytics_view(request):
         y = np.array(historical_amounts)
         slope, intercept = np.polyfit(x, y, 1)
 
-        # Forecast next 6 months
+        # Forecast next 6 months starting from the month after last historical data
         forecast_months = []
         forecast_values = []
-        current_date = datetime.now()
+        # Parse the last historical month to continue from there
+        if historical_months:
+            last_month_str = historical_months[-1]  # Format: "YYYY-MM"
+            last_year, last_month = int(last_month_str.split('-')[0]), int(last_month_str.split('-')[1])
+            from datetime import date as dt_date
+            last_date = dt_date(last_year, last_month, 1)
+        else:
+            last_date = datetime.now().date()
+
         for i in range(1, 7):
-            future_date = current_date + timedelta(days=30*i)
+            # Add months properly
+            new_month = last_date.month + i
+            new_year = last_date.year + (new_month - 1) // 12
+            new_month = ((new_month - 1) % 12) + 1
+            future_date = dt_date(new_year, new_month, 1)
             forecast_months.append(future_date.strftime('%b %Y'))
             predicted = max(0, intercept + slope * (len(historical_amounts) + i - 1))
             forecast_values.append(round(predicted, 2))

@@ -635,7 +635,10 @@ Comprehensive insights and performance metrics
     if (predictiveData.historical_labels?.length || predictiveData.forecast_labels?.length) {
       const allLabels = [...(predictiveData.historical_labels || []), ...(predictiveData.forecast_labels || [])];
       const historicalData = [...(predictiveData.historical_data || []), ...Array(predictiveData.forecast_labels?.length || 0).fill(null)];
-      const forecastData = [...Array(predictiveData.historical_data?.length || 0).fill(null), ...(predictiveData.forecast_data || [])];
+
+      // Connect forecast to last historical point by including it as the first forecast value
+      const lastHistoricalValue = predictiveData.historical_data?.length ? predictiveData.historical_data[predictiveData.historical_data.length - 1] : null;
+      const forecastData = [...Array(Math.max(0, (predictiveData.historical_data?.length || 0) - 1)).fill(null), lastHistoricalValue, ...(predictiveData.forecast_data || [])];
 
       new Chart(document.getElementById('predictiveChart').getContext('2d'), {
         type: 'line',
@@ -649,6 +652,7 @@ Comprehensive insights and performance metrics
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } }
       });
     }
+
 
     // Donation by Role
     if (donationByRoleData.labels?.length) {
