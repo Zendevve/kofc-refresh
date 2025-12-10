@@ -68,6 +68,12 @@
             <i class="fas fa-users"></i>
             <span>Members</span>
           </a>
+
+          <a href="{% url 'manage_councils' %}"
+            class="sidebar-link {% if 'manage-councils' in request.path %}active{% endif %}">
+            <i class="fas fa-landmark"></i>
+            <span>Manage Councils</span>
+          </a>
           {% endif %}
         </div>
         {% endif %}
