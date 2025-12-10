@@ -1498,7 +1498,9 @@ def donations(request):
     else:
         form = DonationForm(initial={'donation_date': date.today()})
         logger.debug(f"Rendered form HTML: {form.as_p()}")
-    return render(request, 'donations.html', {'form': form, 'show_manual_link': show_manual_link})
+    # Use dashboard template with sidebar for logged-in users
+    template = 'donations_dashboard.html' if request.user.is_authenticated else 'donations.html'
+    return render(request, template, {'form': form, 'show_manual_link': show_manual_link})
 
 @csrf_protect
 @login_required
