@@ -1,473 +1,488 @@
-{% extends 'base.html' %}
+{% extends 'dashboard_base.html' %}
 {% load static %}
-{% block title %}
-Knights of Columbus - Event Proposals
+
+{% block title %}Event Proposals - Knights of Columbus{% endblock %}
+{% block page_title %}Event Proposals{% endblock %}
+{% block page_subtitle %}Review and manage pending event proposals{% endblock %}
+
+{% block extra_css %}
+<style>
+  .proposals-section {
+    margin-bottom: var(--space-8);
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-900);
+    margin-bottom: var(--space-4);
+  }
+
+  .section-title i {
+    color: var(--primary-500);
+  }
+
+  .section-title .count {
+    background: var(--primary-100);
+    color: var(--primary-700);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: var(--font-bold);
+  }
+
+  .proposals-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .proposals-table thead {
+    background: var(--neutral-50);
+  }
+
+  .proposals-table th {
+    padding: var(--space-3) var(--space-4);
+    text-align: left;
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--neutral-200);
+  }
+
+  .proposals-table td {
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--neutral-100);
+    font-size: var(--text-sm);
+    color: var(--neutral-700);
+    vertical-align: middle;
+  }
+
+  .proposals-table tbody tr {
+    transition: background var(--transition-fast);
+  }
+
+  .proposals-table tbody tr:hover {
+    background: var(--neutral-50);
+  }
+
+  .event-name {
+    font-weight: var(--font-medium);
+    color: var(--neutral-900);
+  }
+
+  .event-category {
+    display: inline-flex;
+    padding: var(--space-1) var(--space-2);
+    background: var(--primary-50);
+    color: var(--primary-700);
+    border-radius: var(--radius-md);
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+  }
+
+  .status-badge {
+    display: inline-flex;
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+  }
+
+  .status-badge.pending {
+    background: var(--warning-100);
+    color: var(--warning-700);
+  }
+
+  .status-badge.approved {
+    background: var(--success-100);
+    color: var(--success-700);
+  }
+
+  .status-badge.rejected {
+    background: var(--error-100);
+    color: var(--error-700);
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: var(--space-2);
+    justify-content: center;
+  }
+
+  .action-btn {
+    padding: var(--space-2) var(--space-3);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  .action-btn.view {
+    background: var(--neutral-100);
+    color: var(--neutral-700);
+  }
+
+  .action-btn.view:hover {
+    background: var(--neutral-200);
+  }
+
+  .action-btn.approve {
+    background: var(--success-500);
+    color: white;
+  }
+
+  .action-btn.approve:hover {
+    background: var(--success-600);
+  }
+
+  .action-btn.reject {
+    background: var(--error-500);
+    color: white;
+  }
+
+  .action-btn.reject:hover {
+    background: var(--error-600);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: var(--space-8);
+    color: var(--neutral-500);
+  }
+
+  .empty-state i {
+    font-size: var(--text-4xl);
+    color: var(--neutral-300);
+    margin-bottom: var(--space-3);
+  }
+
+  /* Modal Styles */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.show {
+    display: flex;
+  }
+
+  .modal-content {
+    background: white;
+    border-radius: var(--radius-2xl);
+    max-width: 600px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-2xl);
+    animation: modalSlideIn 0.3s ease;
+  }
+
+  @keyframes modalSlideIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .modal-header {
+    padding: var(--space-5);
+    border-bottom: 1px solid var(--neutral-100);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .modal-header h3 {
+    margin: 0;
+    font-size: var(--text-lg);
+    color: var(--neutral-900);
+  }
+
+  .modal-close {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: var(--neutral-100);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+  }
+
+  .modal-close:hover {
+    background: var(--neutral-200);
+  }
+
+  .modal-body {
+    padding: var(--space-5);
+  }
+
+  .event-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+
+  .detail-item {
+    padding: var(--space-3);
+    background: var(--neutral-50);
+    border-radius: var(--radius-md);
+  }
+
+  .detail-item strong {
+    display: block;
+    font-size: var(--text-xs);
+    color: var(--neutral-500);
+    margin-bottom: var(--space-1);
+    text-transform: uppercase;
+  }
+
+  .detail-item span, .detail-item p {
+    font-size: var(--text-sm);
+    color: var(--neutral-900);
+    margin: 0;
+  }
+
+  .detail-item.full-width {
+    grid-column: 1 / -1;
+  }
+
+  .rejection-reason {
+    background: var(--error-50);
+    border: 1px solid var(--error-200);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    margin-top: var(--space-4);
+  }
+
+  .rejection-reason strong {
+    color: var(--error-700);
+    display: block;
+    margin-bottom: var(--space-2);
+  }
+
+  .rejection-reason p {
+    color: var(--error-600);
+    margin: 0;
+  }
+
+  .modal-footer {
+    padding: var(--space-4) var(--space-5);
+    border-top: 1px solid var(--neutral-100);
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  @media (max-width: 768px) {
+    .proposals-table {
+      display: block;
+      overflow-x: auto;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+    }
+
+    .event-detail-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
 {% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/event_management.css' %}?v={% now 'U' %}">
+<!-- Pending Proposals -->
+<div class="dashboard-card proposals-section">
+  <div class="dashboard-card-body">
+    <h2 class="section-title">
+      <i class="fas fa-clock"></i>
+      Pending Proposals
+      {% if pending_events %}<span class="count">{{ pending_events|length }}</span>{% endif %}
+    </h2>
 
-<div class="dashboard-container">
-    <div class="event-form-container">
-        <div class="dashboard-header">
-            <h1>Event Proposals</h1>
-            <div>
-                <a href="{% url 'dashboard' %}" class="role-btn secondary back-btn">
-                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+    {% if pending_events %}
+    <div class="table-responsive">
+      <table class="proposals-table">
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Category</th>
+            <th>Date</th>
+            <th>Council</th>
+            <th>Proposed By</th>
+            <th style="text-align: center;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for event in pending_events %}
+          <tr>
+            <td><span class="event-name">{{ event.name }}</span></td>
+            <td><span class="event-category">{{ event.category }}</span></td>
+            <td>{{ event.date_from|date:"M d, Y" }}{% if event.date_until and event.date_until != event.date_from %} - {{ event.date_until|date:"M d, Y" }}{% endif %}</td>
+            <td>{{ event.council.name }}</td>
+            <td>{{ event.created_by.first_name }} {{ event.created_by.last_name }}</td>
+            <td>
+              <div class="action-buttons">
+                <button class="action-btn view" onclick="viewEventDetails('{{ event.id }}')">
+                  <i class="fas fa-eye"></i> View
+                </button>
+                <a href="{% url 'approve_event' event.id %}" class="action-btn approve">
+                  <i class="fas fa-check"></i> Approve
                 </a>
-            </div>
-        </div>
-
-        {% if pending_events %}
-        <table class="event-table">
-            <thead>
-                <tr>
-                    <th>Event ID</th>
-                    <th>Event Name</th>
-                    <th>Category</th>
-                    <th>Date</th>
-                    <th>Council</th>
-                    <th>Proposed By</th>
-                    <th>Status</th>
-                    <th class="action-header">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for event in pending_events %}
-                <tr>
-                    <td>{{ event.id }}</td>
-                    <td>{{ event.name }}</td>
-                    <td>{{ event.category }}{% if event.subcategory and event.subcategory != 'N/A' %} - {{ event.subcategory }}{% endif %}</td>
-                    <td>{{ event.date_from|date:"M d, Y" }} {% if event.date_until and event.date_until != event.date_from %} - {{ event.date_until|date:"M d, Y" }}{% endif %}</td>
-                    <td>{{ event.council.name }}</td>
-                    <td>{{ event.created_by.first_name }} {{ event.created_by.last_name }}</td>
-                    <td><span class="status-badge status-{{ event.status }}">{{ event.get_status_display }}</span></td>
-                    <td class="action-cell">
-                        <a href="#" class="action-btn details-btn" onclick="viewEventDetails('{{ event.id }}'); return false;">
-                            <i class="fas fa-eye"></i> View
-                        </a>
-                        <a href="{% url 'approve_event' event.id %}" class="action-btn approve-btn">
-                            <i class="fas fa-check"></i> Approve
-                        </a>
-                        <a href="{% url 'reject_event' event.id %}" class="action-btn reject-btn">
-                            <i class="fas fa-times"></i> Reject
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% else %}
-        <div class="no-events-message">
-            <p>There are no pending event proposals at this time.</p>
-        </div>
-        {% endif %}
-
-        <!-- Event history section -->
-        <h3 class="event-form-title" style="margin-top: 2rem;">Previous Event Proposals</h3>
-        {% if previous_events %}
-        <table class="event-table">
-            <thead>
-                <tr>
-                    <th>Event ID</th>
-                    <th>Event Name</th>
-                    <th>Category</th>
-                    <th>Date</th>
-                    <th>Council</th>
-                    <th>Proposed By</th>
-                    <th>Status</th>
-                    <th class="action-header">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for event in previous_events %}
-                <tr>
-                    <td>{{ event.id }}</td>
-                    <td>{{ event.name }}</td>
-                    <td>{{ event.category }}{% if event.subcategory and event.subcategory != 'N/A' %} - {{ event.subcategory }}{% endif %}</td>
-                    <td>{{ event.date_from|date:"M d, Y" }} {% if event.date_until and event.date_until != event.date_from %} - {{ event.date_until|date:"M d, Y" }}{% endif %}</td>
-                    <td>{{ event.council.name }}</td>
-                    <td>{{ event.created_by.first_name }} {{ event.created_by.last_name }}</td>
-                    <td><span class="status-badge status-{{ event.status }}">{{ event.get_status_display }}</span></td>
-                    <td class="action-cell">
-                        <a href="#" class="action-btn details-btn" onclick="viewEventDetails('{{ event.id }}'); return false;">
-                            <i class="fas fa-eye"></i> View
-                        </a>
-                        {% if event.status == 'pending' %}
-                        <a href="{% url 'approve_event' event.id %}" class="action-btn approve-btn">
-                            <i class="fas fa-check"></i> Approve
-                        </a>
-                        <a href="{% url 'reject_event' event.id %}" class="action-btn reject-btn">
-                            <i class="fas fa-times"></i> Reject
-                        </a>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% else %}
-        <div class="no-events-message">
-            <p>There are no previous event proposals.</p>
-        </div>
-        {% endif %}
+                <a href="{% url 'reject_event' event.id %}" class="action-btn reject">
+                  <i class="fas fa-times"></i> Reject
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
+    {% else %}
+    <div class="empty-state">
+      <i class="fas fa-inbox"></i>
+      <p>No pending proposals at this time.</p>
+    </div>
+    {% endif %}
+  </div>
 </div>
 
-<!-- Event details modal -->
-<div id="eventDetailsModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Event Details</h3>
-            <span class="close">&times;</span>
-        </div>
-        <div id="eventDetailsContent">
-            <div class="loading">Loading event details...</div>
-        </div>
-        <div class="modal-footer">
-            <button id="okButton" class="dashboard-btn">OK</button>
-        </div>
+<!-- Previous Proposals -->
+<div class="dashboard-card">
+  <div class="dashboard-card-body">
+    <h2 class="section-title">
+      <i class="fas fa-history"></i>
+      Previous Proposals
+    </h2>
+
+    {% if previous_events %}
+    <div class="table-responsive">
+      <table class="proposals-table">
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Category</th>
+            <th>Date</th>
+            <th>Council</th>
+            <th>Proposed By</th>
+            <th>Status</th>
+            <th style="text-align: center;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for event in previous_events %}
+          <tr>
+            <td><span class="event-name">{{ event.name }}</span></td>
+            <td><span class="event-category">{{ event.category }}</span></td>
+            <td>{{ event.date_from|date:"M d, Y" }}{% if event.date_until and event.date_until != event.date_from %} - {{ event.date_until|date:"M d, Y" }}{% endif %}</td>
+            <td>{{ event.council.name }}</td>
+            <td>{{ event.created_by.first_name }} {{ event.created_by.last_name }}</td>
+            <td><span class="status-badge {{ event.status }}">{{ event.get_status_display }}</span></td>
+            <td>
+              <div class="action-buttons">
+                <button class="action-btn view" onclick="viewEventDetails('{{ event.id }}')">
+                  <i class="fas fa-eye"></i> View
+                </button>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
+    {% else %}
+    <div class="empty-state">
+      <i class="fas fa-folder-open"></i>
+      <p>No previous proposals.</p>
+    </div>
+    {% endif %}
+  </div>
 </div>
 
+<!-- Event Details Modal -->
+<div id="eventDetailsModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Event Details</h3>
+      <button class="modal-close" onclick="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body" id="eventDetailsContent">
+      <div style="text-align: center; padding: var(--space-8); color: var(--neutral-500);">
+        <i class="fas fa-spinner fa-spin" style="font-size: var(--text-2xl);"></i>
+        <p>Loading...</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn--primary" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
 <script>
-    function viewEventDetails(eventId) {
-        const modal = document.getElementById('eventDetailsModal');
-        const content = document.getElementById('eventDetailsContent');
-        
-        content.innerHTML = '<div class="loading">Loading event details...</div>';
-        openModal(modal);
-        
-        fetch(`/event/${eventId}/details/`)
-            .then(response => response.json())
-            .then(data => {
-                let detailsHTML = `
-                    <h4 class="modal-event-title ${data.status === 'rejected' ? 'rejected-title' : ''}">${data.name}</h4>
-                    <div class="modal-event-details-grid">
-                        <div class="modal-detail-item">
-                            <strong>Date:</strong> 
-                            <span>${data.date_from}${data.date_until ? ' - ' + data.date_until : ''}</span>
-                        </div>
-                        <div class="modal-detail-item">
-                            <strong>Location:</strong>
-                            <address>
-                                ${data.street}, ${data.barangay}<br>
-                                ${data.city}, ${data.province}
-                            </address>
-                        </div>
-                        <div class="modal-detail-item">
-                            <strong>Council:</strong>
-                            <p>${data.council_name}</p>
-                        </div>
-                        <div class="modal-detail-item">
-                            <strong>Status:</strong>
-                            <span class="status-badge status-${data.status}">${data.status_display}</span>
-                        </div>
-                        <div class="modal-detail-item">
-                            <strong>Created by:</strong>
-                            <p>${data.creator_name}</p>
-                        </div>
-                        <div class="modal-detail-item full-width">
-                            <strong>Description:</strong>
-                            <p>${data.description}</p>
-                        </div>
-                    </div>
-                `;
-                
-                if (data.status === 'rejected' && data.rejection_reason) {
-                    detailsHTML += `
-                        <div class="detail-group rejection-reason">
-                            <strong>Rejection Reason:</strong>
-                            <p>${data.rejection_reason}</p>
-                        </div>
-                    `;
-                }
-                
-                content.innerHTML = detailsHTML;
-            })
-            .catch(error => {
-                content.innerHTML = '<p>Error loading event details. Please try again later.</p>';
-            });
-    }
+function viewEventDetails(eventId) {
+  const modal = document.getElementById('eventDetailsModal');
+  const content = document.getElementById('eventDetailsContent');
+  modal.classList.add('show');
 
-    function openModal(modal) {
-        modal.style.display = 'block';
-        modal.offsetHeight;
-        modal.classList.add('show');
-    }
+  fetch(`/event/${eventId}/details/`)
+    .then(response => response.json())
+    .then(data => {
+      let html = `
+        <h4 style="margin: 0 0 var(--space-4); font-size: var(--text-xl); color: var(--neutral-900);">${data.name}</h4>
+        <div class="event-detail-grid">
+          <div class="detail-item"><strong>Date</strong><span>${data.date_from}${data.date_until ? ' - ' + data.date_until : ''}</span></div>
+          <div class="detail-item"><strong>Status</strong><span class="status-badge ${data.status}">${data.status_display}</span></div>
+          <div class="detail-item"><strong>Council</strong><span>${data.council_name}</span></div>
+          <div class="detail-item"><strong>Created By</strong><span>${data.creator_name}</span></div>
+          <div class="detail-item full-width"><strong>Location</strong><span>${data.street}, ${data.barangay}, ${data.city}, ${data.province}</span></div>
+          <div class="detail-item full-width"><strong>Description</strong><p>${data.description}</p></div>
+        </div>
+      `;
 
-    function closeModal(modal) {
-        modal.classList.remove('show');
-        setTimeout(function() {
-            modal.style.display = 'none';
-        }, 300);
-    }
+      if (data.status === 'rejected' && data.rejection_reason) {
+        html += `
+          <div class="rejection-reason">
+            <strong><i class="fas fa-exclamation-circle"></i> Rejection Reason</strong>
+            <p>${data.rejection_reason}</p>
+          </div>
+        `;
+      }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const modal = document.getElementById('eventDetailsModal');
-        const closeBtn = modal.querySelector('.close');
-        const okBtn = modal.querySelector('#okButton');
-
-        closeBtn.onclick = function() {
-            closeModal(modal);
-        };
-
-        okBtn.onclick = function() {
-            closeModal(modal);
-        };
-
-        window.onclick = function(event) {
-            if (event.target === modal) {
-                closeModal(modal);
-            }
-        };
+      content.innerHTML = html;
+    })
+    .catch(error => {
+      content.innerHTML = '<p style="color: var(--error-500); text-align: center;">Error loading details.</p>';
     });
+}
+
+function closeModal() {
+  document.getElementById('eventDetailsModal').classList.remove('show');
+}
+
+document.getElementById('eventDetailsModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
 </script>
-
-<style>
-    /* Modal styles */
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0; top: 0;
-        width: 100%; height: 100%;
-        background-color: rgba(13, 52, 113, 0.8);
-        backdrop-filter: blur(5px);
-    }
-    .modal.show { display: block; }
-    .modal-content {
-        background: linear-gradient(135deg, var(--secondary-bg), white);
-        margin: 5% auto;
-        padding: 2rem;
-        border-radius: 16px;
-        max-width: 700px;
-        position: relative;
-        max-height: 85vh;
-        overflow-y: auto;
-        box-shadow: 0 20px 60px rgba(13, 52, 113, 0.3);
-        animation: modalSlideIn 0.4s ease-out;
-    }
-    @keyframes modalSlideIn { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
-    .modal-header h3 { color: var(--heading-color); margin-bottom: 1.5rem; border-bottom: 2px solid var(--primary-bg); padding-bottom: 1rem; font-size: 1.8rem; }
-    .close {
-        position: absolute;
-        top: 1.5rem; right: 2rem;
-        font-size: 2rem;
-        cursor: pointer;
-        color: var(--heading-color);
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        transition: all var(--transition-speed) ease;
-    }
-    .close:hover {
-        background-color: var(--primary-bg);
-        color: var(--secondary-bg);
-        transform: rotate(90deg);
-    }
-    #eventDetailsContent { padding: 0; }
-    .modal-event-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-    .modal-detail-item { padding: 1rem; background-color: rgba(13, 52, 113, 0.05); border-radius: var(--border-radius); }
-    .modal-detail-item strong { display: block; color: var(--heading-color); margin-bottom: 0.5rem; }
-    .modal-detail-item.full-width { grid-column: 1 / -1; }
-    .modal-event-title { grid-column: 1 / -1; margin: 0 0 1rem 0; padding-bottom: 1rem; border-bottom: 1px solid rgba(13, 52, 113, 0.1); }
-    .modal-footer { padding-top: 1.5rem; text-align: right; border-top: 1px solid rgba(13, 52, 113, 0.1); }
-    .modal-footer .dashboard-btn {
-        background: linear-gradient(135deg, var(--primary-bg), #1e5a96);
-        color: white;
-        border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 12px rgba(13, 52, 113, 0.3);
-    }
-    .modal-footer .dashboard-btn:hover {
-        background: linear-gradient(135deg, #1e5a96, var(--primary-bg));
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(13, 52, 113, 0.4);
-    }
-    
-    /* Archived Events Table Styles */
-    .event-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-        background-color: white;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: var(--table-shadow);
-        margin-top: 2rem;
-        position: relative;
-    }
-    .event-table::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, var(--primary-bg), var(--accent-color), var(--primary-bg));
-    }
-    .event-table th {
-        padding: 1.5rem 1.25rem;
-        text-align: left;
-        background-color: var(--primary-bg);
-        color: white;
-        font-weight: 700;
-        font-size: 0.95rem;
-        text-transform: uppercase;
-    }
-    .event-table td {
-        padding: 1.25rem;
-        text-align: left;
-        border-bottom: 1px solid rgba(13, 52, 113, 0.08);
-        vertical-align: middle;
-    }
-    .event-table tbody tr:hover {
-        background-color: rgba(13, 52, 113, 0.06);
-    }
-    .event-table tr:last-child td {
-        border-bottom: none;
-    }
-    .action-header { text-align: center !important; }
-    .action-cell {
-        display: flex;
-        justify-content: center;
-        gap: 0.75rem;
-    }
-    .action-btn {
-        padding: 0.6rem 1.2rem;
-        border: none;
-        border-radius: 6px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all var(--transition-speed) ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: white;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    }
-    .action-btn:hover { 
-        transform: translateY(-2px); 
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25); 
-    }
-    .details-btn {
-        background: linear-gradient(135deg, var(--accent-color), #f39c12);
-        color: var(--primary-bg) !important;
-    }
-    .approve-btn {
-        background: linear-gradient(135deg, #28a745, #20c997);
-        color: white !important;
-    }
-    .reject-btn {
-        background: linear-gradient(135deg, #dc3545, #e74c3c);
-        color: white !important;
-    }
-    .status-badge {
-        display: inline-block;
-        padding: 0.5rem 1rem;
-        border-radius: 25px;
-        font-size: 0.8rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    }
-    .status-pending { background: linear-gradient(135deg, #ffc107, #f39c12); color: #212529; }
-    .status-approved { background: linear-gradient(135deg, #28a745, #20c997); color: white; }
-    .status-rejected { background: linear-gradient(135deg, #dc3545, #e74c3c); color: white; }
-    .no-events-message {
-        text-align: center;
-        padding: 3rem 2rem;
-        background: #f8f9fa;
-        border-radius: 12px;
-        color: #6c757d;
-    }
-    
-    @media (max-width: 768px) {
-        .event-table { display: block; overflow-x: auto; }
-        .action-cell { flex-direction: column; gap: 0.5rem; }
-    }
-    
-    .event-details {
-        margin-top: 1rem;
-    }
-    
-    .detail-group {
-        margin-bottom: 1rem;
-    }
-    
-    .detail-group strong {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: var(--heading-color);
-    }
-    
-    .event-category {
-        display: inline-block;
-        background-color: var(--primary-bg);
-        color: white;
-        padding: 0.25rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.9rem;
-        margin-bottom: 1rem;
-    }
-    
-    .loading {
-        text-align: center;
-        padding: 2rem;
-        color: var(--heading-color);
-    }
-    
-    .dashboard-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 2rem;
-        padding-bottom: 0;
-        border-bottom: none;
-    }
-
-    .role-btn {
-        padding: 1rem 1rem;
-        border: none;
-        border-radius: var(--border-radius);
-        font-size: 0.9rem;
-        cursor: pointer;
-        transition: all var(--transition-speed) ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        background-color: var(--primary-bg);
-        color: white;
-    }
-
-    .role-btn.secondary {
-        background-color: var(--primary-bg);
-        color: white;
-    }
-
-    .role-btn:hover {
-        opacity: 0.9;
-        transform: translateY(-1px);
-        color: var(--accent-color);
-    }
-
-    .back-btn:hover {
-        background-color: var(--accent-color) !important;
-        color: var(--primary-bg);
-    }
-</style>
-{% endblock %} 
+{% endblock %}

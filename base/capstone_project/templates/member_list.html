@@ -1,649 +1,662 @@
-{% extends 'base.html' %}
+{% extends 'dashboard_base.html' %}
 {% load static %}
-{% block title %}
-Knights of Columbus - Member List
+
+{% block title %}Members - Knights of Columbus{% endblock %}
+{% block page_title %}Members{% endblock %}
+{% block page_subtitle %}Manage and view all council members{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'manage_pending_users' %}" class="btn btn--ghost">
+  <i class="fas fa-user-clock"></i>
+  <span>Pending</span>
+</a>
+<a href="{% url 'archived_users' %}" class="btn btn--ghost">
+  <i class="fas fa-archive"></i>
+  <span>Archived</span>
+</a>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  .filters-bar {
+    display: flex;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .search-box {
+    flex: 1;
+    min-width: 250px;
+    position: relative;
+  }
+
+  .search-box input {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    padding-left: var(--space-10);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    transition: all var(--transition-fast);
+  }
+
+  .search-box input:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+
+  .search-box i {
+    position: absolute;
+    left: var(--space-4);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--neutral-400);
+  }
+
+  .filter-pills {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  .filter-pill {
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-full);
+    background: white;
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--neutral-600);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .filter-pill:hover {
+    border-color: var(--primary-300);
+    color: var(--primary-600);
+  }
+
+  .filter-pill.active {
+    background: var(--primary-600);
+    border-color: var(--primary-600);
+    color: white;
+  }
+
+  .sort-select {
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--neutral-200);
+    border-radius: var(--radius-lg);
+    background: white;
+    font-size: var(--text-sm);
+    color: var(--neutral-700);
+    cursor: pointer;
+  }
+
+  .members-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .members-table thead {
+    background: var(--neutral-50);
+  }
+
+  .members-table th {
+    padding: var(--space-3) var(--space-4);
+    text-align: left;
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--neutral-200);
+  }
+
+  .members-table td {
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--neutral-100);
+    font-size: var(--text-sm);
+    color: var(--neutral-700);
+    vertical-align: middle;
+  }
+
+  .members-table tbody tr {
+    transition: background var(--transition-fast);
+  }
+
+  .members-table tbody tr:hover {
+    background: var(--neutral-50);
+  }
+
+  .member-cell {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .member-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, var(--primary-100), var(--primary-200));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  .member-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .member-avatar i {
+    font-size: var(--text-sm);
+    color: var(--primary-600);
+  }
+
+  .member-name {
+    font-weight: var(--font-medium);
+    color: var(--neutral-900);
+  }
+
+  .role-badge {
+    display: inline-flex;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+  }
+
+  .role-badge.admin {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    color: #92400e;
+  }
+
+  .role-badge.officer {
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    color: #1e40af;
+  }
+
+  .role-badge.member {
+    background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+    color: #065f46;
+  }
+
+  .role-badge.pending {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    color: #92400e;
+  }
+
+  .inactive-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-2);
+    background: var(--warning-50);
+    color: var(--warning-600);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+    margin-left: var(--space-2);
+  }
+
+  .degree-badge {
+    padding: var(--space-1) var(--space-2);
+    background: var(--neutral-100);
+    color: var(--neutral-700);
+    border-radius: var(--radius-md);
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  .action-btn {
+    padding: var(--space-2) var(--space-3);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  .action-btn.details {
+    background: var(--primary-50);
+    color: var(--primary-700);
+  }
+
+  .action-btn.details:hover {
+    background: var(--primary-100);
+  }
+
+  .action-btn.council {
+    background: var(--success-50);
+    color: var(--success-700);
+  }
+
+  .action-btn.council:hover {
+    background: var(--success-100);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: var(--space-12);
+    color: var(--neutral-500);
+  }
+
+  .empty-state i {
+    font-size: var(--text-4xl);
+    color: var(--neutral-300);
+    margin-bottom: var(--space-4);
+  }
+
+  /* Modal Styles */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.show {
+    display: flex;
+  }
+
+  .modal-content {
+    background: white;
+    border-radius: var(--radius-2xl);
+    max-width: 600px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-2xl);
+    animation: modalSlideIn 0.3s ease;
+  }
+
+  @keyframes modalSlideIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .modal-header {
+    padding: var(--space-6);
+    border-bottom: 1px solid var(--neutral-100);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .modal-header h3 {
+    margin: 0;
+    font-size: var(--text-xl);
+    color: var(--neutral-900);
+  }
+
+  .modal-close {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: var(--neutral-100);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+  }
+
+  .modal-close:hover {
+    background: var(--neutral-200);
+  }
+
+  .modal-body {
+    padding: var(--space-6);
+  }
+
+  .user-profile-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+
+  .profile-avatar-large {
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, var(--primary-100), var(--primary-200));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 3px solid var(--primary-200);
+  }
+
+  .profile-avatar-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .profile-avatar-large i {
+    font-size: var(--text-3xl);
+    color: var(--primary-600);
+  }
+
+  .profile-avatar-large.inactive {
+    border-color: var(--warning-400);
+    box-shadow: 0 0 0 3px var(--warning-100);
+  }
+
+  .user-details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+
+  .detail-group {
+    padding: var(--space-3);
+    background: var(--neutral-50);
+    border-radius: var(--radius-md);
+  }
+
+  .detail-group strong {
+    display: block;
+    font-size: var(--text-xs);
+    color: var(--neutral-500);
+    margin-bottom: var(--space-1);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .detail-group span {
+    font-size: var(--text-sm);
+    color: var(--neutral-900);
+  }
+
+  .detail-group.full-width {
+    grid-column: 1 / -1;
+  }
+
+  .modal-footer {
+    padding: var(--space-4) var(--space-6);
+    border-top: 1px solid var(--neutral-100);
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  @media (max-width: 768px) {
+    .filters-bar {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .filter-pills {
+      overflow-x: auto;
+      padding-bottom: var(--space-2);
+    }
+
+    .members-table {
+      display: block;
+      overflow-x: auto;
+    }
+
+    .user-details-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
 {% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/role_management.css' %}?v={% now 'U' %}">
+<div class="dashboard-card">
+  <div class="dashboard-card-body">
+    <!-- Filters Bar -->
+    <div class="filters-bar">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="userSearchInput" placeholder="Search by name, email, or council...">
+      </div>
+      <div class="filter-pills">
+        <button class="filter-pill active" data-role="all">All</button>
+        <button class="filter-pill" data-role="officer">Officers</button>
+        <button class="filter-pill" data-role="member">Members</button>
+        <button class="filter-pill" data-role="pending">Pending</button>
+      </div>
+      <select id="sortSelect" class="sort-select">
+        <option value="alphabetical">A-Z</option>
+        <option value="reverse-alphabetical">Z-A</option>
+        <option value="newest">Newest</option>
+        <option value="oldest">Oldest</option>
+      </select>
+    </div>
 
-<div class="dashboard-container">
-    <div class="role-management-container">
-        <div class="role-management-header">
-            <h2>Member List</h2>
-            <div class="header-actions">
-                <a href="{% url 'dashboard' %}" class="role-btn">
-                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+    <!-- Members Table -->
+    <div class="table-responsive">
+      <table class="members-table">
+        <thead>
+          <tr>
+            <th>Member</th>
+            <th>Council</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Degree</th>
+            <th style="text-align: center;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          {% if not user.is_archived %}
+          <tr data-role="{{ user.role }}" data-council="{{ user.council.name|default:'' }}" data-name="{{ user.first_name }} {{ user.last_name }}" data-joined="{{ user.date_joined|date:'Y-m-d' }}">
+            <td>
+              <div class="member-cell">
+                <div class="member-avatar">
+                  {% if user.profile_picture %}
+                  <img src="{{ user.profile_picture.url }}" alt="{{ user.first_name }}">
+                  {% else %}
+                  <i class="fas fa-user"></i>
+                  {% endif %}
+                </div>
+                <span class="member-name">{{ user.first_name }} {{ user.last_name }}</span>
+              </div>
+            </td>
+            <td>{{ user.council.name|default:"—" }}</td>
+            <td>{{ user.email }}</td>
+            <td>
+              <span class="role-badge {{ user.role }}">{{ user.get_role_display }}</span>
+              {% with activity_status=user.get_activity_status %}
+              {% if activity_status.warning %}
+              <span class="inactive-badge" title="{{ activity_status.message }}">
+                <i class="fas fa-exclamation-triangle"></i> Inactive
+              </span>
+              {% endif %}
+              {% endwith %}
+            </td>
+            <td><span class="degree-badge">{{ user.get_current_degree_display }}</span></td>
+            <td>
+              <div class="action-buttons" style="justify-content: center;">
+                <button class="action-btn details" onclick="viewUserDetails('{{ user.id }}')">
+                  <i class="fas fa-info-circle"></i> Details
+                </button>
+                {% if request.user.role == 'admin' %}
+                <a href="{% url 'change_council' user_id=user.id %}" class="action-btn council">
+                  <i class="fas fa-exchange-alt"></i> Council
                 </a>
-            </div>
-        </div>
-
-        <div class="role-search-filter">
-            <input type="text" id="userSearchInput" placeholder="Search members by name, email, or council..." class="role-search-input">
-        </div>
-
-        <div class="role-filters-container">
-            <div class="role-filters">
-                <button class="role-filter-btn active" data-role="all">All</button>
-                <button class="role-filter-btn" data-role="officer">Officers</button>
-                <button class="role-filter-btn" data-role="member">Members</button>
-                <button class="role-filter-btn" data-role="pending">Pending</button>
-            </div>
-            <div class="sort-filter">
-                <select id="sortSelect" class="sort-dropdown">
-                    <option value="alphabetical">Alphabetical (A-Z)</option>
-                    <option value="reverse-alphabetical">Reverse Alphabetical (Z-A)</option>
-                    <option value="newest">Newest Members</option>
-                    <option value="oldest">Oldest Members</option>
-                </select>
-            </div>
-            <div class="filter-actions">
-                <a href="{% url 'manage_pending_users' %}" class="role-btn">
-                    <i class="fas fa-user-clock"></i> Pending Users
-                </a>
-                <a href="{% url 'archived_users' %}" class="role-btn">
-                    <i class="fas fa-archive"></i> Archived Users
-                </a>
-            </div>
-        </div>
-
-        <table class="event-table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Council</th>
-                    <th>Email</th>
-                    <th>Current Role</th>
-                    <th>Degree</th>
-                    <th class="action-header">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                {% if not user.is_archived %}
-                <tr data-role="{{ user.role }}" data-council="{{ user.council.name|default:'' }}" data-name="{{ user.first_name }} {{ user.last_name }}" data-joined="{{ user.date_joined|date:'Y-m-d' }}">
-                    <td>{{ user.first_name }} {{ user.last_name }}</td>
-                    <td>{{ user.council.name|default:"No council" }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>
-                        <span class="role-badge role-{{ user.role }}">{{ user.get_role_display }}</span>
-                        {% with activity_status=user.get_activity_status %}
-                            {% if activity_status.warning %}
-                                <br><span class="{{ activity_status.class }}" title="{{ activity_status.message }}">
-                                    <i class="fas fa-exclamation-triangle"></i> Inactive
-                                </span>
-                            {% endif %}
-                        {% endwith %}
-                    </td>
-                    <td>{{ user.get_current_degree_display }}</td>
-                    <td>
-                        <div class="action-cell">
-                            <button class="action-btn details-btn" onclick="viewUserDetails('{{ user.id }}'); return false;">
-                                <i class="fas fa-info-circle"></i> Details
-                            </button>
-                            {% if request.user.role == 'admin' %}
-                            <a href="{% url 'change_council' user_id=user.id %}" class="action-btn promote-btn">
-                                <i class="fas fa-exchange-alt"></i> Change Council
-                            </a>
-                            {% endif %}
-                        </div>
-                    </td>
-                </tr>
                 {% endif %}
-                {% empty %}
-                <tr>
-                    <td colspan="6" style="text-align: center; padding: 2rem;">
-                        <div class="no-events-message">
-                            <p>No members found matching your criteria.</p>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        
+              </div>
+            </td>
+          </tr>
+          {% endif %}
+          {% empty %}
+          <tr>
+            <td colspan="6">
+              <div class="empty-state">
+                <i class="fas fa-users-slash"></i>
+                <p>No members found.</p>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
+  </div>
 </div>
 
-<!-- User details modal -->
-<div id="userDetailsModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>User Details</h3>
-            <span class="close">&times;</span>
-        </div>
-        <div id="userDetailsContent">
-            <div class="loading">Loading user details...</div>
-        </div>
-        <div class="modal-footer">
-            <button id="okButton" class="dashboard-btn">OK</button>
-        </div>
+<!-- User Details Modal -->
+<div id="userDetailsModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Member Details</h3>
+      <button class="modal-close" onclick="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
     </div>
+    <div class="modal-body" id="userDetailsContent">
+      <div style="text-align: center; padding: var(--space-8); color: var(--neutral-500);">
+        <i class="fas fa-spinner fa-spin" style="font-size: var(--text-2xl);"></i>
+        <p>Loading...</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn--primary" onclick="closeModal()">Close</button>
+    </div>
+  </div>
 </div>
+{% endblock %}
 
+{% block extra_js %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Search functionality
-        const searchInput = document.getElementById('userSearchInput');
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const rows = document.querySelectorAll('.event-table tbody tr');
-            
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                const shouldShow = text.includes(searchTerm);
-                
-                // Check if we need to respect role filter
-                const activeRoleFilter = document.querySelector('.role-filter-btn.active');
-                const filterRole = activeRoleFilter.dataset.role;
-                const rowRole = row.dataset.role;
-                
-                if (filterRole === 'all' || filterRole === rowRole) {
-                    row.style.display = shouldShow ? '' : 'none';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        });
-        
-        // Role filter functionality
-        const filterButtons = document.querySelectorAll('.role-filter-btn');
-        filterButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                // Remove active class from all buttons
-                filterButtons.forEach(btn => btn.classList.remove('active'));
-                
-                // Add active class to clicked button
-                this.classList.add('active');
-                
-                const role = this.dataset.role;
-                const rows = document.querySelectorAll('.event-table tbody tr');
-                
-                rows.forEach(row => {
-                    if (role === 'all') {
-                        // Still respect search term
-                        const searchTerm = searchInput.value.toLowerCase();
-                        const text = row.textContent.toLowerCase();
-                        row.style.display = text.includes(searchTerm) ? '' : 'none';
-                    } else {
-                        const rowRole = row.dataset.role;
-                        const searchTerm = searchInput.value.toLowerCase();
-                        const text = row.textContent.toLowerCase();
-                        
-                        if (rowRole === role && text.includes(searchTerm)) {
-                            row.style.display = '';
-                        } else {
-                            row.style.display = 'none';
-                        }
-                    }
-                });
-            });
-        });
-        
-        // Sort functionality
-        const sortSelect = document.getElementById('sortSelect');
-        
-        function sortTable(sortType) {
-            const tbody = document.querySelector('.event-table tbody');
-            const rows = Array.from(tbody.querySelectorAll('tr'));
-            
-            rows.sort((a, b) => {
-                switch(sortType) {
-                    case 'alphabetical':
-                        const nameA = a.dataset.name.toLowerCase();
-                        const nameB = b.dataset.name.toLowerCase();
-                        return nameA.localeCompare(nameB);
-                    case 'reverse-alphabetical':
-                        const nameA2 = a.dataset.name.toLowerCase();
-                        const nameB2 = b.dataset.name.toLowerCase();
-                        return nameB2.localeCompare(nameA2);
-                    case 'newest':
-                        const dateA = new Date(a.dataset.joined);
-                        const dateB = new Date(b.dataset.joined);
-                        return dateB - dateA;
-                    case 'oldest':
-                        const dateA2 = new Date(a.dataset.joined);
-                        const dateB2 = new Date(b.dataset.joined);
-                        return dateA2 - dateB2;
-                    default:
-                        return 0;
-                }
-            });
-            
-            // Re-append sorted rows
-            rows.forEach(row => tbody.appendChild(row));
-        }
-        
-        // Initialize with alphabetical sort
-        sortTable('alphabetical');
-        
-        sortSelect.addEventListener('change', function() {
-            sortTable(this.value);
-        });
-        
-        // User details modal functionality
-        window.viewUserDetails = function(userId) {
-            const modal = document.getElementById('userDetailsModal');
-            const contentDiv = document.getElementById('userDetailsContent');
-            
-            openModal(modal);
-            
-            // Show loading message
-            contentDiv.innerHTML = '<div class="loading">Loading user details...</div>';
-            
-            // Fetch user details via AJAX
-            fetch(`/user/${userId}/details/`)
-                .then(response => response.json())
-                .then(data => {
-                    // Format the details with profile picture
-                    let detailsHTML = `
-                        <div class="user-details">
-                            <div class="user-profile-header">
-                                <div class="profile-picture-container${data.is_inactive ? ' inactive' : ''}">
-                                    ${data.profile_picture ? 
-                                        `<img src="${data.profile_picture}" alt="Profile Picture" class="profile-picture">` : 
-                                        `<div class="profile-picture-placeholder">
-                                            <i class="fas fa-user"></i>
-                                        </div>`
-                                    }
-                                </div>
-                                <div class="user-basic-info">
-                                    <h4 class="user-name">${data.first_name} ${data.middle_name ? data.middle_name + ' ' : ''}${data.last_name}${data.suffix ? ' ' + data.suffix : ''}</h4>
-                                    <span class="role-badge role-${data.role}">${data.role_display}</span>
-                                </div>
-                            </div>
-                            
-                            <div class="user-details-grid">
-                                <div class="detail-group">
-                                    <strong>Email:</strong>
-                                    <span>${data.email}</span>
-                                </div>
-                                
-                                <div class="detail-group">
-                                    <strong>Contact Number:</strong>
-                                    <span>${data.contact_number || 'Not provided'}</span>
-                                </div>
-                                
-                                <div class="detail-group">
-                                    <strong>Council:</strong>
-                                    <span>${data.council_name || 'No council assigned'}</span>
-                                </div>
-                                
-                                <div class="detail-group">
-                                    <strong>Username:</strong>
-                                    <span>${data.username}</span>
-                                </div>
-                                
-                                <div class="detail-group">
-                                    <strong>Birthday:</strong>
-                                    <span>${data.birthday || 'Not provided'}</span>
-                                </div>
-                                
-                                <div class="detail-group">
-                                    <strong>Age:</strong>
-                                    <span>${data.age || 'Not provided'}</span>
-                                </div>
-                                
-                                <div class="detail-group">
-                                    <strong>Address:</strong>
-                                    <span>${data.street ? `${data.street}, ${data.barangay}, ${data.city}, ${data.province} ${data.zip_code}` : 'Not provided'}</span>
-                                </div>
-                                
-                                <div class="detail-group">
-                                    <strong>Current Degree:</strong>
-                                    <span>${data.degree_display || 'Not specified'}</span>
-                                </div>
-                                
-                                <div class="detail-group">
-                                    <strong>Member Since:</strong>
-                                    <span>${data.date_joined}</span>
-                                </div>
-                                
-                                <div class="detail-group">
-                                    <strong>Marital Status:</strong>
-                                    <span>${data.marital_status || 'Not provided'}</span>
-                                </div>
-                                
-                                <div class="detail-group">
-                                    <strong>Occupation:</strong>
-                                    <span>${data.occupation || 'Not provided'}</span>
-                                </div>
-                                
-                                <div class="detail-group">
-                                    <strong>Recruiter:</strong>
-                                    <span>${data.recruiter_name || (data.voluntary_join ? 'Voluntary Join' : 'Not specified')}</span>
-                                </div>
-                                
-                                ${data.join_reason ? `
-                                <div class="detail-group full-width">
-                                    <strong>Join Reason:</strong>
-                                    <span>${data.join_reason}</span>
-                                </div>
-                                ` : ''}
-                            </div>
-                        </div>
-                    `;
-                    
-                    contentDiv.innerHTML = detailsHTML;
-                })
-                .catch(error => {
-                    contentDiv.innerHTML = '<p class="error-message">Error loading user details. Please try again later.</p>';
-                    console.error('Error fetching user details:', error);
-                });
-        };
-        
-        function openModal(modal) {
-            modal.style.display = 'block';
-            // Trigger reflow to allow animation to work
-            modal.offsetHeight;
-            modal.classList.add('show');
-        }
-        
-        function closeModal(modal) {
-            modal.classList.remove('show');
-            setTimeout(function() {
-                modal.style.display = 'none';
-            }, 300); // Match the transition duration
-        }
-        
-        // Close modal when clicking the close button
-        const closeButton = document.querySelector('.modal .close');
-        if (closeButton) {
-            closeButton.addEventListener('click', function() {
-                const modal = this.closest('.modal');
-                closeModal(modal);
-            });
-        }
-        
-        // Close modal when clicking the OK button
-        const okButton = document.getElementById('okButton');
-        if (okButton) {
-            okButton.addEventListener('click', function() {
-                const modal = document.getElementById('userDetailsModal');
-                closeModal(modal);
-            });
-        }
-        
-        // Close modal when clicking outside of it
-        window.addEventListener('click', function(event) {
-            const modal = document.getElementById('userDetailsModal');
-            if (event.target === modal) {
-                closeModal(modal);
-            }
-        });
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('userSearchInput');
+  const filterPills = document.querySelectorAll('.filter-pill');
+  const sortSelect = document.getElementById('sortSelect');
+  const tbody = document.querySelector('.members-table tbody');
+
+  // Search functionality
+  searchInput.addEventListener('input', filterTable);
+
+  // Filter pills
+  filterPills.forEach(pill => {
+    pill.addEventListener('click', function() {
+      filterPills.forEach(p => p.classList.remove('active'));
+      this.classList.add('active');
+      filterTable();
     });
+  });
+
+  // Sort functionality
+  sortSelect.addEventListener('change', sortTable);
+
+  function filterTable() {
+    const searchTerm = searchInput.value.toLowerCase();
+    const activeFilter = document.querySelector('.filter-pill.active').dataset.role;
+    const rows = tbody.querySelectorAll('tr[data-role]');
+
+    rows.forEach(row => {
+      const text = row.textContent.toLowerCase();
+      const role = row.dataset.role;
+      const matchesSearch = text.includes(searchTerm);
+      const matchesRole = activeFilter === 'all' || role === activeFilter;
+      row.style.display = matchesSearch && matchesRole ? '' : 'none';
+    });
+  }
+
+  function sortTable() {
+    const sortType = sortSelect.value;
+    const rows = Array.from(tbody.querySelectorAll('tr[data-role]'));
+
+    rows.sort((a, b) => {
+      switch(sortType) {
+        case 'alphabetical':
+          return a.dataset.name.localeCompare(b.dataset.name);
+        case 'reverse-alphabetical':
+          return b.dataset.name.localeCompare(a.dataset.name);
+        case 'newest':
+          return new Date(b.dataset.joined) - new Date(a.dataset.joined);
+        case 'oldest':
+          return new Date(a.dataset.joined) - new Date(b.dataset.joined);
+        default:
+          return 0;
+      }
+    });
+
+    rows.forEach(row => tbody.appendChild(row));
+  }
+
+  // Initial sort
+  sortTable();
+});
+
+// Modal functions
+function viewUserDetails(userId) {
+  const modal = document.getElementById('userDetailsModal');
+  const content = document.getElementById('userDetailsContent');
+  modal.classList.add('show');
+
+  fetch(`/user/${userId}/details/`)
+    .then(response => response.json())
+    .then(data => {
+      content.innerHTML = `
+        <div class="user-profile-header">
+          <div class="profile-avatar-large ${data.is_inactive ? 'inactive' : ''}">
+            ${data.profile_picture ?
+              `<img src="${data.profile_picture}" alt="Profile">` :
+              `<i class="fas fa-user"></i>`}
+          </div>
+          <div>
+            <h4 style="margin: 0; font-size: var(--text-xl); color: var(--neutral-900);">
+              ${data.first_name} ${data.middle_name || ''} ${data.last_name} ${data.suffix || ''}
+            </h4>
+            <span class="role-badge ${data.role}" style="margin-top: var(--space-2);">${data.role_display}</span>
+          </div>
+        </div>
+        <div class="user-details-grid">
+          <div class="detail-group"><strong>Email</strong><span>${data.email}</span></div>
+          <div class="detail-group"><strong>Contact</strong><span>${data.contact_number || '—'}</span></div>
+          <div class="detail-group"><strong>Council</strong><span>${data.council_name || '—'}</span></div>
+          <div class="detail-group"><strong>Username</strong><span>${data.username}</span></div>
+          <div class="detail-group"><strong>Birthday</strong><span>${data.birthday || '—'}</span></div>
+          <div class="detail-group"><strong>Age</strong><span>${data.age || '—'}</span></div>
+          <div class="detail-group full-width"><strong>Address</strong><span>${data.street ? `${data.street}, ${data.barangay}, ${data.city}, ${data.province} ${data.zip_code}` : '—'}</span></div>
+          <div class="detail-group"><strong>Degree</strong><span>${data.degree_display || '—'}</span></div>
+          <div class="detail-group"><strong>Member Since</strong><span>${data.date_joined}</span></div>
+          <div class="detail-group"><strong>Marital Status</strong><span>${data.marital_status || '—'}</span></div>
+          <div class="detail-group"><strong>Occupation</strong><span>${data.occupation || '—'}</span></div>
+          <div class="detail-group"><strong>Recruiter</strong><span>${data.recruiter_name || (data.voluntary_join ? 'Voluntary Join' : '—')}</span></div>
+          ${data.join_reason ? `<div class="detail-group full-width"><strong>Join Reason</strong><span>${data.join_reason}</span></div>` : ''}
+        </div>
+      `;
+    })
+    .catch(error => {
+      content.innerHTML = '<p style="color: var(--error-500); text-align: center;">Error loading details.</p>';
+    });
+}
+
+function closeModal() {
+  document.getElementById('userDetailsModal').classList.remove('show');
+}
+
+// Close modal on overlay click
+document.getElementById('userDetailsModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
 </script>
-
-<style>
-    /* Modal styles */
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0; top: 0;
-        width: 100%; height: 100%;
-        background-color: rgba(13, 52, 113, 0.8);
-        backdrop-filter: blur(5px);
-    }
-    .modal.show { display: block; }
-    .modal-content {
-        background: linear-gradient(135deg, var(--secondary-bg), white);
-        margin: 5% auto;
-        padding: 2rem;
-        border-radius: 16px;
-        max-width: 700px;
-        position: relative;
-        max-height: 85vh;
-        overflow-y: auto;
-        box-shadow: 0 20px 60px rgba(13, 52, 113, 0.3);
-        animation: modalSlideIn 0.4s ease-out;
-    }
-    @keyframes modalSlideIn { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
-    .modal-header h3 { color: var(--heading-color); margin-bottom: 1.5rem; border-bottom: 2px solid var(--primary-bg); padding-bottom: 1rem; font-size: 1.8rem; }
-    .close {
-        position: absolute;
-        top: 1.5rem; right: 2rem;
-        font-size: 2rem;
-        cursor: pointer;
-        color: var(--heading-color);
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        transition: all var(--transition-speed) ease;
-    }
-    .close:hover {
-        background-color: var(--primary-bg);
-        color: var(--secondary-bg);
-        transform: rotate(90deg);
-    }
-    .modal-footer { padding-top: 1.5rem; text-align: right; border-top: 1px solid rgba(13, 52, 113, 0.1); }
-    .modal-footer .dashboard-btn {
-        background: linear-gradient(135deg, var(--primary-bg), #1e5a96);
-        color: white;
-        border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 12px rgba(13, 52, 113, 0.3);
-    }
-    .modal-footer .dashboard-btn:hover {
-        background: linear-gradient(135deg, #1e5a96, var(--primary-bg));
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(13, 52, 113, 0.4);
-    }
-    
-    /* Archived Events Table Styles */
-    .event-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-        background-color: white;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: var(--table-shadow);
-        margin-top: 2rem;
-        position: relative;
-    }
-    .event-table::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, var(--primary-bg), var(--accent-color), var(--primary-bg));
-    }
-    .event-table th {
-        padding: 1.5rem 1.25rem;
-        text-align: left;
-        background-color: var(--primary-bg);
-        color: white;
-        font-weight: 700;
-        font-size: 0.95rem;
-        text-transform: uppercase;
-    }
-    .event-table td {
-        padding: 1.25rem;
-        text-align: left;
-        border-bottom: 1px solid rgba(13, 52, 113, 0.08);
-        vertical-align: middle;
-    }
-    .event-table tbody tr:hover {
-        background-color: rgba(13, 52, 113, 0.06);
-    }
-    .event-table tr:last-child td {
-        border-bottom: none;
-    }
-    .action-header { text-align: center !important; }
-    .action-cell {
-        display: flex;
-        justify-content: center;
-        gap: 0.75rem;
-    }
-    .action-btn {
-        padding: 0.6rem 1.2rem;
-        border: none;
-        border-radius: 6px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all var(--transition-speed) ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: white;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        min-width: 120px;
-        justify-content: center;
-        white-space: nowrap;
-        box-sizing: border-box;
-    }
-    .action-btn:hover { 
-        transform: translateY(-2px); 
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25); 
-    }
-    .details-btn {
-        background: linear-gradient(135deg, var(--accent-color), #f39c12);
-        color: var(--primary-bg) !important;
-        padding: 0.6rem 1.2rem;
-        font-size: 0.85rem;
-        font-weight: 600;
-        min-width: 120px;
-    }
-    .promote-btn {
-        background: linear-gradient(135deg, #28a745, #20c997);
-        color: white !important;
-        padding: 0.6rem 1.2rem;
-        font-size: 0.85rem;
-        font-weight: 600;
-        min-width: 120px;
-    }
-    
-    /* Sort dropdown styles */
-    .role-filters-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-        flex-wrap: wrap;
-    }
-    
-    .sort-filter {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    
-    .sort-dropdown {
-        padding: 0.75rem 1rem;
-        border: 2px solid rgba(13, 52, 113, 0.2);
-        border-radius: 8px;
-        background: white;
-        color: var(--primary-bg);
-        font-size: 0.9rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(13, 52, 113, 0.1);
-        min-width: 200px;
-    }
-    
-    .sort-dropdown:hover {
-        border-color: var(--primary-bg);
-        box-shadow: 0 4px 12px rgba(13, 52, 113, 0.2);
-    }
-    
-    .sort-dropdown:focus {
-        outline: none;
-        border-color: var(--primary-bg);
-        box-shadow: 0 0 0 3px rgba(13, 52, 113, 0.1);
-    }
-    
-    /* Inactive warning badge styling */
-    .warning-badge.inactive {
-        display: inline-block;
-        padding: 0.25rem 0.5rem;
-        border-radius: 12px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        background: linear-gradient(135deg, #ffc107, #f39c12);
-        color: #212529;
-        margin-top: 0.25rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Profile picture container styles */
-    .profile-picture-container {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        overflow: hidden;
-        border: 3px solid var(--primary-bg);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: var(--secondary-bg);
-    }
-
-    .profile-picture-container.inactive {
-        position: relative;
-        border-color: var(--accent-color);
-        box-shadow: 0 0 0 2px rgba(244, 180, 26, 0.3);
-        animation: pulse-inactive 2s infinite;
-    }
-
-    .profile-picture-container.inactive::after {
-        content: '\f071';
-        font-family: 'Font Awesome 5 Free';
-        font-weight: 900;
-        position: absolute;
-        bottom: -5px;
-        right: -5px;
-        background: var(--accent-color);
-        color: var(--primary-bg);
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 10px;
-        border: 2px solid white;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    .profile-picture {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .profile-picture-placeholder {
-        color: var(--primary-bg);
-        font-size: 2rem;
-    }
-
-    @keyframes pulse-inactive {
-        0%, 100% { box-shadow: 0 0 0 2px rgba(244, 180, 26, 0.3); }
-        50% { box-shadow: 0 0 0 4px rgba(244, 180, 26, 0.6); }
-    }
-
-    @media (max-width: 768px) {
-        .event-table { display: block; overflow-x: auto; }
-        .action-cell { flex-direction: column; gap: 0.5rem; }
-        .role-filters-container { flex-direction: column; align-items: stretch; }
-        .sort-dropdown { min-width: auto; width: 100%; }
-    }
-</style>
 {% endblock %}
