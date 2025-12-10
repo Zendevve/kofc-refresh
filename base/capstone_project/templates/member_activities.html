@@ -4,7 +4,12 @@
 {% block title %}My Activities - Knights of Columbus{% endblock %}
 
 {% block page_title %}My Activities{% endblock %}
-{% block page_subtitle %}Event participation history and attendance records{% endblock %}
+{% block breadcrumbs %}
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item">Analytics</span>
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item current">My Activities</span>
+{% endblock %}
 
 {% block header_actions %}
 <a href="{% if is_self %}{% url 'dashboard' %}{% else %}{% url 'member_list' %}{% endif %}" class="btn btn--ghost">

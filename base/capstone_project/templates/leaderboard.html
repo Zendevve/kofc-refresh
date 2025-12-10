@@ -4,7 +4,12 @@
 {% block title %}Recruitment Leaderboard - Knights of Columbus{% endblock %}
 
 {% block page_title %}Recruitment Leaderboard{% endblock %}
-{% block page_subtitle %}Track recruitment performance across councils{% endblock %}
+{% block breadcrumbs %}
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item">Analytics</span>
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item current">Leaderboard</span>
+{% endblock %}
 
 {% block header_actions %}
 <a href="{% url 'my_recruits' %}" class="btn btn--primary">

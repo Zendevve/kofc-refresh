@@ -2,7 +2,12 @@
 {% load static %}
 {% block title %}Take Attendance{% endblock %}
 {% block page_title %}Take Attendance{% endblock %}
-{% block page_subtitle %}Scan member QR codes to record event attendance{% endblock %}
+{% block breadcrumbs %}
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item">Attendance</span>
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item current">Take Attendance</span>
+{% endblock %}
 
 {% block extra_css %}
 <style>

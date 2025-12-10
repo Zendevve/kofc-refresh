@@ -736,7 +736,7 @@ a:hover {
 
 .main-header-title h1 {
   font-size: var(--text-xl);
-  color: var(--neutral-900);
+  color: var(--primary-700);
 }
 
 .main-header-title p {
@@ -746,6 +746,35 @@ a:hover {
 
 .main-body {
   padding: var(--space-6);
+}
+
+/* Breadcrumbs */
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  margin-top: var(--space-1);
+}
+
+.breadcrumb-item {
+  color: var(--neutral-500);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.breadcrumb-item:hover {
+  color: var(--primary-600);
+}
+
+.breadcrumb-item.current {
+  color: var(--neutral-600);
+}
+
+.breadcrumb-separator {
+  color: var(--neutral-300);
+  font-size: 0.6rem;
+  margin: 0 var(--space-1);
 }
 
 /* ============== ANIMATIONS ============== */

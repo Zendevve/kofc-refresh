@@ -2,7 +2,12 @@
 {% load static %}
 {% block title %}My QR Code - Knights of Columbus{% endblock %}
 {% block page_title %}My QR Code{% endblock %}
-{% block page_subtitle %}Present this to an officer to record your event attendance{% endblock %}
+{% block breadcrumbs %}
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item">Attendance</span>
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item current">My QR Code</span>
+{% endblock %}
 
 {% block extra_css %}
 <style>

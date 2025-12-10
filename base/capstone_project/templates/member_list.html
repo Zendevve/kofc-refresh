@@ -3,7 +3,12 @@
 
 {% block title %}Members - Knights of Columbus{% endblock %}
 {% block page_title %}Members{% endblock %}
-{% block page_subtitle %}Manage and view all council members{% endblock %}
+{% block breadcrumbs %}
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item">Management</span>
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item current">Members</span>
+{% endblock %}
 
 {% block header_actions %}
 <a href="{% url 'manage_pending_users' %}" class="btn btn--ghost">

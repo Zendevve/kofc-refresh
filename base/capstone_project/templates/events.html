@@ -4,7 +4,12 @@
 {% block title %}Events - Knights of Columbus{% endblock %}
 
 {% block page_title %}Events{% endblock %}
-{% block page_subtitle %}Manage and view all council events{% endblock %}
+{% block breadcrumbs %}
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item">Events</span>
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item current">All Events</span>
+{% endblock %}
 
 {% block header_actions %}
 {% if user.role != 'member' %}

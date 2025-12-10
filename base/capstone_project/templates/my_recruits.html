@@ -3,7 +3,12 @@
 
 {% block title %}My Recruits - Knights of Columbus{% endblock %}
 {% block page_title %}My Recruits{% endblock %}
-{% block page_subtitle %}Track your recruitment progress and degree advancement{% endblock %}
+{% block breadcrumbs %}
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item">Analytics</span>
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item current">My Recruits</span>
+{% endblock %}
 
 {% block header_actions %}
 {% if request.user.role == 'admin' %}

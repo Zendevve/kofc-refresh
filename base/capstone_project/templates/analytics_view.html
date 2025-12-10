@@ -4,12 +4,11 @@
 {% block title %}Analytics - Knights of Columbus{% endblock %}
 
 {% block page_title %}Analytics Dashboard{% endblock %}
-{% block page_subtitle %}
-{% if is_officer %}
-Analytics for {{ councils.first.name }}
-{% else %}
-Comprehensive insights and performance metrics
-{% endif %}
+{% block breadcrumbs %}
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item">Analytics</span>
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item current">Dashboard</span>
 {% endblock %}
 
 {% block extra_css %}

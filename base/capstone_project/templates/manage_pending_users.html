@@ -4,7 +4,12 @@
 {% block title %}Pending Users - Knights of Columbus{% endblock %}
 
 {% block page_title %}Pending Users{% endblock %}
-{% block page_subtitle %}Review and approve membership requests{% endblock %}
+{% block breadcrumbs %}
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item">Management</span>
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item current">Pending Users</span>
+{% endblock %}
 
 {% block header_actions %}
 {% if request.user.role == 'admin' %}

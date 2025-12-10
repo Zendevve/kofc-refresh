@@ -3,7 +3,12 @@
 
 {% block title %}Blockchain Ledger - Knights of Columbus{% endblock %}
 {% block page_title %}Donation Ledger{% endblock %}
-{% block page_subtitle %}View the immutable record of all donation transactions{% endblock %}
+{% block breadcrumbs %}
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item">Donations</span>
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item current">Blockchain Ledger</span>
+{% endblock %}
 
 {% block header_actions %}
 {% if user.is_authenticated and user.role == 'admin' or user.role == 'officer' %}

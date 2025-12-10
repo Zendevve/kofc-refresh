@@ -4,7 +4,12 @@
 {% block title %}Add Event - Knights of Columbus{% endblock %}
 
 {% block page_title %}Add Event{% endblock %}
-{% block page_subtitle %}Create a new event for the calendar{% endblock %}
+{% block breadcrumbs %}
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item">Events</span>
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item current">Create Event</span>
+{% endblock %}
 
 {% block header_actions %}
 <a href="{% url 'event_list' %}" class="btn btn--ghost">

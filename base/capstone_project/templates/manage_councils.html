@@ -2,7 +2,12 @@
 {% load static %}
 {% block title %}Manage Councils{% endblock %}
 {% block page_title %}Manage Councils{% endblock %}
-{% block page_subtitle %}Add, edit, or remove councils{% endblock %}
+{% block breadcrumbs %}
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item">Management</span>
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item current">Manage Councils</span>
+{% endblock %}
 
 {% block header_actions %}
 <button class="btn btn--primary" onclick="openAddCouncilModal()">

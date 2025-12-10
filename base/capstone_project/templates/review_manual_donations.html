@@ -4,7 +4,12 @@
 {% block title %}Review Manual Donations - Knights of Columbus{% endblock %}
 
 {% block page_title %}Review Manual Donations{% endblock %}
-{% block page_subtitle %}Approve or reject pending donation submissions{% endblock %}
+{% block breadcrumbs %}
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item">Donations</span>
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item current">Review Donations</span>
+{% endblock %}
 
 {% block header_actions %}
 <a href="{% url 'donations' %}" class="btn btn--ghost">

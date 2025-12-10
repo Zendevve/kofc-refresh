@@ -3,7 +3,10 @@
 
 {% block title %}Notifications - Knights of Columbus{% endblock %}
 {% block page_title %}Notifications{% endblock %}
-{% block page_subtitle %}Stay updated with important alerts{% endblock %}
+{% block breadcrumbs %}
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item current">Notifications</span>
+{% endblock %}
 
 {% block header_actions %}
 {% if notifications %}
