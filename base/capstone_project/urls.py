@@ -29,6 +29,7 @@ urlpatterns = [
     path('review_manual_donations/', views.review_manual_donations, name='review_manual_donations'),
     path('gcash/initiate', views.initiate_gcash_payment, name='initiate_gcash_payment'),
     path('success/', views.success_page, name='success_page'),
+    path('donation-success/<int:donation_id>/', views.donation_success, name='donation_success'),
     path('cancel/', views.cancel_page, name='cancel_page'),
     path('gcash/confirm/', views.confirm_gcash_payment, name='confirm_gcash_payment'),
     path('blockchain/', views.get_blockchain_data, name='blockchain'),

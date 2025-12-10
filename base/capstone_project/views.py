@@ -1826,7 +1826,16 @@ def confirm_gcash_payment(request):
         donation.status = 'failed'
         donation.save()
         messages.error(request, "An error occurred while processing your payment. Please try again.")
-    return redirect('donations')
+    return redirect('donation_success', donation_id=donation.id)
+
+
+def donation_success(request, donation_id):
+    """Show donation success page after successful payment"""
+    donation = get_object_or_404(Donation, id=donation_id, status='completed')
+    return render(request, 'donation_success.html', {
+        'donation': donation
+    })
+
 
 @never_cache
 def get_blockchain_data(request):
