@@ -992,9 +992,10 @@ def analytics_view(request):
         'chain_valid': blockchain.is_chain_valid() if hasattr(blockchain, 'is_chain_valid') else True
     }
 
-    # 13. Data Summaries (insights)
+    # 13. ENHANCED Data Summaries & Insights
     total_donations_amount = summary_stats['total_donations']
     avg_donation_amount = summary_stats['avg_donation']
+    total_users = summary_stats['total_members'] + summary_stats['total_officers']
 
     # Calculate month-over-month growth
     if len(historical_amounts) >= 2:
@@ -1003,19 +1004,102 @@ def analytics_view(request):
         if prev_month > 0:
             donation_growth = round(((last_month - prev_month) / prev_month) * 100, 1)
         else:
-            donation_growth = 100.0
+            donation_growth = 100.0 if last_month > 0 else 0
     else:
         donation_growth = 0
 
-    top_active = activity_ranking[0]['name'] if activity_ranking else 'N/A'
-    inactive_count = total_members - active_members
+    # Participation Rate (% of members who attended at least one event)
+    total_events_count = Event.objects.filter(status='approved').count()
+    if council_id:
+        total_events_count = Event.objects.filter(status='approved', council_id=council_id).count()
 
+    members_with_attendance = EventAttendance.objects.filter(is_present=True).values('member').distinct().count()
+    participation_rate = round((members_with_attendance / total_users * 100), 1) if total_users > 0 else 0
+
+    # Donation Rate (% of members who have donated)
+    donors_count = Donation.objects.filter(status='completed').values('submitted_by').distinct().count()
+    donation_rate = round((donors_count / total_users * 100), 1) if total_users > 0 else 0
+
+    # Average events attended per member
+    total_attendances = EventAttendance.objects.filter(is_present=True).count()
+    avg_events_per_member = round(total_attendances / total_users, 1) if total_users > 0 else 0
+
+    # Engagement Score (weighted: 40% participation + 40% donation rate + 20% activity)
+    engagement_score = round((participation_rate * 0.4) + (donation_rate * 0.4) + (min(avg_events_per_member * 10, 20)), 1)
+
+    # Inactive member rate
+    inactive_count = total_members - active_members
+    inactive_rate = round((inactive_count / total_members * 100), 1) if total_members > 0 else 0
+
+    # Top 3 most active
+    top_3_active = [m['name'] for m in activity_ranking[:3]]
+
+    # Donation distribution
+    total_role_donations = sum(role_donations.values())
+    role_percentages = {}
+    for role, amount in role_donations.items():
+        role_percentages[role] = round((amount / total_role_donations * 100), 1) if total_role_donations > 0 else 0
+
+    # Highest donating role
+    highest_role = max(role_donations.items(), key=lambda x: x[1])[0] if role_donations else 'N/A'
+
+    # Event participation insights
+    if event_participation_data:
+        avg_attendance_rate = round(sum(e['attended'] for e in event_participation_data) /
+                                    sum(e['attended'] + e['not_attended'] for e in event_participation_data) * 100, 1) if event_participation_data else 0
+        best_event = max(event_participation_data, key=lambda x: x['attended'])['event_name'] if event_participation_data else 'N/A'
+    else:
+        avg_attendance_rate = 0
+        best_event = 'N/A'
+
+    # Year-over-year comparison (if we have enough data)
+    yoy_growth = 0
+    if len(historical_amounts) >= 12:
+        current_year_total = sum(historical_amounts[-6:])
+        prev_year_total = sum(historical_amounts[-12:-6])
+        if prev_year_total > 0:
+            yoy_growth = round(((current_year_total - prev_year_total) / prev_year_total) * 100, 1)
+
+    # Build comprehensive insights
     data_summaries = {
-        'donation_trend': f"{'↑' if donation_growth >= 0 else '↓'} {abs(donation_growth)}% vs last month",
-        'top_contributor': f"Most active: {top_active}",
-        'inactive_alert': f"{inactive_count} members have no recent activity" if inactive_count > 0 else "All members are active!",
-        'avg_donation_note': f"Average donation is ₱{avg_donation_amount:,.2f}",
-        'blockchain_note': f"{blockchain_metrics['total_blocks']} blocks securing {blockchain_metrics['total_transactions']} transactions"
+        # Trend Arrows
+        'donation_trend': f"{'↑' if donation_growth >= 0 else '↓'} {abs(donation_growth)}%",
+        'donation_trend_label': 'vs last month',
+
+        # Key Ratios
+        'participation_rate': participation_rate,
+        'donation_rate': donation_rate,
+        'engagement_score': engagement_score,
+        'inactive_rate': inactive_rate,
+        'avg_events_per_member': avg_events_per_member,
+        'avg_attendance_rate': avg_attendance_rate,
+
+        # Comparisons
+        'yoy_growth': yoy_growth,
+        'donation_growth': donation_growth,
+
+        # Role Distribution
+        'role_percentages': role_percentages,
+        'highest_role': highest_role,
+
+        # Activity Insights
+        'top_3_active': top_3_active,
+        'inactive_count': inactive_count,
+        'best_event': best_event,
+
+        # Narrative Insights
+        'headline': f"{'📈 Strong Growth!' if donation_growth > 10 else '📊 Steady Progress' if donation_growth >= 0 else '📉 Needs Attention'}",
+        'participation_insight': f"{participation_rate}% of members have attended at least one event" +
+                                 (f" - {'Excellent!' if participation_rate > 70 else 'Good' if participation_rate > 50 else 'Room for improvement'}" if participation_rate > 0 else ""),
+        'donation_insight': f"{donation_rate}% of members have donated" +
+                            (f" • {highest_role}s contribute {role_percentages.get(highest_role, 0)}% of total" if highest_role != 'N/A' else ""),
+        'activity_insight': f"Top performers: {', '.join(top_3_active)}" if top_3_active else "No activity data yet",
+        'alert': f"⚠️ {inactive_count} members ({inactive_rate}%) have no recent activity" if inactive_rate > 30 else
+                 f"✅ Most members are active ({100-inactive_rate}% engagement)" if inactive_rate < 20 else
+                 f"📋 {inactive_count} members could be re-engaged",
+
+        # Blockchain
+        'blockchain_note': f"{blockchain_metrics['total_blocks']} blocks • {blockchain_metrics['total_transactions']} transactions secured"
     }
 
     context = {
