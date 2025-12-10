@@ -1,1717 +1,1323 @@
-{% extends 'base.html' %}
+{% extends 'dashboard_base.html' %}
 {% load static %}
 
-{% block content %}
-{% csrf_token %}
-<div class="forum-container">
-    <!-- Mobile hamburger menu button -->
-    <button class="mobile-nav-toggle">
-        <i class="fas fa-bars"></i>
-    </button>
-    
-    <!-- Mobile overlay -->
-    <div class="mobile-overlay"></div>
-    
-    <div class="forum-sidebar">
-        <div class="forum-header">
-            <h2>Community Forums</h2>
-            <p>Council {{ user_council.id }}</p>
-        </div>
+{% block title %}Community Forum - Knights of Columbus{% endblock %}
 
-        <div class="user-info">
-            <div class="user-avatar">
-                {% if current_user.profile_picture %}
-                    <img src="{{ current_user.profile_picture.url }}" alt="Profile Picture">
-                {% else %}
-                    <div class="default-avatar">{{ current_user.username|first }}</div>
-                {% endif %}
-            </div>
-            <div class="user-details">
-                <h3>{{ current_user.username }}</h3>
-                <span class="user-role">
-                    {% if current_user.role == 'admin' %}
-                        District Director
-                    {% elif current_user.role == 'officer' %}
-                        Officer {{ current_user.council.id }}
-                    {% else %}
-                        Member {{ current_user.council.id }}
-                    {% endif %}
-                </span>
-            </div>
-        </div>
-        
-        <div class="forum-type-selector">
-            <select id="forumTypeSelect" class="form-select">
-                <option value="council">District (Public)</option>
-                <option value="district">Council {{ user_council.id }} (Private)</option>
-            </select>
-        </div>
-        
-        <div class="search-box">
-            <input type="text" id="messageSearch" placeholder="Search messages...">
-            <button id="searchButton" class="btn btn-primary">
-                <i class="fas fa-search"></i>
-            </button>
-            <button id="clearSearchButton" class="btn btn-secondary" style="display: none;">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        
-        <div class="category-dropdown">
-            <select id="categorySelect" class="form-select">
-                {% for category in categories %}
-                <option value="{{ category.id }}">{{ category.get_name_display }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        
-        <!-- Pinned Messages Section -->
-        <div class="pinned-messages-section">
-            <div class="pinned-header">
-                <h3><i class="fas fa-thumbtack"></i> Pinned Messages</h3>
-            </div>
-            <div id="pinnedMessagesListContainer" class="pinned-list-container">
-                <div class="empty-pinned-message">No pinned messages</div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="forum-main">
-        <div class="messages-container" id="messagesContainer">
-            <!-- Messages will be loaded here -->
-        </div>
-        
-        <div class="message-input">
-            <div class="image-upload">
-                <label for="imageUpload" title="Upload image (Max: 10MB)">
-                    <i class="fas fa-image"></i>
-                </label>
-                <input type="file" id="imageUpload" accept="image/*" style="display: none;">
-            </div>
-            <textarea id="messageInput" placeholder="Type a message here..."></textarea>
-            <button id="sendButton" class="btn btn-primary">
-                <i class="fas fa-paper-plane"></i>
-            </button>
-        </div>
-        <div id="selectedImagePreview" class="image-preview"></div>
-        <div id="imageError" class="image-error" style="display: none;">File size exceeds 10MB limit. Please choose a smaller image.</div>
-    </div>
-</div>
+{% block page_title %}Community Forum{% endblock %}
+{% block page_subtitle %}Connect with your fellow Knights{% endblock %}
 
+{% block extra_css %}
 <style>
-.forum-container {
+  /* Forum Layout */
+  .forum-layout {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 1.5rem;
+    min-height: calc(100vh - 200px);
+  }
+
+  @media (max-width: 1024px) {
+    .forum-layout {
+      grid-template-columns: 1fr;
+    }
+    .forum-sidebar-panel {
+      display: none;
+    }
+  }
+
+  /* Forum Type Tabs */
+  .forum-type-tabs {
     display: flex;
-    height: calc(94vh - 60px);
-    background-color: #0a0f2c;
-    color: white;
-}
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
 
-.forum-sidebar {
-    width: 280px;
-    background-color: #0d1338;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-}
-
-.forum-header {
-    margin-bottom: 20px;
-}
-
-.forum-header h2 {
-    color: #ffd700;
-    margin-bottom: 5px;
-}
-
-.forum-type-selector {
-    margin-bottom: 20px;
-}
-
-.search-box {
-    margin-bottom: 20px;
-    display: flex;
-    gap: 10px;
-}
-
-.search-box input {
-    flex-grow: 1;
-    padding: 10px;
-    background-color: #1a2147;
-    color: white;
-    border: 1px solid #2a3157;
-    border-radius: 5px;
-}
-
-.search-box button {
-    padding: 10px;
-    background-color: #ffd700;
-    color: #0a0f2c;
-    border: none;
-    border-radius: 5px;
-}
-
-.search-box button.btn-secondary {
-    background-color: #ff4444;
-    color: white;
-}
-
-.search-active .search-box {
-    border: 2px solid #ffd700;
-    border-radius: 5px;
-    padding: 2px;
-}
-
-.category-dropdown {
-    margin-bottom: 20px;
-}
-
-.form-select {
-    width: 100%;
-    padding: 10px;
-    background-color: #1a2147;
-    color: white;
-    border: 1px solid #2a3157;
-    border-radius: 5px;
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    padding: 15px;
-    background-color: #1a2147;
-    border-radius: 10px;
-}
-
-.user-avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    overflow: hidden;
-    margin-right: 15px;
-}
-
-.user-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.default-avatar {
-    width: 100%;
-    height: 100%;
-    background-color: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    color: white;
-    background-image: url("{% static 'images/default-profile.png' %}");
-    background-size: cover;
-    background-position: center;
-}
-
-.user-details h3 {
-    margin: 0;
-    font-size: 16px;
-}
-
-.user-role {
-    font-size: 14px;
-    color: #ffd700;
-}
-
-.forum-main {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    background-color: #0a0f2c;
-    position: relative;
-}
-
-.messages-container {
-    flex-grow: 1;
-    padding: 20px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    scroll-behavior: smooth;
-}
-
-.messages-container::-webkit-scrollbar {
-    width: 8px;
-}
-
-.messages-container::-webkit-scrollbar-track {
-    background: #0d1338;
-    border-radius: 4px;
-}
-
-.messages-container::-webkit-scrollbar-thumb {
-    background: #2a3157;
-    border-radius: 4px;
-}
-
-.messages-container::-webkit-scrollbar-thumb:hover {
-    background: #3a4167;
-}
-
-.scroll-to-present {
-    position: absolute;
-    bottom: 80px;
-    right: 20px;
-    background: #ffd700;
-    color: #0a0f2c;
-    padding: 8px 16px;
-    border-radius: 20px;
-    display: none;
-    align-items: center;
-    justify-content: center;
+  .forum-type-tab {
+    padding: 0.5rem 1.25rem;
+    border-radius: 99px;
+    font-size: 0.875rem;
+    font-weight: 500;
     cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    z-index: 100;
-    gap: 8px;
-    font-size: 14px;
-    transition: all 0.3s ease;
-}
+    border: 1px solid #e5e7eb;
+    background: white;
+    color: #6b7280;
+    transition: all 0.2s ease;
+  }
 
-.scroll-to-present:hover {
-    background: #ffed4a;
-    transform: translateY(-2px);
-}
+  .forum-type-tab:hover {
+    border-color: #2563eb;
+    color: #2563eb;
+  }
 
-.scroll-to-present.visible {
+  .forum-type-tab.active {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: white;
+  }
+
+  /* Category Tabs */
+  .category-tabs {
     display: flex;
-}
-
-.scroll-to-present i {
-    font-size: 12px;
-}
-
-.message {
-    max-width: 70%;
-    margin-bottom: 20px;
-    padding: 15px;
-    background-color: #1a2147;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    background: #f3f4f6;
     border-radius: 10px;
-    position: relative;
-    align-self: flex-start;
-    opacity: 1;
-    transition: transform 0.3s ease;
+    margin-bottom: 1rem;
+    overflow-x: auto;
+  }
+
+  .category-tab {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: #6b7280;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+
+  .category-tab:hover {
+    background: #e5e7eb;
+    color: #374151;
+  }
+
+  .category-tab.active {
+    background: white;
+    color: #2563eb;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  /* Search Bar */
+  .forum-search {
     display: flex;
-    gap: 15px;
-}
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
 
-.message.new-message {
-    animation: slideUp 0.3s ease forwards;
-}
+  .forum-search input {
+    flex: 1;
+    padding: 0.625rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    background: white;
+  }
 
-@keyframes slideUp {
-    from {
-        transform: translateY(20px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
+  .forum-search input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+  }
 
-.message.sending {
-    opacity: 0.7;
+  .search-btn {
+    padding: 0.625rem 1rem;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .search-btn:hover {
+    background: #1d4ed8;
+  }
+
+  .search-btn.clear {
+    background: #ef4444;
+    display: none;
+  }
+
+  .search-btn.clear.visible {
+    display: block;
+  }
+
+  /* Messages Container */
+  .messages-panel {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 280px);
+    min-height: 400px;
+  }
+
+  .messages-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .messages-list::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .messages-list::-webkit-scrollbar-track {
+    background: #f3f4f6;
+  }
+
+  .messages-list::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 3px;
+  }
+
+  /* Message Card */
+  .message-card {
+    background: #f9fafb;
+    border-radius: 10px;
+    padding: 1rem;
     position: relative;
-}
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+  }
 
-.message.sending::after {
-    content: '';
-    position: absolute;
-    bottom: 5px;
-    right: 5px;
-    width: 12px;
-    height: 12px;
-    border: 2px solid #ffd700;
-    border-radius: 50%;
-    border-top-color: transparent;
-    animation: rotate 1s linear infinite;
-}
+  .message-card:hover {
+    background: #f3f4f6;
+    border-color: #e5e7eb;
+  }
 
-@keyframes rotate {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
+  .message-card.own {
+    background: #eff6ff;
+    border-left: 3px solid #2563eb;
+  }
 
-.message.own-message {
-    align-self: flex-end;
-    background-color: #2a3157;
-}
+  .message-card.pinned {
+    border: 1px solid #fbbf24;
+    background: #fffbeb;
+  }
 
-.message.pinned {
-    border: 2px solid #ffd700;
-}
+  .message-card.sending {
+    opacity: 0.6;
+  }
 
-.message-avatar {
-    width: 40px;
-    height: 40px;
+  .message-card.new {
+    animation: slideIn 0.3s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .message-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .message-avatar {
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;
-}
+    background: #e5e7eb;
+  }
 
-.message-avatar img {
+  .message-avatar img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-}
+  }
 
-.message-avatar .default-avatar {
+  .message-avatar .initials {
     width: 100%;
     height: 100%;
-    background-color: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
     color: white;
-    background-image: url("{% static 'images/default-profile.png' %}");
-    background-size: cover;
-    background-position: center;
-}
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
 
-.message-content-wrapper {
-    flex-grow: 1;
-}
+  .message-meta {
+    flex: 1;
+    min-width: 0;
+  }
 
-.message-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 4px;
-}
-
-.message-sender {
-    font-weight: bold;
-    color: #ffd700;
+  .message-sender {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.5rem;
     flex-wrap: wrap;
-}
+  }
 
-.message-sender-name {
-    max-width: 150px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
+  .sender-name {
+    font-weight: 600;
+    color: #111827;
+    font-size: 0.875rem;
+  }
 
-.sender-role {
-    padding: 2px 8px;
-    border-radius: 15px;
-    font-size: 11px;
-    margin-left: 4px;
-    white-space: nowrap;
-}
+  .sender-role {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 99px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
 
-.role-district-director {
-    background-color: #ff4444;
-    color: white;
-}
+  .role-admin {
+    background: #fef3c7;
+    color: #92400e;
+  }
 
-.role-officer {
-    background-color: #ff8c00;
-    color: white;
-}
+  .role-officer {
+    background: #dbeafe;
+    color: #1d4ed8;
+  }
 
-.role-member {
-    background-color: #4CAF50;
-    color: white;
-}
+  .role-member {
+    background: #dcfce7;
+    color: #166534;
+  }
 
-.message-timestamp {
-    font-size: 10px;
-    color: #8890b5;
-    margin-left: auto;
-    opacity: 0.8;
-    white-space: nowrap;
-}
+  .message-time {
+    font-size: 0.75rem;
+    color: #9ca3af;
+  }
 
-.message-content {
-    color: white;
+  .message-content {
+    color: #374151;
+    font-size: 0.9rem;
+    line-height: 1.5;
     word-break: break-word;
-}
+  }
 
-.message-image {
+  .message-image {
     max-width: 100%;
     max-height: 300px;
-    border-radius: 5px;
-    margin-top: 10px;
-}
+    border-radius: 8px;
+    margin-top: 0.75rem;
+    cursor: pointer;
+  }
 
-.message-actions {
+  .message-actions-btn {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    display: flex;
-    align-items: center;
+    top: 0.75rem;
+    right: 0.75rem;
     opacity: 0;
-    transition: opacity 0.2s ease;
-}
+    transition: opacity 0.2s;
+  }
 
-.message:hover .message-actions {
+  .message-card:hover .message-actions-btn {
     opacity: 1;
-}
+  }
 
-.message-menu-trigger {
+  .action-trigger {
     width: 28px;
     height: 28px;
-    border-radius: 50%;
-    background-color: rgba(42, 49, 87, 0.7);
+    border-radius: 6px;
+    background: white;
+    border: 1px solid #e5e7eb;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background-color 0.2s ease;
-}
+    color: #6b7280;
+    transition: all 0.2s;
+  }
 
-.message-menu-trigger:hover {
-    background-color: rgba(42, 49, 87, 1);
-}
+  .action-trigger:hover {
+    background: #f3f4f6;
+    color: #374151;
+  }
 
-.message-menu-trigger i {
-    color: #ffd700;
-    font-size: 14px;
-}
-
-.message-menu {
+  .action-menu {
     position: absolute;
     top: 100%;
     right: 0;
-    background-color: #1a2147;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    min-width: 120px;
-    z-index: 10;
-    overflow: hidden;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    min-width: 140px;
+    z-index: 50;
     display: none;
-    transform: translateY(5px);
-    transition: transform 0.2s ease, opacity 0.2s ease;
-    opacity: 0;
-}
+    overflow: hidden;
+  }
 
-.message-menu.show {
+  .action-menu.show {
     display: block;
-    opacity: 1;
-    transform: translateY(0);
-}
+  }
 
-.message-menu-item {
-    padding: 8px 12px;
-    width: 100%;
-    text-align: left;
-    background: none;
-    border: none;
-    color: white;
-    font-size: 14px;
-    cursor: pointer;
+  .action-item {
     display: flex;
     align-items: center;
-    gap: 8px;
-    transition: background-color 0.2s ease;
-}
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    font-size: 0.8rem;
+    color: #374151;
+    cursor: pointer;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    transition: background 0.15s;
+  }
 
-.message-menu-item:hover {
-    background-color: #2a3157;
-}
+  .action-item:hover {
+    background: #f3f4f6;
+  }
 
-.delete-message-btn i {
-    color: #ff4444;
-}
+  .action-item.delete {
+    color: #dc2626;
+  }
 
-.pin-message-btn i {
-    color: #ffd700;
-}
+  .action-item i {
+    width: 16px;
+    text-align: center;
+  }
 
-.pinned-indicator {
+  /* Pin Badge */
+  .pin-badge {
     position: absolute;
-    top: -8px;
-    right: 8px;
-    background-color: #ffd700;
-    color: #0a0f2c;
-    width: 24px;
-    height: 24px;
+    top: -6px;
+    right: 12px;
+    background: #fbbf24;
+    color: #78350f;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size: 0.65rem;
     transform: rotate(45deg);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  }
 
-/* Animation for deleting messages */
-.message.deleting {
-    animation: fadeOut 0.5s ease forwards;
-    pointer-events: none;
-}
+  /* Message Input */
+  .message-input-area {
+    padding: 1rem;
+    border-top: 1px solid #f3f4f6;
+    background: #f9fafb;
+    border-radius: 0 0 12px 12px;
+  }
 
-@keyframes fadeOut {
-    from {
-        opacity: 1;
-        transform: scale(1);
-    }
-    to {
-        opacity: 0;
-        transform: scale(0.9);
-        height: 0;
-        margin: 0;
-        padding: 0;
-    }
-}
-
-/* Animation for pinning messages */
-.message.pinning {
-    animation: pinPulse 0.5s ease;
-}
-
-@keyframes pinPulse {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.05);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-/* Confirmation tooltip */
-.delete-confirmation {
-    position: absolute;
-    bottom: -40px;
-    right: 0;
-    background-color: rgba(220, 53, 69, 0.9);
-    color: white;
-    padding: 8px 12px;
-    border-radius: 5px;
-    font-size: 12px;
-    z-index: 20;
+  .input-row {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    pointer-events: none;
-}
+    gap: 0.75rem;
+    align-items: flex-end;
+  }
 
-.delete-confirmation.show {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
-}
-
-.delete-confirm-buttons {
-    display: flex;
-    gap: 8px;
-    margin-left: 8px;
-}
-
-.delete-confirm-yes,
-.delete-confirm-no {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 12px;
-    padding: 2px 5px;
-    cursor: pointer;
-    border-radius: 3px;
-}
-
-.delete-confirm-yes {
-    background-color: rgba(255, 255, 255, 0.2);
-}
-
-.delete-confirm-yes:hover {
-    background-color: rgba(255, 255, 255, 0.3);
-}
-
-.delete-confirm-no:hover {
-    text-decoration: underline;
-}
-
-.message-input {
-    padding: 20px;
-    background-color: #1a2147;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-.message-input textarea {
-    flex-grow: 1;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #2a3157;
-    background-color: #0d1338;
-    color: white;
-    resize: none;
-}
-
-.message-input button {
-    padding: 10px 20px;
-    background-color: #ffd700;
-    color: #0a0f2c;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.image-upload {
-    padding: 10px;
-    background-color: #0d1338;
-    border-radius: 5px;
-    cursor: pointer;
+  .upload-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    background: white;
     display: flex;
     align-items: center;
     justify-content: center;
-}
+    cursor: pointer;
+    color: #6b7280;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
 
-.image-upload i {
-    color: #ffd700;
-    font-size: 18px;
-}
+  .upload-btn:hover {
+    border-color: #2563eb;
+    color: #2563eb;
+  }
 
-.image-preview {
-    padding: 10px;
-    background-color: #1a2147;
+  .message-textarea {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    resize: none;
+    min-height: 42px;
+    max-height: 120px;
+    font-family: inherit;
+    background: white;
+  }
+
+  .message-textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+  }
+
+  .send-btn {
+    padding: 0.75rem 1.25rem;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+
+  .send-btn:hover {
+    background: #1d4ed8;
+  }
+
+  .send-btn:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+  }
+
+  /* Image Preview */
+  .image-preview-container {
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
     display: none;
     align-items: center;
-    gap: 10px;
-}
+    gap: 0.75rem;
+  }
 
-.image-preview img {
+  .image-preview-container.visible {
+    display: flex;
+  }
+
+  .image-preview-container img {
     max-height: 60px;
     max-width: 100px;
-    object-fit: contain;
-}
+    border-radius: 6px;
+    object-fit: cover;
+  }
 
-.image-preview button {
-    background-color: #ff4444;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
-    cursor: pointer;
-}
-
-/* Responsive Media Queries */
-@media (max-width: 991px) {
-    .message {
-        max-width: 80%;
-    }
-}
-
-@media (max-width: 768px) {
-    /* Hide the main logo in mobile view */
-    header.navbar .logo {
-        display: none !important;
-    }
-    
-    /* Fix hamburger menu positioning */
-    .mobile-nav-toggle {
-        position: fixed;
-        top: 15px;
-        left: 15px;
-        z-index: 2000;
-        display: flex !important;
-    }
-    
-    /* Adjust forum sidebar to avoid overlapping */
-    .forum-sidebar {
-        padding-top: 70px;
-    }
-    
-    .forum-header {
-        margin-top: 0;
-    }
-    
-    .forum-container {
-        flex-direction: row;
-        height: calc(94vh - 60px);
-        position: relative;
-    }
-    
-    .forum-sidebar {
-        position: fixed;
-        top: 0;
-        left: -280px;
-        height: 100%;
-        width: 280px;
-        z-index: 999;
-        transition: left 0.3s ease;
-        box-shadow: 3px 0 10px rgba(0, 0, 0, 0.2);
-    }
-    
-    .forum-sidebar.active {
-        left: 0;
-    }
-    
-    .forum-main {
-        width: 100%;
-        margin-left: 0;
-        height: 100%;
-    }
-    
-    .mobile-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0, 0, 0, 0.6);
-        z-index: 998;
-    }
-    
-    .mobile-overlay.active {
-        display: block;
-    }
-    
-    .message {
-        max-width: 90%;
-    }
-}
-
-@media (max-width: 576px) {
-    .forum-header h2 {
-        font-size: 1.5rem;
-    }
-    
-    .message-input {
-        padding: 10px;
-    }
-    
-    .user-info {
-        padding: 10px;
-    }
-    
-    .search-box,
-    .category-dropdown {
-        margin-bottom: 15px;
-    }
-    
-    .message {
-        padding: 10px;
-    }
-    
-    .user-avatar {
-        width: 40px;
-        height: 40px;
-    }
-}
-
-.pinned-messages-dropdown,
-.pinned-dropdown-header,
-.close-pinned-btn,
-.pinned-messages-dropdown.show {
-    /* These styles are now obsolete */
-    display: none !important;
-}
-
-.pinned-messages-section {
-    margin-top: 20px;
-    background-color: #1a2147;
-    border-radius: 10px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    max-height: 300px;
-    border: 1px solid rgba(255, 215, 0, 0.3);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.pinned-header {
-    padding: 12px 15px;
-    background-color: rgba(255, 215, 0, 0.3);
-    border-bottom: 1px solid rgba(255, 215, 0, 0.4);
-}
-
-.pinned-header h3 {
-    margin: 0;
-    color: #ffd700;
-    font-size: 16px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.pinned-header h3 i {
-    color: #ffd700;
-    font-size: 18px;
-}
-
-.pinned-list-container {
-    overflow-y: auto;
-    max-height: 250px;
-    padding: 10px;
-}
-
-.pinned-message-item {
-    padding: 10px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.pinned-message-item:hover {
-    background-color: rgba(255, 255, 255, 0.05);
-}
-
-.pinned-message-sender {
-    font-weight: bold;
-    color: #ffd700;
-    font-size: 14px;
-    margin-bottom: 4px;
-}
-
-.pinned-message-preview {
-    color: white;
-    font-size: 12px;
-    opacity: 0.8;
-    white-space: nowrap;
+  .image-preview-container .filename {
+    flex: 1;
+    font-size: 0.8rem;
+    color: #6b7280;
     overflow: hidden;
     text-overflow: ellipsis;
-}
+    white-space: nowrap;
+  }
 
-.pinned-message-date {
-    font-size: 10px;
-    color: #8890b5;
-    margin-top: 4px;
-}
+  .image-preview-container .remove-btn {
+    padding: 0.375rem 0.75rem;
+    border: none;
+    border-radius: 6px;
+    background: #fee2e2;
+    color: #dc2626;
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
 
-.empty-pinned-message {
-    padding: 15px;
+  .image-error-msg {
+    margin-top: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: #fee2e2;
+    color: #dc2626;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    display: none;
+  }
+
+  .image-error-msg.visible {
+    display: block;
+  }
+
+  /* Sidebar Panel */
+  .forum-sidebar-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .sidebar-card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+  }
+
+  .sidebar-card-header {
+    padding: 0.875rem 1rem;
+    background: #f9fafb;
+    border-bottom: 1px solid #f3f4f6;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #374151;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .sidebar-card-header i {
+    color: #fbbf24;
+  }
+
+  .sidebar-card-body {
+    padding: 0;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .pinned-item {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .pinned-item:last-child {
+    border-bottom: none;
+  }
+
+  .pinned-item:hover {
+    background: #f9fafb;
+  }
+
+  .pinned-item-sender {
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: #111827;
+    margin-bottom: 0.25rem;
+  }
+
+  .pinned-item-preview {
+    font-size: 0.8rem;
+    color: #6b7280;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .pinned-item-time {
+    font-size: 0.7rem;
+    color: #9ca3af;
+    margin-top: 0.25rem;
+  }
+
+  .empty-pinned {
+    padding: 1.5rem 1rem;
     text-align: center;
-    color: #8890b5;
-    font-size: 14px;
-}
+    color: #9ca3af;
+    font-size: 0.8rem;
+  }
 
-.message.highlight {
-    animation: highlightMessage 2s ease-out;
-}
+  /* User Card */
+  .user-sidebar-card {
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
 
-@keyframes highlightMessage {
-    0% {
-        background-color: rgba(255, 215, 0, 0.3);
-        transform: scale(1.05);
-    }
-    70% {
-        background-color: rgba(255, 215, 0, 0.1);
-    }
-    100% {
-        background-color: inherit;
-        transform: scale(1);
-    }
-}
+  .user-sidebar-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #e5e7eb;
+  }
 
-.copy-notification {
+  .user-sidebar-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .user-sidebar-info h4 {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #111827;
+    margin: 0 0 0.25rem;
+  }
+
+  .user-sidebar-info span {
+    font-size: 0.8rem;
+    color: #6b7280;
+  }
+
+  /* Jump to Present */
+  .jump-to-present {
     position: fixed;
-    bottom: 20px;
+    bottom: 100px;
+    right: 40px;
+    background: #2563eb;
+    color: white;
+    padding: 0.625rem 1rem;
+    border-radius: 99px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 100;
+    transition: transform 0.2s;
+  }
+
+  .jump-to-present:hover {
+    transform: translateY(-2px);
+  }
+
+  .jump-to-present.visible {
+    display: flex;
+  }
+
+  /* No Results */
+  .no-results-msg {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #9ca3af;
+    font-size: 0.9rem;
+  }
+
+  /* Delete Confirmation */
+  .delete-confirm {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    z-index: 60;
+    display: none;
+    text-align: center;
+  }
+
+  .delete-confirm.show {
+    display: block;
+  }
+
+  .delete-confirm p {
+    margin: 0 0 0.75rem;
+    font-size: 0.875rem;
+    color: #374151;
+  }
+
+  .delete-confirm-btns {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .delete-confirm-btns button {
+    padding: 0.375rem 0.875rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn-confirm-yes {
+    background: #dc2626;
+    color: white;
+  }
+
+  .btn-confirm-no {
+    background: #f3f4f6;
+    color: #374151;
+  }
+
+  /* Copy Notification */
+  .copy-toast {
+    position: fixed;
+    bottom: 24px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: rgba(0, 0, 0, 0.8);
+    background: #111827;
     color: white;
-    padding: 8px 16px;
-    border-radius: 4px;
-    z-index: 999;
-    font-size: 14px;
+    padding: 0.625rem 1.25rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
     opacity: 0;
-    transition: opacity 0.3s ease;
-}
+    transition: opacity 0.3s;
+    z-index: 1000;
+  }
 
-.copy-notification.show {
+  .copy-toast.show {
     opacity: 1;
-}
+  }
 
-/* Add hamburger menu for mobile */
-.mobile-nav-toggle {
-    display: none;
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    z-index: 2000;
-    background-color: #ffd700;
-    color: #0a0f2c;
-    width: 45px;
-    height: 45px;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-}
+  /* Animations */
+  .message-card.deleting {
+    animation: fadeOut 0.4s ease forwards;
+  }
 
-.mobile-nav-toggle i {
-    font-size: 20px;
-}
+  @keyframes fadeOut {
+    to { opacity: 0; transform: scale(0.95); }
+  }
 
-.no-results {
-    text-align: center;
-    padding: 20px;
-    color: #8890b5;
-    font-size: 16px;
-    background-color: rgba(26, 33, 71, 0.7);
-    border-radius: 10px;
-    margin: 20px auto;
-    max-width: 80%;
-}
+  .message-card.pinning {
+    animation: pinPulse 0.4s ease;
+  }
 
-.image-error {
-    background-color: rgba(255, 68, 68, 0.9);
-    color: white;
-    padding: 10px;
-    margin: 0 20px;
-    border-radius: 5px;
-    text-align: center;
-    font-size: 14px;
-    margin-bottom: 10px;
-    animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+  @keyframes pinPulse {
+    50% { transform: scale(1.02); }
+  }
 </style>
+{% endblock %}
 
+{% block header_actions %}
+<div class="forum-type-tabs">
+  <button class="forum-type-tab active" data-type="council">
+    <i class="fas fa-globe"></i> All Councils
+  </button>
+  <button class="forum-type-tab" data-type="district">
+    <i class="fas fa-lock"></i> My Council
+  </button>
+</div>
+{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+
+<div class="forum-layout">
+  <div class="forum-main-area">
+    <!-- Category Tabs -->
+    <div class="category-tabs" id="categoryTabs">
+      {% for category in categories %}
+      <button class="category-tab {% if forloop.first %}active{% endif %}" data-id="{{ category.id }}">
+        {{ category.get_name_display }}
+      </button>
+      {% endfor %}
+    </div>
+
+    <!-- Search -->
+    <div class="forum-search">
+      <input type="text" id="searchInput" placeholder="Search messages...">
+      <button class="search-btn" id="searchBtn"><i class="fas fa-search"></i></button>
+      <button class="search-btn clear" id="clearSearchBtn"><i class="fas fa-times"></i></button>
+    </div>
+
+    <!-- Messages Panel -->
+    <div class="messages-panel">
+      <div class="messages-list" id="messagesList">
+        <!-- Messages will be loaded here -->
+      </div>
+
+      <div class="message-input-area">
+        <div class="input-row">
+          <label for="imageUpload" class="upload-btn" title="Upload image">
+            <i class="fas fa-image"></i>
+          </label>
+          <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+          <textarea id="messageInput" class="message-textarea" placeholder="Type a message..." rows="1"></textarea>
+          <button class="send-btn" id="sendBtn">
+            <i class="fas fa-paper-plane"></i> Send
+          </button>
+        </div>
+        <div class="image-preview-container" id="imagePreview">
+          <img src="" alt="Preview" id="previewImg">
+          <span class="filename" id="previewFilename"></span>
+          <button class="remove-btn" id="removeImageBtn">Remove</button>
+        </div>
+        <div class="image-error-msg" id="imageError">File size exceeds 10MB limit.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="forum-sidebar-panel">
+    <!-- User Card -->
+    <a href="{% url 'edit_profile' %}" class="sidebar-card user-card-link" style="text-decoration: none; display: block;">
+      <div class="user-sidebar-card">
+        <div class="user-sidebar-avatar">
+          {% if current_user.profile_picture %}
+          <img src="{{ current_user.profile_picture.url }}" alt="{{ current_user.username }}">
+          {% else %}
+          <div class="initials" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#2563eb,#3b82f6);color:white;font-weight:600;">{{ current_user.first_name|first }}{{ current_user.last_name|first }}</div>
+          {% endif %}
+        </div>
+        <div class="user-sidebar-info">
+          <h4>{{ current_user.first_name }} {{ current_user.last_name }}</h4>
+          <span>
+            {% if current_user.role == 'admin' %}District Director{% elif current_user.role == 'officer' %}Officer{% else %}Member{% endif %}
+            {% if current_user.council %} • Council {{ current_user.council.id }}{% endif %}
+          </span>
+        </div>
+        <i class="fas fa-chevron-right" style="color: #9ca3af; margin-left: auto;"></i>
+      </div>
+    </a>
+
+    <!-- Pinned Messages -->
+    <div class="sidebar-card">
+      <div class="sidebar-card-header">
+        <i class="fas fa-thumbtack"></i> Pinned Messages
+      </div>
+      <div class="sidebar-card-body" id="pinnedList">
+        <div class="empty-pinned">No pinned messages</div>
+      </div>
+    </div>
+
+    <!-- Forum Guidelines -->
+    <div class="sidebar-card">
+      <div class="sidebar-card-header">
+        <i class="fas fa-info-circle" style="color: #2563eb;"></i> Guidelines
+      </div>
+      <div class="sidebar-card-body" style="padding: 1rem;">
+        <ul style="margin:0;padding-left:1.25rem;font-size:0.8rem;color:#6b7280;line-height:1.6;">
+          <li>Be respectful and courteous</li>
+          <li>Stay on topic in each category</li>
+          <li>No spam or self-promotion</li>
+          <li>Officers can pin important messages</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Jump to Present Button -->
+<div class="jump-to-present" id="jumpBtn">
+  <span>Jump to latest</span>
+  <i class="fas fa-chevron-down"></i>
+</div>
+
+<!-- Copy Toast -->
+<div class="copy-toast" id="copyToast">Copied to clipboard!</div>
+{% endblock %}
+
+{% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const messagesContainer = document.getElementById('messagesContainer');
-    const messageInput = document.getElementById('messageInput');
-    const sendButton = document.getElementById('sendButton');
-    const categorySelect = document.getElementById('categorySelect');
-    const forumTypeSelect = document.getElementById('forumTypeSelect');
-    const messageSearch = document.getElementById('messageSearch');
-    const searchButton = document.getElementById('searchButton');
-    const clearSearchButton = document.getElementById('clearSearchButton');
-    const imageUpload = document.getElementById('imageUpload');
-    const selectedImagePreview = document.getElementById('selectedImagePreview');
-    const imageError = document.getElementById('imageError');
-    const pinnedMessagesListContainer = document.getElementById('pinnedMessagesListContainer');
-    const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
-    const forumSidebar = document.querySelector('.forum-sidebar');
-    const mobileOverlay = document.querySelector('.mobile-overlay');
-    
-    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes
-    
-    // Handle mobile sidebar toggle
-    mobileNavToggle.addEventListener('click', function(e) {
-        e.preventDefault(); 
-        e.stopPropagation();
-        forumSidebar.classList.toggle('active');
-        mobileOverlay.classList.toggle('active');
-        console.log("Mobile menu toggled");
+  const messagesList = document.getElementById('messagesList');
+  const messageInput = document.getElementById('messageInput');
+  const sendBtn = document.getElementById('sendBtn');
+  const searchInput = document.getElementById('searchInput');
+  const searchBtn = document.getElementById('searchBtn');
+  const clearSearchBtn = document.getElementById('clearSearchBtn');
+  const categoryTabs = document.getElementById('categoryTabs');
+  const imageUpload = document.getElementById('imageUpload');
+  const imagePreview = document.getElementById('imagePreview');
+  const previewImg = document.getElementById('previewImg');
+  const previewFilename = document.getElementById('previewFilename');
+  const removeImageBtn = document.getElementById('removeImageBtn');
+  const imageError = document.getElementById('imageError');
+  const pinnedList = document.getElementById('pinnedList');
+  const jumpBtn = document.getElementById('jumpBtn');
+  const copyToast = document.getElementById('copyToast');
+  const forumTypeTabs = document.querySelectorAll('.forum-type-tab');
+
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+  let currentCategory = categoryTabs.querySelector('.category-tab.active').dataset.id;
+  let currentForumType = 'council';
+  let originalMessages = [];
+  let messageIds = new Set();
+  let isSearching = false;
+  let isSending = false;
+  let isNearBottom = true;
+  let selectedImage = null;
+
+  const currentUser = {
+    id: {{ current_user.id }},
+    username: "{{ current_user.username }}",
+    role: "{{ current_user.role }}",
+    council: {{ current_user.council.id|default:"null" }}
+  };
+
+  // Forum Type Toggle
+  forumTypeTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      forumTypeTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentForumType = tab.dataset.type;
+      messageIds.clear();
+      loadMessages(currentCategory, true);
     });
-    
-    // Close sidebar when clicking the overlay
-    mobileOverlay.addEventListener('click', function() {
-        forumSidebar.classList.remove('active');
-        mobileOverlay.classList.remove('active');
-        console.log("Mobile menu closed via overlay");
-    });
-    
-    let currentCategory = categorySelect.value;
-    let currentForumType = forumTypeSelect.value; // 'council' or 'district'
-    let lastMessageTimestamp = null;
-    let isSearching = false;
-    let originalMessages = [];
-    let messageIds = new Set();
-    let isScrolling = false;
-    let isSending = false;
-    let isNearBottom = true; // Track if user is near bottom
-    let selectedImage = null;
-    
-    const currentUser = {
-        id: parseInt("{{ current_user.id }}"),
-        username: "{{ current_user.username }}",
-        role: "{{ current_user.role }}",
-        council: parseInt("{{ current_user.council.id }}")
-    };
-    
-    // Create copy notification element
-    const copyNotification = document.createElement('div');
-    copyNotification.className = 'copy-notification';
-    copyNotification.textContent = 'Text copied to clipboard!';
-    document.body.appendChild(copyNotification);
-    
-    function showCopyNotification() {
-        copyNotification.classList.add('show');
-        setTimeout(() => {
-            copyNotification.classList.remove('show');
-        }, 2000);
+  });
+
+  // Category Tabs
+  categoryTabs.addEventListener('click', (e) => {
+    if (e.target.classList.contains('category-tab')) {
+      categoryTabs.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+      e.target.classList.add('active');
+      currentCategory = e.target.dataset.id;
+      messageIds.clear();
+      loadMessages(currentCategory, true);
     }
-    
-    function getRoleLabel(role, councilId) {
-        if (role === 'admin') return 'District Director';
-        if (role === 'officer') return `Officer ${councilId}`;
-        return `Member ${councilId}`;
+  });
+
+  // Helper functions
+  function getRoleClass(role) {
+    if (role === 'admin') return 'role-admin';
+    if (role === 'officer') return 'role-officer';
+    return 'role-member';
+  }
+
+  function getRoleLabel(role) {
+    if (role === 'admin') return 'Director';
+    if (role === 'officer') return 'Officer';
+    return 'Member';
+  }
+
+  function getInitials(firstName, lastName) {
+    return ((firstName || '')[0] || '') + ((lastName || '')[0] || '');
+  }
+
+  function isUserNearBottom() {
+    return (messagesList.scrollHeight - messagesList.scrollTop - messagesList.clientHeight) < 150;
+  }
+
+  function updateJumpButton() {
+    isNearBottom = isUserNearBottom();
+    jumpBtn.classList.toggle('visible', !isNearBottom);
+  }
+
+  function scrollToBottom(force = false) {
+    if (force || isNearBottom) {
+      messagesList.scrollTo({ top: messagesList.scrollHeight, behavior: 'smooth' });
+      setTimeout(updateJumpButton, 300);
+    }
+  }
+
+  // Load Messages
+  function loadMessages(categoryId, shouldScroll = true) {
+    if (isSearching) return;
+
+    fetch(`/forum/messages/${categoryId}/?forum_type=${currentForumType}`)
+      .then(res => res.json())
+      .then(data => {
+        const sortedMessages = data.messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+        originalMessages = sortedMessages;
+
+        const hasNew = sortedMessages.some(m => !messageIds.has(m.id));
+        if (!hasNew && messageIds.size > 0 && !window.searchJustCleared) return;
+        window.searchJustCleared = false;
+
+        messagesList.innerHTML = '';
+        sortedMessages.forEach(msg => {
+          messageIds.add(msg.id);
+          messagesList.appendChild(createMessageCard(msg));
+        });
+
+        if (shouldScroll) scrollToBottom();
+        updateJumpButton();
+        updatePinnedList();
+      });
+  }
+
+  // Create Message Card
+  function createMessageCard(msg, isNew = false) {
+    const isOwn = msg.sender === currentUser.username;
+    const canPin = currentUser.role === 'admin' || currentUser.role === 'officer';
+
+    const div = document.createElement('div');
+    div.className = `message-card${msg.is_pinned ? ' pinned' : ''}${isOwn ? ' own' : ''}${isNew ? ' new' : ''}`;
+    div.dataset.messageId = msg.id;
+
+    const avatarHtml = msg.sender_profile_picture
+      ? `<img src="${msg.sender_profile_picture}" alt="${msg.sender_first_name}">`
+      : `<div class="initials">${getInitials(msg.sender_first_name, msg.sender_last_name)}</div>`;
+
+    const imageHtml = msg.image_url ? `<img src="${msg.image_url}" alt="Shared image" class="message-image">` : '';
+
+    div.innerHTML = `
+      ${msg.is_pinned ? '<div class="pin-badge"><i class="fas fa-thumbtack"></i></div>' : ''}
+      <div class="message-header">
+        <div class="message-avatar">${avatarHtml}</div>
+        <div class="message-meta">
+          <div class="message-sender">
+            <span class="sender-name">${msg.sender_first_name} ${msg.sender_last_name}</span>
+            <span class="sender-role ${getRoleClass(msg.sender_role)}">${getRoleLabel(msg.sender_role)}</span>
+          </div>
+          <div class="message-time">${msg.timestamp}</div>
+        </div>
+      </div>
+      <div class="message-content">${msg.content}</div>
+      ${imageHtml}
+      <div class="message-actions-btn">
+        <div class="action-trigger"><i class="fas fa-ellipsis-v"></i></div>
+        <div class="action-menu">
+          <button class="action-item copy-btn" data-id="${msg.id}"><i class="fas fa-copy"></i> Copy</button>
+          ${msg.can_delete ? `<button class="action-item delete delete-btn" data-id="${msg.id}"><i class="fas fa-trash"></i> Delete</button>` : ''}
+          ${canPin ? `<button class="action-item pin-btn" data-id="${msg.id}" data-pinned="${msg.is_pinned}"><i class="fas fa-thumbtack"></i> ${msg.is_pinned ? 'Unpin' : 'Pin'}</button>` : ''}
+        </div>
+      </div>
+    `;
+
+    return div;
+  }
+
+  // Update Pinned List
+  function updatePinnedList() {
+    const pinned = originalMessages.filter(m => m.is_pinned);
+    if (pinned.length === 0) {
+      pinnedList.innerHTML = '<div class="empty-pinned">No pinned messages</div>';
+      return;
     }
 
-    function getRoleClass(role) {
-        if (role === 'admin') return 'role-district-director';
-        if (role === 'officer') return 'role-officer';
-        return 'role-member';
-    }
-    
-    // Replace scroll button with jump to present button
-    const jumpButton = document.createElement('div');
-    jumpButton.className = 'scroll-to-present';
-    jumpButton.innerHTML = '<span>Jump to Present</span><i class="fas fa-chevron-down"></i>';
-    document.querySelector('.forum-main').appendChild(jumpButton);
-    
-    function isUserNearBottom() {
-        const threshold = 150; // pixels from bottom to consider "near bottom"
-        return (messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight) < threshold;
-    }
-    
-    function updateJumpButton() {
-        isNearBottom = isUserNearBottom();
-        jumpButton.classList.toggle('visible', !isNearBottom);
-    }
-    
-    function scrollToBottom(force = false) {
-        if (force || isNearBottom) {
-            isScrolling = true;
-            messagesContainer.scrollTo({
-                top: messagesContainer.scrollHeight,
-                behavior: 'smooth'
-            });
-            setTimeout(() => {
-                isScrolling = false;
-                updateJumpButton();
-            }, 300);
-        }
-    }
-    
-    function scrollToMessage(messageId) {
-        const messageElement = document.querySelector(`.message[data-message-id="${messageId}"]`);
-        if (messageElement) {
-            // Close mobile sidebar if on mobile
-            if (window.innerWidth <= 768) {
-                forumSidebar.classList.remove('active');
-                mobileOverlay.classList.remove('active');
-            }
-            
-            // Scroll to the message with animation
-            isScrolling = true;
-            setTimeout(() => {
-                messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 300); // Small delay to allow sidebar to close
-            
-            // Add and then remove the highlight class
-            messageElement.classList.add('highlight');
-            
-            // Remove highlight class after animation completes
-            setTimeout(() => {
-                messageElement.classList.remove('highlight');
-                isScrolling = false;
-                updateJumpButton();
-            }, 2000);
-        }
-    }
-    
-    // Update pinned messages list
-    function updatePinnedMessagesList() {
-        const pinnedMessages = originalMessages.filter(message => message.is_pinned);
-        
-        if (pinnedMessages.length === 0) {
-            pinnedMessagesListContainer.innerHTML = '<div class="empty-pinned-message">No pinned messages</div>';
-            return;
-        }
-        
-        pinnedMessagesListContainer.innerHTML = '';
-        pinnedMessages.forEach(message => {
-            const messageItem = document.createElement('div');
-            messageItem.className = 'pinned-message-item';
-            messageItem.dataset.messageId = message.id;
-            
-            const senderName = `${message.sender_first_name} ${message.sender_last_name}`;
-            const contentPreview = message.content.length > 50 ? message.content.substring(0, 50) + '...' : message.content;
-            
-            messageItem.innerHTML = `
-                <div class="pinned-message-sender">${senderName}</div>
-                <div class="pinned-message-preview">${contentPreview}</div>
-                <div class="pinned-message-date">${message.timestamp}</div>
-            `;
-            
-            messageItem.addEventListener('click', function() {
-                scrollToMessage(message.id);
-            });
-            
-            pinnedMessagesListContainer.appendChild(messageItem);
-        });
-    }
-    
-    jumpButton.addEventListener('click', () => {
-        scrollToBottom(true); // Force scroll to bottom
+    pinnedList.innerHTML = '';
+    pinned.forEach(msg => {
+      const item = document.createElement('div');
+      item.className = 'pinned-item';
+      item.dataset.messageId = msg.id;
+      item.innerHTML = `
+        <div class="pinned-item-sender">${msg.sender_first_name} ${msg.sender_last_name}</div>
+        <div class="pinned-item-preview">${msg.content.substring(0, 50)}${msg.content.length > 50 ? '...' : ''}</div>
+        <div class="pinned-item-time">${msg.timestamp}</div>
+      `;
+      item.addEventListener('click', () => scrollToMessage(msg.id));
+      pinnedList.appendChild(item);
     });
-    
-    messagesContainer.addEventListener('scroll', () => {
-        if (!isScrolling) {
-            updateJumpButton();
-        }
-    });
-    
-    function loadMessages(categoryId, shouldScroll = true) {
-        if (isSearching) return;
-        
-        fetch(`/forum/messages/${categoryId}/?forum_type=${currentForumType}`)
-            .then(response => response.json())
-            .then(data => {
-                const sortedMessages = data.messages.sort((a, b) => {
-                    return new Date(a.timestamp) - new Date(b.timestamp);
-                });
-                
-                originalMessages = sortedMessages;
-                
-                // Check if there are any new messages
-                const hasNewMessages = sortedMessages.some(message => 
-                    !messageIds.has(message.id)
-                );
-                
-                // Force refresh when clearing search by setting hasNewMessages to true
-                // when messageIds is empty or after a search clear
-                if (!hasNewMessages && messageIds.size > 0 && !window.searchJustCleared) {
-                    return; // No new messages, don't update DOM
-                }
-                
-                // Reset the search clear flag
-                window.searchJustCleared = false;
-                
-                messagesContainer.innerHTML = '';
-                sortedMessages.forEach(message => {
-                    messageIds.add(message.id);
-                    const messageElement = createMessageElement(message);
-                    messagesContainer.appendChild(messageElement);
-                });
-                
-                if (shouldScroll) {
-                    scrollToBottom();
-                }
-                
-                updateJumpButton();
-                updatePinnedMessagesList(); // Update pinned messages list whenever messages are loaded
-            });
+  }
+
+  function scrollToMessage(id) {
+    const el = messagesList.querySelector(`.message-card[data-message-id="${id}"]`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.style.boxShadow = '0 0 0 3px rgba(37,99,235,0.3)';
+      setTimeout(() => el.style.boxShadow = '', 2000);
     }
-    
-    function createMessageElement(message, isSending = false, isNew = false) {
-        const isOwnMessage = message.sender === currentUser.username;
-        const div = document.createElement('div');
-        div.className = `message ${message.is_pinned ? 'pinned' : ''} ${isOwnMessage ? 'own-message' : ''} ${isSending ? 'sending' : ''} ${isNew ? 'new-message' : ''}`;
-        div.dataset.messageId = message.id;
-        
-        const roleLabel = getRoleLabel(message.sender_role, message.council);
-        const roleClass = getRoleClass(message.sender_role);
-        
-        // Create avatar element
-        const avatarHtml = message.sender_profile_picture 
-            ? `<img src="${message.sender_profile_picture}" alt="${message.sender_first_name}">`
-            : `<div class="default-avatar"></div>`;
-        
-        // Create image element if message has an image
-        const imageHtml = message.image_url 
-            ? `<img src="${message.image_url}" alt="Shared image" class="message-image">`
-            : '';
-        
-        // Use sender's full name (first name + last name) instead of username
-        const senderName = `${message.sender_first_name} ${message.sender_last_name}`;
-        
-        // Check if user can pin (admins and officers)
-        const canPin = currentUser.role === 'admin' || currentUser.role === 'officer';
-        
-        div.innerHTML = `
-            <div class="message-avatar">
-                ${avatarHtml}
-            </div>
-            <div class="message-content-wrapper">
-                <div class="message-header">
-                    <span class="message-sender">
-                        <span class="message-sender-name">${senderName}</span>
-                        <span class="sender-role ${roleClass}">${roleLabel}</span>
-                    </span>
-                    <span class="message-timestamp">${message.timestamp}</span>
-                </div>
-                <div class="message-content">${message.content}</div>
-                ${imageHtml}
-                <div class="message-actions">
-                    <div class="message-menu-trigger">
-                        <i class="fas fa-ellipsis-v"></i>
-                    </div>
-                    <div class="message-menu">
-                        <button class="message-menu-item copy-message-btn" data-message-id="${message.id}">
-                            <i class="fas fa-copy"></i> Copy Text
-                        </button>
-                        ${message.can_delete ? `
-                            <button class="message-menu-item delete-message-btn" data-message-id="${message.id}">
-                                <i class="fas fa-trash"></i> Delete
-                            </button>
-                        ` : ''}
-                        ${canPin ? `
-                            <button class="message-menu-item pin-message-btn" data-message-id="${message.id}" data-is-pinned="${message.is_pinned}">
-                                <i class="fas fa-thumbtack"></i> ${message.is_pinned ? 'Unpin' : 'Pin'}
-                            </button>
-                        ` : ''}
-                    </div>
-                    ${message.is_pinned ? `<div class="pinned-indicator"><i class="fas fa-thumbtack"></i></div>` : ''}
-                </div>
-            </div>
-        `;
-        return div;
+  }
+
+  // Send Message
+  function sendMessage() {
+    const content = messageInput.value.trim();
+    if ((!content && !selectedImage) || isSending) return;
+
+    if (selectedImage && selectedImage.size > MAX_FILE_SIZE) {
+      showImageError();
+      clearSelectedImage();
+      return;
     }
-    
-    function sendMessage() {
-        const content = messageInput.value.trim();
-        if ((!content && !selectedImage) || isSending) return;
-        
-        // Double-check file size before sending
-        if (selectedImage && selectedImage.size > MAX_FILE_SIZE) {
-            imageError.style.display = 'block';
-            setTimeout(() => {
-                imageError.style.display = 'none';
-            }, 5000);
-            clearSelectedImage();
-            return;
-        }
-        
-        isSending = true;
-        sendButton.disabled = true;
-        
-        const formData = new FormData();
-        formData.append('category_id', currentCategory);
-        formData.append('content', content);
-        formData.append('forum_type', currentForumType);
-        
-        // Get CSRF token from the template
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-        
-        if (selectedImage) {
-            formData.append('image', selectedImage);
-        }
-        
-        fetch('/forum/send/', {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': csrfToken
-            },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                messageInput.value = '';
-                clearSelectedImage();
-                isNearBottom = true; // Force scroll to bottom after sending
-                loadMessages(currentCategory, true);
-            } else if (data.status === 'error' && data.message) {
-                // Display server-side error if any
-                imageError.textContent = data.message;
-                imageError.style.display = 'block';
-                setTimeout(() => {
-                    imageError.style.display = 'none';
-                }, 5000);
-            }
-        })
-        .finally(() => {
-            isSending = false;
-            sendButton.disabled = false;
-        });
-    }
-    
-    function searchMessages(query) {
-        const forumContainer = document.querySelector('.forum-container');
-        
-        if (!query) {
-            isSearching = false;
-            clearSearchButton.style.display = 'none';
-            forumContainer.classList.remove('search-active');
-            
-            // Set a flag to force reload messages when clearing search
-            window.searchJustCleared = true;
-            
-            // Force reload by clearing messageIds
-            messageIds.clear();
-            
-            loadMessages(currentCategory, false);
-            return;
-        }
-        
-        isSearching = true;
-        clearSearchButton.style.display = 'flex';
-        forumContainer.classList.add('search-active');
-        
-        const searchResults = originalMessages.filter(message => 
-            message.content.toLowerCase().includes(query.toLowerCase()) ||
-            message.sender.toLowerCase().includes(query.toLowerCase()) ||
-            `${message.sender_first_name} ${message.sender_last_name}`.toLowerCase().includes(query.toLowerCase())
-        );
-        
-        messagesContainer.innerHTML = '';
-        if (searchResults.length === 0) {
-            messagesContainer.innerHTML = '<div class="no-results">No messages found matching your search.</div>';
-        } else {
-            searchResults.forEach(message => {
-                const messageElement = createMessageElement(message);
-                messagesContainer.appendChild(messageElement);
-            });
-        }
-    }
-    
-    function deleteMessage(messageId, messageElement) {
-        // Get CSRF token from the template
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-        
-        fetch(`/forum/delete/${messageId}/`, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': csrfToken
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                // Remove message from DOM after animation completes
-                setTimeout(() => {
-                    messageElement.remove();
-                    // Also remove it from our original messages array
-                    const messageIndex = originalMessages.findIndex(m => m.id === parseInt(messageId));
-                    if (messageIndex !== -1) {
-                        originalMessages.splice(messageIndex, 1);
-                        messageIds.delete(parseInt(messageId));
-                    }
-                    // Update pinned messages list if needed
-                    updatePinnedMessagesList();
-                }, 500);
-            } else {
-                // If error, remove animation class
-                messageElement.classList.remove('deleting');
-            }
-        })
-        .catch(error => {
-            console.error('Error deleting message:', error);
-            // If error, remove animation class
-            messageElement.classList.remove('deleting');
-        });
-    }
-    
-    function togglePin(messageId) {
-        // Get CSRF token from the template
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-        
-        fetch(`/forum/pin/${messageId}/`, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': csrfToken
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                // Update orignal messages array
-                const messageIndex = originalMessages.findIndex(m => m.id === parseInt(messageId));
-                if (messageIndex !== -1) {
-                    originalMessages[messageIndex].is_pinned = data.is_pinned;
-                }
-                
-                // Update pinned messages list
-                updatePinnedMessagesList();
-                
-                // Remove animation class after it completes
-                setTimeout(() => {
-                    const message = document.querySelector(`.message[data-message-id="${messageId}"]`);
-                    if (message) message.classList.remove('pinning');
-                }, 500);
-            }
-        })
-        .catch(error => console.error('Error toggling pin:', error));
-    }
-    
-    // Copy text functionality
-    function copyMessageText(messageId) {
-        const message = originalMessages.find(m => m.id === parseInt(messageId));
-        if (message) {
-            const textToCopy = message.content;
-            
-            // Create a temporary textarea element to copy from
-            const textarea = document.createElement('textarea');
-            textarea.value = textToCopy;
-            textarea.style.position = 'absolute';
-            textarea.style.left = '-9999px';
-            document.body.appendChild(textarea);
-            
-            // Select and copy the text
-            textarea.select();
-            document.execCommand('copy');
-            
-            // Clean up
-            document.body.removeChild(textarea);
-            
-            // Show notification
-            showCopyNotification();
-        }
-    }
-    
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-    
-    // Handle image upload
-    imageUpload.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file && file.type.startsWith('image/')) {
-            // Check file size
-            if (file.size > MAX_FILE_SIZE) {
-                imageError.style.display = 'block';
-                imageUpload.value = ''; // Clear the input
-                selectedImage = null;
-                
-                // Hide error message after 5 seconds
-                setTimeout(() => {
-                    imageError.style.display = 'none';
-                }, 5000);
-                return;
-            }
-            
-            selectedImage = file;
-            displaySelectedImage(file);
-            imageError.style.display = 'none';
-        }
-    });
-    
-    function displaySelectedImage(file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            selectedImagePreview.innerHTML = `                <img src="${e.target.result}" alt="Selected image">
-                <div>
-                    <span>${file.name}</span>
-                    <button id="removeImageBtn">Remove</button>
-                </div>
-            `;
-            selectedImagePreview.style.display = 'flex';
-            
-            document.getElementById('removeImageBtn').addEventListener('click', clearSelectedImage);
-        };
-        reader.readAsDataURL(file);
-    }
-    
-    function clearSelectedImage() {
-        selectedImage = null;
-        selectedImagePreview.innerHTML = '';
-        selectedImagePreview.style.display = 'none';
-        imageUpload.value = '';
-    }
-    
-    categorySelect.addEventListener('change', function() {
-        currentCategory = this.value;
-        messageIds.clear();
+
+    isSending = true;
+    sendBtn.disabled = true;
+
+    const formData = new FormData();
+    formData.append('category_id', currentCategory);
+    formData.append('content', content);
+    formData.append('forum_type', currentForumType);
+    if (selectedImage) formData.append('image', selectedImage);
+
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    fetch('/forum/send/', {
+      method: 'POST',
+      headers: { 'X-CSRFToken': csrfToken },
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === 'success') {
+        messageInput.value = '';
+        clearSelectedImage();
+        isNearBottom = true;
         loadMessages(currentCategory, true);
+      }
+    })
+    .finally(() => {
+      isSending = false;
+      sendBtn.disabled = false;
     });
-    
-    forumTypeSelect.addEventListener('change', function() {
-        currentForumType = this.value;
+  }
+
+  // Search
+  function searchMessages(query) {
+    if (!query) {
+      isSearching = false;
+      clearSearchBtn.classList.remove('visible');
+      window.searchJustCleared = true;
+      messageIds.clear();
+      loadMessages(currentCategory, false);
+      return;
+    }
+
+    isSearching = true;
+    clearSearchBtn.classList.add('visible');
+
+    const results = originalMessages.filter(m =>
+      m.content.toLowerCase().includes(query.toLowerCase()) ||
+      `${m.sender_first_name} ${m.sender_last_name}`.toLowerCase().includes(query.toLowerCase())
+    );
+
+    messagesList.innerHTML = '';
+    if (results.length === 0) {
+      messagesList.innerHTML = '<div class="no-results-msg">No messages found</div>';
+    } else {
+      results.forEach(m => messagesList.appendChild(createMessageCard(m)));
+    }
+  }
+
+  // Delete Message
+  function deleteMessage(id, el) {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    el.classList.add('deleting');
+
+    fetch(`/forum/delete/${id}/`, {
+      method: 'POST',
+      headers: { 'X-CSRFToken': csrfToken }
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === 'success') {
+        setTimeout(() => {
+          el.remove();
+          originalMessages = originalMessages.filter(m => m.id !== parseInt(id));
+          messageIds.delete(parseInt(id));
+          updatePinnedList();
+        }, 400);
+      } else {
+        el.classList.remove('deleting');
+      }
+    });
+  }
+
+  // Toggle Pin
+  function togglePin(id) {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    fetch(`/forum/pin/${id}/`, {
+      method: 'POST',
+      headers: { 'X-CSRFToken': csrfToken }
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === 'success') {
+        const idx = originalMessages.findIndex(m => m.id === parseInt(id));
+        if (idx !== -1) originalMessages[idx].is_pinned = data.is_pinned;
+        updatePinnedList();
         messageIds.clear();
-        loadMessages(currentCategory, true);
+        loadMessages(currentCategory, false);
+      }
     });
-    
-    sendButton.addEventListener('click', sendMessage);
-    
-    messageInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
-        }
-    });
-    
-    searchButton.addEventListener('click', function() {
-        searchMessages(messageSearch.value.trim());
-    });
-    
-    clearSearchButton.addEventListener('click', function() {
-        messageSearch.value = '';
-        searchMessages('');
-    });
-    
-    messageSearch.addEventListener('keyup', function(e) {
-        if (e.key === 'Enter') {
-            searchMessages(messageSearch.value.trim());
-        } else if (e.key === 'Escape') {
-            messageSearch.value = '';
-            searchMessages('');
-        }
-    });
-    
-    // Message menu interactions
-    messagesContainer.addEventListener('click', function(e) {
-        // Handle menu trigger clicks
-        if (e.target.closest('.message-menu-trigger')) {
-            const trigger = e.target.closest('.message-menu-trigger');
-            const menu = trigger.nextElementSibling;
-            
-            // Close all other open menus first
-            document.querySelectorAll('.message-menu.show').forEach(item => {
-                if (item !== menu) item.classList.remove('show');
-            });
-            
-            // Toggle this menu
-            menu.classList.toggle('show');
-            e.stopPropagation();
-        }
-        
-        // Handle copy button clicks
-        if (e.target.closest('.copy-message-btn')) {
-            const btn = e.target.closest('.copy-message-btn');
-            const messageId = btn.dataset.messageId;
-            
-            // Hide menu
-            const menu = btn.closest('.message-menu');
-            menu.classList.remove('show');
-            
-            // Copy the message text
-            copyMessageText(messageId);
-            e.stopPropagation();
-        }
-        
-        // Handle delete button clicks
-        if (e.target.closest('.delete-message-btn')) {
-            const btn = e.target.closest('.delete-message-btn');
-            const messageId = btn.dataset.messageId;
-            const message = btn.closest('.message');
-            
-            // Create confirmation dialog
-            const confirmation = document.createElement('div');
-            confirmation.className = 'delete-confirmation';
-            confirmation.innerHTML = `
-                <span>Delete this message?</span>
-                <div class="delete-confirm-buttons">
-                    <button class="delete-confirm-yes" data-message-id="${messageId}">Yes</button>
-                    <button class="delete-confirm-no">No</button>
-                </div>
-            `;
-            message.appendChild(confirmation);
-            
-            // Show confirmation with a slight delay
-            setTimeout(() => confirmation.classList.add('show'), 10);
-            
-            // Hide any open menus
-            document.querySelectorAll('.message-menu.show').forEach(menu => 
-                menu.classList.remove('show')
-            );
-            
-            e.stopPropagation();
-        }
-        
-        // Handle delete confirmation yes
-        if (e.target.closest('.delete-confirm-yes')) {
-            const btn = e.target.closest('.delete-confirm-yes');
-            const messageId = btn.dataset.messageId;
-            const message = btn.closest('.message');
-            
-            // Add deleting animation
-            message.classList.add('deleting');
-            
-            // Remove confirmation
-            const confirmation = message.querySelector('.delete-confirmation');
-            if (confirmation) confirmation.remove();
-            
-            // Call delete API
-            deleteMessage(messageId, message);
-            e.stopPropagation();
-        }
-        
-        // Handle delete confirmation no
-        if (e.target.closest('.delete-confirm-no')) {
-            const confirmation = e.target.closest('.delete-confirmation');
-            confirmation.classList.remove('show');
-            
-            // Remove after animation
-            setTimeout(() => confirmation.remove(), 300);
-            e.stopPropagation();
-        }
-        
-        // Handle pin button clicks
-        if (e.target.closest('.pin-message-btn')) {
-            const btn = e.target.closest('.pin-message-btn');
-            const messageId = btn.dataset.messageId;
-            const isPinned = btn.dataset.isPinned === "true";
-            const message = btn.closest('.message');
-            
-            // Hide menu
-            const menu = btn.closest('.message-menu');
-            menu.classList.remove('show');
-            
-            // Add pinning animation
-            message.classList.add('pinning');
-            
-            // Update UI immediately based on new state
-            if (!isPinned) {
-                // Adding a pin
-                const pinIndicator = document.createElement('div');
-                pinIndicator.className = 'pinned-indicator';
-                pinIndicator.innerHTML = '<i class="fas fa-thumbtack"></i>';
-                message.querySelector('.message-actions').appendChild(pinIndicator);
-                message.classList.add('pinned');
-                btn.innerHTML = '<i class="fas fa-thumbtack"></i> Unpin';
-                btn.dataset.isPinned = "true";
-            } else {
-                // Removing a pin
-                const pinIndicator = message.querySelector('.pinned-indicator');
-                if (pinIndicator) pinIndicator.remove();
-                message.classList.remove('pinned');
-                btn.innerHTML = '<i class="fas fa-thumbtack"></i> Pin';
-                btn.dataset.isPinned = "false";
-            }
-            
-            // Call toggle pin API
-            togglePin(messageId);
-            e.stopPropagation();
-        }
-    });
-    
-    // Close message menus when clicking outside
-    document.addEventListener('click', function(e) {
-        // Close all message menus
-        document.querySelectorAll('.message-menu.show').forEach(menu => 
-            menu.classList.remove('show')
-        );
-    });
-    
-    loadMessages(currentCategory, true);
-    
-    // Update auto-refresh
-    setInterval(() => {
-        if (!isSearching && !isSending) {
-            loadMessages(currentCategory, isNearBottom);
-        }
-    }, 3000);
+  }
+
+  // Copy Text
+  function copyText(id) {
+    const msg = originalMessages.find(m => m.id === parseInt(id));
+    if (msg) {
+      navigator.clipboard.writeText(msg.content).then(() => {
+        copyToast.classList.add('show');
+        setTimeout(() => copyToast.classList.remove('show'), 2000);
+      });
+    }
+  }
+
+  // Image Handling
+  imageUpload.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > MAX_FILE_SIZE) {
+      showImageError();
+      imageUpload.value = '';
+      return;
+    }
+
+    selectedImage = file;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      previewImg.src = ev.target.result;
+      previewFilename.textContent = file.name;
+      imagePreview.classList.add('visible');
+    };
+    reader.readAsDataURL(file);
+  });
+
+  removeImageBtn.addEventListener('click', clearSelectedImage);
+
+  function clearSelectedImage() {
+    selectedImage = null;
+    imageUpload.value = '';
+    imagePreview.classList.remove('visible');
+  }
+
+  function showImageError() {
+    imageError.classList.add('visible');
+    setTimeout(() => imageError.classList.remove('visible'), 5000);
+  }
+
+  // Event Delegation for Actions
+  messagesList.addEventListener('click', (e) => {
+    // Toggle menu
+    if (e.target.closest('.action-trigger')) {
+      const menu = e.target.closest('.message-actions-btn').querySelector('.action-menu');
+      document.querySelectorAll('.action-menu.show').forEach(m => { if (m !== menu) m.classList.remove('show'); });
+      menu.classList.toggle('show');
+      e.stopPropagation();
+      return;
+    }
+
+    // Copy
+    if (e.target.closest('.copy-btn')) {
+      const id = e.target.closest('.copy-btn').dataset.id;
+      copyText(id);
+      e.target.closest('.action-menu').classList.remove('show');
+      e.stopPropagation();
+      return;
+    }
+
+    // Delete
+    if (e.target.closest('.delete-btn')) {
+      const btn = e.target.closest('.delete-btn');
+      const id = btn.dataset.id;
+      const card = btn.closest('.message-card');
+      btn.closest('.action-menu').classList.remove('show');
+
+      if (confirm('Delete this message?')) {
+        deleteMessage(id, card);
+      }
+      e.stopPropagation();
+      return;
+    }
+
+    // Pin
+    if (e.target.closest('.pin-btn')) {
+      const btn = e.target.closest('.pin-btn');
+      const id = btn.dataset.id;
+      const card = btn.closest('.message-card');
+      btn.closest('.action-menu').classList.remove('show');
+      card.classList.add('pinning');
+      setTimeout(() => card.classList.remove('pinning'), 400);
+      togglePin(id);
+      e.stopPropagation();
+      return;
+    }
+  });
+
+  // Close menus on outside click
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.action-menu.show').forEach(m => m.classList.remove('show'));
+  });
+
+  // Send Events
+  sendBtn.addEventListener('click', sendMessage);
+  messageInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  // Search Events
+  searchBtn.addEventListener('click', () => searchMessages(searchInput.value.trim()));
+  clearSearchBtn.addEventListener('click', () => { searchInput.value = ''; searchMessages(''); });
+  searchInput.addEventListener('keyup', (e) => {
+    if (e.key === 'Enter') searchMessages(searchInput.value.trim());
+    if (e.key === 'Escape') { searchInput.value = ''; searchMessages(''); }
+  });
+
+  // Scroll Events
+  messagesList.addEventListener('scroll', updateJumpButton);
+  jumpBtn.addEventListener('click', () => scrollToBottom(true));
+
+  // Initial Load
+  loadMessages(currentCategory, true);
+
+  // Auto-refresh
+  setInterval(() => {
+    if (!isSearching && !isSending) loadMessages(currentCategory, isNearBottom);
+  }, 3000);
 });
 </script>
-{% endblock %} 
+{% endblock %}
