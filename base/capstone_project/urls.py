@@ -1,6 +1,6 @@
 from django.urls import path
 from capstone_project import views
-from capstone_project.more_views import api_endpoints, council
+from capstone_project.more_views import api_endpoints, council, attendance
 
 urlpatterns = [
     path('', views.capstone_project, name='capstone_project'),
@@ -110,5 +110,10 @@ urlpatterns = [
     path('api/user-counts/', api_endpoints.user_counts_api, name='user_counts_api'),
     path('api/council-user-counts/', api_endpoints.council_user_counts_api, name='council_user_counts_api'),
     path('api/event/<int:event_id>/download-data/', api_endpoints.event_download_data, name='event_download_data'),
+
+    # QR Attendance (NEW)
+    path('officer-take-attendance/', attendance.officer_take_attendance, name='officer_take_attendance'),
+    path('scan-qr/', attendance.scan_qr, name='scan_qr'),
+    path('member_attend/', attendance.member_attend, name='member_attend'),
 ]
 

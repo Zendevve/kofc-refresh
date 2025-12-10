@@ -1,0 +1,153 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+{% block title %}Attend an Event{% endblock %}
+{% block page_title %}Attend an Event{% endblock %}
+{% block page_subtitle %}Show your QR code to the officer to record attendance{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-card">
+  <div class="dashboard-card-body">
+    <div class="attendance-container">
+      <div class="qr-code-section">
+        <h3>Your Attendance QR Code</h3>
+        {% if qr_code_url %}
+        <div class="qr-wrapper">
+          <img src="{{ qr_code_url }}" alt="Your QR Code" class="qr-code-img">
+        </div>
+        <p class="qr-instruction">Show this QR code to the officer to mark your attendance</p>
+        {% else %}
+        <div class="qr-placeholder">
+          <i class="fas fa-qrcode"></i>
+          <p>QR code not available</p>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="member-details">
+        <h3>Member Information</h3>
+        <div class="info-card">
+          <div class="info-row">
+            <span class="info-label"><i class="fas fa-user"></i> Full Name</span>
+            <span class="info-value">{{ user.get_full_name }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label"><i class="fas fa-users"></i> Council</span>
+            <span class="info-value">{{ user.council.name|default:"Not assigned" }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label"><i class="fas fa-id-badge"></i> Member ID</span>
+            <span class="info-value">#{{ user.id }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .attendance-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--space-6);
+    gap: var(--space-8);
+  }
+
+  .qr-code-section,
+  .member-details {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .qr-code-section h3,
+  .member-details h3 {
+    color: var(--primary-600);
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-4);
+  }
+
+  .qr-wrapper {
+    display: inline-block;
+    padding: var(--space-4);
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 3px solid var(--primary-500);
+  }
+
+  .qr-code-img {
+    width: 200px;
+    height: 200px;
+    display: block;
+  }
+
+  .qr-instruction {
+    margin-top: var(--space-3);
+    color: var(--neutral-600);
+    font-size: var(--text-sm);
+  }
+
+  .qr-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8);
+    background: var(--neutral-100);
+    border-radius: var(--radius-lg);
+    color: var(--neutral-400);
+  }
+
+  .qr-placeholder i {
+    font-size: 4rem;
+    margin-bottom: var(--space-2);
+  }
+
+  .info-card {
+    background: var(--neutral-50);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    border: 1px solid var(--neutral-200);
+  }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--neutral-200);
+  }
+
+  .info-row:last-child {
+    border-bottom: none;
+  }
+
+  .info-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--neutral-600);
+    font-size: var(--text-sm);
+  }
+
+  .info-label i {
+    color: var(--primary-500);
+    width: 16px;
+  }
+
+  .info-value {
+    font-weight: var(--font-semibold);
+    color: var(--neutral-800);
+  }
+
+  @media (max-width: 768px) {
+    .qr-code-img {
+      width: 180px;
+      height: 180px;
+    }
+  }
+</style>
+
+{% endblock %}

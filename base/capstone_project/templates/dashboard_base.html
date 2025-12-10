@@ -103,6 +103,24 @@
         </div>
 
         <div class="sidebar-section">
+          <div class="sidebar-section-title">Attendance</div>
+
+          <a href="{% url 'member_attend' %}"
+            class="sidebar-link {% if 'member_attend' in request.path %}active{% endif %}">
+            <i class="fas fa-qrcode"></i>
+            <span>My QR Code</span>
+          </a>
+
+          {% if user.role == 'admin' or user.role == 'officer' %}
+          <a href="{% url 'officer_take_attendance' %}"
+            class="sidebar-link {% if 'officer-take-attendance' in request.path %}active{% endif %}">
+            <i class="fas fa-camera"></i>
+            <span>Take Attendance</span>
+          </a>
+          {% endif %}
+        </div>
+
+        <div class="sidebar-section">
           <div class="sidebar-section-title">Analytics</div>
 
           {% if user.role == 'admin' or user.role == 'officer' %}
