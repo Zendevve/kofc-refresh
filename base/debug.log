@@ -16424,3 +16424,578 @@ DEBUG 2025-12-10 06:40:01,733 views Fetching blockchain data
 INFO 2025-12-10 06:40:01,737 views Blockchain data retrieved: 10 blocks, 0 pending transactions
 DEBUG 2025-12-10 06:51:47,283 views Fetching blockchain data
 INFO 2025-12-10 06:51:47,286 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 06:55:13,374 views Fetching blockchain data
+INFO 2025-12-10 06:55:13,377 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 06:55:15,318 views Fetching blockchain data
+INFO 2025-12-10 06:55:15,320 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 06:56:38,223 views Fetching blockchain data
+INFO 2025-12-10 06:56:38,266 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+ERROR 2025-12-10 06:56:38,295 views Error fetching blockchain data: Invalid block tag on line 384: 'endfor', expected 'elif', 'else' or 'endif'. Did you forget to register or load this tag?
+DEBUG 2025-12-10 06:56:38,320 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-10 06:56:38,338 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 06:57:00,086 views Fetching blockchain data
+INFO 2025-12-10 06:57:00,089 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+ERROR 2025-12-10 06:57:00,091 views Error fetching blockchain data: Invalid block tag on line 384: 'endfor', expected 'elif', 'else' or 'endif'. Did you forget to register or load this tag?
+DEBUG 2025-12-10 06:57:00,115 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-10 06:57:00,121 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 06:57:15,659 views Fetching blockchain data
+INFO 2025-12-10 06:57:15,661 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+ERROR 2025-12-10 06:57:15,663 views Error fetching blockchain data: Invalid block tag on line 384: 'endfor', expected 'elif', 'else' or 'endif'. Did you forget to register or load this tag?
+DEBUG 2025-12-10 06:57:15,680 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-10 06:57:15,685 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 06:57:39,236 views Fetching blockchain data
+INFO 2025-12-10 06:57:39,239 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+ERROR 2025-12-10 06:57:39,243 views Error fetching blockchain data: Invalid block tag on line 384: 'endfor', expected 'elif', 'else' or 'endif'. Did you forget to register or load this tag?
+DEBUG 2025-12-10 06:57:39,265 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-10 06:57:39,278 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 07:08:23,788 views Fetching blockchain data
+INFO 2025-12-10 07:08:23,904 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+ERROR 2025-12-10 07:08:23,907 views Error fetching blockchain data: Invalid block tag on line 308: 'endif', expected 'empty' or 'endfor'. Did you forget to register or load this tag?
+DEBUG 2025-12-10 07:08:23,936 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-10 07:08:23,953 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 07:08:26,399 views Fetching blockchain data
+INFO 2025-12-10 07:08:26,403 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+ERROR 2025-12-10 07:08:26,406 views Error fetching blockchain data: Invalid block tag on line 308: 'endif', expected 'empty' or 'endfor'. Did you forget to register or load this tag?
+DEBUG 2025-12-10 07:08:26,423 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-10 07:08:26,429 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 07:08:28,269 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-10 07:08:28,320 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 07:08:29,808 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-10 07:08:29,817 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 07:08:31,657 views Fetching blockchain data
+INFO 2025-12-10 07:08:31,662 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+ERROR 2025-12-10 07:08:31,664 views Error fetching blockchain data: Invalid block tag on line 308: 'endif', expected 'empty' or 'endfor'. Did you forget to register or load this tag?
+DEBUG 2025-12-10 07:08:31,690 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-10 07:08:31,718 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 07:08:37,122 views Fetching blockchain data
+INFO 2025-12-10 07:08:37,125 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+ERROR 2025-12-10 07:08:37,132 views Error fetching blockchain data: Invalid block tag on line 308: 'endif', expected 'empty' or 'endfor'. Did you forget to register or load this tag?
+DEBUG 2025-12-10 07:08:37,154 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-10 07:08:37,161 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 07:11:37,459 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-10 07:11:37,472 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 07:11:39,553 views Fetching blockchain data
+INFO 2025-12-10 07:11:39,565 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 07:17:32,865 views Fetching blockchain data
+INFO 2025-12-10 07:17:32,905 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 07:18:39,160 views User Mr_Admin (role=admin, council=Council 3469): Found 1 pending manual donations
+DEBUG 2025-12-10 07:18:39,164 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-10 07:19:06,279 views Fetching blockchain data
+INFO 2025-12-10 07:19:06,283 views Blockchain data retrieved: 10 blocks, 0 pending transactions

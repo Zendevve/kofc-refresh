@@ -333,13 +333,11 @@
       <div class="activity-title">{{ activity.event.name }}</div>
       <div class="activity-meta">
         <span class="activity-tag category">{{ activity.event.category }}</span>
-        <span class="activity-tag"><i class="fas fa-map-marker-alt"></i> {{ activity.event.city }}, {{
-          activity.event.province }}</span>
+        <span class="activity-tag"><i class="fas fa-map-marker-alt"></i> {{ activity.event.city }}, {{ activity.event.province }}</span>
       </div>
       <p class="activity-description">{{ activity.event.description|truncatechars:150 }}</p>
       <div class="activity-footer">
-        <span><i class="fas fa-user-check"></i> Recorded by {{ activity.recorded_by.first_name }} {{
-          activity.recorded_by.last_name }}</span>
+        <span><i class="fas fa-user-check"></i> Recorded by {{ activity.recorded_by.first_name }} {{ activity.recorded_by.last_name }}</span>
         <span>{{ activity.recorded_at|date:"M j, Y" }}</span>
       </div>
     </div>
