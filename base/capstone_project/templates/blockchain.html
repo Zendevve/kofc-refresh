@@ -6,6 +6,9 @@
 {% block page_subtitle %}View the immutable record of all donation transactions{% endblock %}
 
 {% block header_actions %}
+{% if user.is_authenticated and user.role == 'admin' or user.role == 'officer' %}
+<a href="{% url 'download_ledger' %}" class="btn btn--primary"><i class="fas fa-download"></i> Download Ledger</a>
+{% endif %}
 <a href="{% url 'donations' %}" class="btn btn--ghost"><i class="fas fa-arrow-left"></i> Back to Donations</a>
 {% endblock %}
 

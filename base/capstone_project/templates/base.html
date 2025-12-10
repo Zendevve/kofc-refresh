@@ -85,6 +85,7 @@
                 <ul>
                     <li><a href="{% url 'capstone_project' %}" {% if request.path == '/' %}class="active"{% endif %}>Home</a></li>
                     <li><a href="{% url 'councils' %}" {% if request.path == '/councils/' %}class="active"{% endif %}>Councils</a></li>
+                    <li><a href="{% url 'approved_events' %}" {% if request.path == '/approved-events/' %}class="active"{% endif %}>Events</a></li>
                     <li><a href="{% url 'donations' %}" {% if request.path == '/donations/' %}class="active"{% endif %}>Donations</a></li>
                     <li><a href="{% url 'about_us' %}" {% if request.path == '/about_us/' %}class="active"{% endif %}>About us</a></li>
                     <li><a href="{% url 'sign-in' %}" {% if request.path == '/sign-in/' %}class="active"{% endif %}>Sign in</a></li>
@@ -109,6 +110,7 @@
                 <nav>
                     <ul>
                         <li><a href="{% url 'councils' %}" {% if request.path == '/councils/' %}class="active"{% endif %}>Councils</a></li>
+                        <li><a href="{% url 'approved_events' %}" {% if request.path == '/approved-events/' %}class="active"{% endif %}>Events</a></li>
                         <li><a href="{% url 'donations' %}" {% if request.path == '/donations/' %}class="active"{% endif %}>Donations</a></li>
                         <li><a href="{% url 'about_us' %}" {% if request.path == '/about_us/' %}class="active"{% endif %}>About us</a></li>
                     </ul>
