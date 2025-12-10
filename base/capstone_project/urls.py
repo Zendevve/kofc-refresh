@@ -1,5 +1,6 @@
 from django.urls import path
 from capstone_project import views
+from capstone_project.more_views import api_endpoints, council
 
 urlpatterns = [
     path('', views.capstone_project, name='capstone_project'),
@@ -96,4 +97,18 @@ urlpatterns = [
     path('notifications/count/', views.notifications_count, name='notifications_count'),
     path('notifications/mark-read/<int:notification_id>/', views.mark_notification_read, name='mark_notification_read'),
     path('notifications/mark-all-read/', views.mark_all_notifications_read, name='mark_all_notifications_read'),
+
+    # Council Management (NEW)
+    path('manage-councils/', council.manage_councils, name='manage_councils'),
+    path('add-council/', council.add_council, name='add_council'),
+    path('delete-council/<int:council_id>/', council.delete_council, name='delete_council'),
+    path('edit-council/<int:council_id>/', council.edit_council, name='edit_council'),
+
+    # API Endpoints (NEW)
+    path('api/event-counts/', api_endpoints.event_counts_api, name='event_counts_api'),
+    path('api/council-event-counts/', api_endpoints.council_event_counts_api, name='council_event_counts_api'),
+    path('api/user-counts/', api_endpoints.user_counts_api, name='user_counts_api'),
+    path('api/council-user-counts/', api_endpoints.council_user_counts_api, name='council_user_counts_api'),
+    path('api/event/<int:event_id>/download-data/', api_endpoints.event_download_data, name='event_download_data'),
 ]
+
