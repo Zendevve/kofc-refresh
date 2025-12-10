@@ -2,7 +2,7 @@ from .models import User, Council, Event, Analytics, Donation, Blockchain, block
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, FileResponse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.contrib.sessions.models import Session
@@ -1829,7 +1829,6 @@ def confirm_gcash_payment(request):
     return redirect('donations')
 
 @never_cache
-@login_required
 def get_blockchain_data(request):
     logger.debug("Fetching blockchain data")
     try:
@@ -1838,49 +1837,156 @@ def get_blockchain_data(request):
             logger.error("Blockchain validation failed")
             messages.error(request, "Blockchain data is corrupted. Contact support.")
             return redirect('donations')
-        pending_transactions = blockchain.pending_transactions
 
-        # Preprocess chain: Ensure dates are in 'YYYY-MM-DD' format
-        for block in chain:
-            for tx in block['transactions']:
-                if 'date' in tx and tx['date']:
-                    try:
-                        # Ensure the date remains in 'YYYY-MM-DD' format
-                        date_obj = datetime.strptime(tx['date'], '%Y-%m-%d')
-                        tx['donation_date'] = date_obj.strftime('%Y-%m-%d')
-                    except ValueError:
-                        logger.error(f"Invalid date format in transaction {tx.get('transaction_id')}: {tx['date']}")
-                        tx['donation_date'] = 'N/A'
-                else:
-                    tx['donation_date'] = 'N/A'
-                # Ensure status is present
-                if 'status' not in tx:
-                    tx['status'] = 'Unknown'
+        # Use deepcopy to avoid modifying the original objects if they are cached references
+        import copy
+        chain = copy.deepcopy(chain)
+        pending_transactions = copy.deepcopy(blockchain.pending_transactions)
 
-        # Preprocess pending transactions
-        for tx in pending_transactions:
+        # Identify user role for permission check
+        # Anonymous users are treated as guests (no role, no actions)
+        if request.user.is_authenticated:
+            user_role = getattr(request.user, 'role', 'member')
+            is_privileged = user_role in ['admin', 'officer']
+        else:
+            user_role = None  # Guest/anonymous
+            is_privileged = False
+
+        # Helper to process transaction data
+        def process_transaction(tx):
+            # Mask data for non-privileged users
+            if not is_privileged:
+                tx['donor'] = "Anonymous"
+                tx['email'] = "***@***.***"
+
+            # Format date
             if 'date' in tx and tx['date']:
                 try:
                     date_obj = datetime.strptime(tx['date'], '%Y-%m-%d')
                     tx['donation_date'] = date_obj.strftime('%Y-%m-%d')
                 except ValueError:
-                    logger.error(f"Invalid date format in pending transaction {tx.get('transaction_id')}: {tx['date']}")
+                    # Try parsing ISO format if simple date fails
+                    try:
+                        date_obj = datetime.fromisoformat(tx['date'])
+                        tx['donation_date'] = date_obj.strftime('%Y-%m-%d')
+                    except ValueError:
+                        logger.error(f"Invalid date format in transaction {tx.get('transaction_id')}: {tx['date']}")
+                        tx['donation_date'] = 'N/A'
+            elif 'timestamp' in tx:
+                 # Fallback to timestamp if date is missing
+                try:
+                    date_obj = datetime.fromisoformat(tx['timestamp'])
+                    tx['donation_date'] = date_obj.strftime('%Y-%m-%d')
+                except ValueError:
                     tx['donation_date'] = 'N/A'
             else:
                 tx['donation_date'] = 'N/A'
+
             # Ensure status is present
             if 'status' not in tx:
                 tx['status'] = 'Unknown'
 
+        # Process chain
+        for block in chain:
+            for tx in block['transactions']:
+                process_transaction(tx)
+
+        # Process pending transactions
+        for tx in pending_transactions:
+            process_transaction(tx)
+
         logger.info(f"Blockchain data retrieved: {len(chain)} blocks, {len(pending_transactions)} pending transactions")
         return render(request, 'blockchain.html', {
             'chain': chain,
-            'pending_transactions': pending_transactions
+            'pending_transactions': pending_transactions,
+            'is_privileged': is_privileged
         })
     except Exception as e:
         logger.error(f"Error fetching blockchain data: {str(e)}")
         messages.error(request, "Unable to retrieve blockchain data. Please try again later.")
         return redirect('donations')
+
+@login_required
+def request_receipt(request, transaction_id):
+    """Allow members to request a receipt for a transaction"""
+    try:
+        # Verify the transaction exists (look up associated donation if possible)
+        try:
+            donation = Donation.objects.get(transaction_id=transaction_id)
+        except Donation.DoesNotExist:
+            messages.error(request, "Transaction not found.")
+            return redirect('blockchain')
+
+        # Create a notification for admins
+        admins = User.objects.filter(role='admin')
+        for admin in admins:
+            Notification.objects.create(
+                user=admin,
+                title="Receipt Request",
+                content=f"User {request.user.username} requested a receipt for transaction {transaction_id}.",
+                is_read=False
+            )
+
+        messages.success(request, "Receipt request sent to administrators.")
+        return redirect('blockchain')
+    except Exception as e:
+        logger.error(f"Error requesting receipt: {str(e)}")
+        messages.error(request, "An error occurred while processing your request.")
+        return redirect('blockchain')
+
+@login_required
+def download_receipt(request, transaction_id):
+    """Allow admins/officers to download a receipt"""
+    if request.user.role not in ['admin', 'officer']:
+        messages.error(request, "You do not have permission to download receipts.")
+        return redirect('blockchain')
+
+    try:
+        donation = get_object_or_404(Donation, transaction_id=transaction_id)
+        if donation.receipt:
+            return FileResponse(donation.receipt.open(), as_attachment=True, filename=f"Receipt-{transaction_id}.jpg")
+        else:
+            messages.error(request, "No receipt available for this transaction.")
+            return redirect('blockchain')
+    except Exception as e:
+        logger.error(f"Error downloading receipt: {str(e)}")
+        messages.error(request, "Error retrieving receipt file.")
+        return redirect('blockchain')
+
+@login_required
+def send_receipt(request, transaction_id):
+    """Allow admins/officers to email the receipt to the donor"""
+    if request.user.role not in ['admin', 'officer']:
+        messages.error(request, "Permission denied.")
+        return redirect('blockchain')
+
+    try:
+        donation = get_object_or_404(Donation, transaction_id=transaction_id)
+        if not donation.email:
+            messages.error(request, "No email address associated with this donation.")
+            return redirect('blockchain')
+
+        if not donation.receipt:
+            messages.error(request, "No receipt file found to send.")
+            return redirect('blockchain')
+
+        # Send email
+        from django.core.mail import EmailMessage
+        email = EmailMessage(
+            'Keep this Safe: Official Donation Receipt - Knights of Columbus',
+            f'Dear {donation.first_name},\n\nPlease find attached your official receipt for transaction {transaction_id}.\n\nThank you for your support!\nKnights of Columbus',
+            settings.DEFAULT_FROM_EMAIL,
+            [donation.email],
+        )
+        email.attach_file(donation.receipt.path)
+        email.send()
+
+        messages.success(request, f"Receipt sent successfully to {donation.email}")
+        return redirect('blockchain')
+    except Exception as e:
+        logger.error(f"Error sending receipt: {str(e)}")
+        messages.error(request, f"Failed to email receipt: {str(e)}")
+        return redirect('blockchain')
 
 def success_page(request):
     return render(request, 'success.html', {'message': 'Payment processing. Awaiting confirmation.'})
@@ -3104,3 +3210,47 @@ def leaderboard(request):
     }
 
     return render(request, 'leaderboard.html', context)
+
+
+# ============================================================================
+# NOTIFICATION VIEWS
+# ============================================================================
+
+@login_required
+def notifications_list(request):
+    """Display all notifications for the current user"""
+    notifications = Notification.objects.filter(user=request.user).order_by('-timestamp')
+    unread_count = notifications.filter(is_read=False).count()
+
+    return render(request, 'notifications.html', {
+        'notifications': notifications,
+        'unread_count': unread_count
+    })
+
+@login_required
+def notifications_count(request):
+    """Return the count of unread notifications (JSON for AJAX)"""
+    count = Notification.objects.filter(user=request.user, is_read=False).count()
+    return JsonResponse({'count': count})
+
+@login_required
+def mark_notification_read(request, notification_id):
+    """Mark a single notification as read"""
+    notification = get_object_or_404(Notification, id=notification_id, user=request.user)
+    notification.is_read = True
+    notification.save()
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({'success': True})
+    return redirect('notifications')
+
+@login_required
+def mark_all_notifications_read(request):
+    """Mark all notifications as read for the current user"""
+    Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({'success': True})
+    messages.success(request, "All notifications marked as read.")
+    return redirect('notifications')
+

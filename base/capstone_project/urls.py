@@ -31,6 +31,9 @@ urlpatterns = [
     path('cancel/', views.cancel_page, name='cancel_page'),
     path('gcash/confirm/', views.confirm_gcash_payment, name='confirm_gcash_payment'),
     path('blockchain/', views.get_blockchain_data, name='blockchain'),
+    path('blockchain/receipt/request/<str:transaction_id>/', views.request_receipt, name='request_receipt'),
+    path('blockchain/receipt/download/<str:transaction_id>/', views.download_receipt, name='download_receipt'),
+    path('blockchain/receipt/send/<str:transaction_id>/', views.send_receipt, name='send_receipt'),
     # path('search-users/', views.search_users, name='search_users'),
 
     # New endpoint for recruiter name autocomplete
@@ -55,36 +58,42 @@ urlpatterns = [
     path('reject-event/<int:event_id>/', views.reject_event, name='reject_event'),
     path('event/<int:event_id>/details/', views.event_details, name='event_details'),
     path('archived-events/', views.archived_events, name='archived_events'),
-    
+
     # New URLs for member and event lists
     path('event-list/', views.event_list, name='event_list'),
     path('member-list/', views.member_list, name='member_list'),
     path('council-members/', views.council_members, name='council_members'),
     path('council-events/', views.council_events, name='council_events'),
     path('update-degree/<int:user_id>/', views.update_degree, name='update_degree'),
-    
+
     # User details endpoint
     path('user/<int:user_id>/details/', views.user_details, name='user_details'),
-    
+
     # Event attendance management
     path('event/<int:event_id>/attendance/', views.event_attendance, name='event_attendance'),
     path('event/update-attendance/', views.update_attendance, name='update_attendance'),
-    
+
     # Member activities
     path('member-activities/', views.member_activities, name='member_activities'),
-    
+
     # My Recruits
     path('my-recruits/', views.my_recruits, name='my_recruits'),
-    
+
     # Add Recruitment Record
     path('add-recruitment/', views.add_recruitment, name='add_recruitment'),
-    
+
     # Undo Recruitment Change
     path('undo-recruitment/<int:history_id>/', views.undo_recruitment, name='undo_recruitment'),
-    
+
     # Change Council
     path('change-council/<int:user_id>/', views.change_council, name='change_council'),
-    
+
     # Leaderboard
     path('leaderboard/', views.leaderboard, name='leaderboard'),
+
+    # Notifications
+    path('notifications/', views.notifications_list, name='notifications'),
+    path('notifications/count/', views.notifications_count, name='notifications_count'),
+    path('notifications/mark-read/<int:notification_id>/', views.mark_notification_read, name='mark_notification_read'),
+    path('notifications/mark-all-read/', views.mark_all_notifications_read, name='mark_all_notifications_read'),
 ]

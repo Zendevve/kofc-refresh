@@ -96,15 +96,16 @@
           {% endif %}
         </div>
 
-        {% if user.role == 'admin' or user.role == 'officer' %}
         <div class="sidebar-section">
           <div class="sidebar-section-title">Analytics</div>
 
+          {% if user.role == 'admin' or user.role == 'officer' %}
           <a href="{% url 'analytics_view' %}"
             class="sidebar-link {% if 'analytics' in request.path %}active{% endif %}">
             <i class="fas fa-chart-line"></i>
             <span>Analytics</span>
           </a>
+          {% endif %}
 
           <a href="{% url 'leaderboard' %}"
             class="sidebar-link {% if 'leaderboard' in request.path %}active{% endif %}">
@@ -123,9 +124,7 @@
             <span>My Recruits</span>
           </a>
         </div>
-        {% endif %}
 
-        {% if user.role == 'admin' or user.role == 'officer' %}
         <div class="sidebar-section">
           <div class="sidebar-section-title">Donations</div>
 
@@ -134,18 +133,19 @@
             <span>Donations</span>
           </a>
 
+          {% if user.role == 'admin' or user.role == 'officer' %}
           <a href="{% url 'review_manual_donations' %}"
             class="sidebar-link {% if 'review' in request.path %}active{% endif %}">
             <i class="fas fa-file-invoice-dollar"></i>
             <span>Review Donations</span>
           </a>
+          {% endif %}
 
           <a href="{% url 'blockchain' %}" class="sidebar-link {% if 'blockchain' in request.path %}active{% endif %}">
             <i class="fas fa-link"></i>
             <span>Blockchain</span>
           </a>
         </div>
-        {% endif %}
 
         <div class="sidebar-section">
           <div class="sidebar-section-title">Community</div>
@@ -153,6 +153,12 @@
           <a href="{% url 'forum' %}" class="sidebar-link {% if 'forum' in request.path %}active{% endif %}">
             <i class="fas fa-comments"></i>
             <span>Community Forum</span>
+          </a>
+
+          <a href="{% url 'notifications' %}"
+            class="sidebar-link {% if 'notifications' in request.path %}active{% endif %}">
+            <i class="fas fa-bell"></i>
+            <span>Notifications</span>
           </a>
         </div>
       </nav>
@@ -196,6 +202,13 @@
           </div>
         </div>
         <div class="main-header-right flex items-center gap-4">
+          <!-- Notification Bell -->
+          <a href="{% url 'notifications' %}" class="btn btn--ghost btn--icon notification-bell" title="Notifications"
+            style="position: relative;">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge" id="notificationBadge" style="display: none;"></span>
+          </a>
+
           {% block header_actions %}
           <a href="{% url 'edit_profile' %}" class="btn btn--ghost">
             <i class="fas fa-user-edit"></i>
@@ -276,8 +289,50 @@
           setTimeout(() => notification.remove(), 300);
         });
       });
+
+      // Notification bell badge - fetch unread count
+      function updateNotificationBadge() {
+        fetch('{% url "notifications_count" %}')
+          .then(res => res.json())
+          .then(data => {
+            const badge = document.getElementById('notificationBadge');
+            if (badge) {
+              if (data.count > 0) {
+                badge.textContent = data.count > 99 ? '99+' : data.count;
+                badge.style.display = 'flex';
+              } else {
+                badge.style.display = 'none';
+              }
+            }
+          })
+          .catch(err => console.error('Failed to fetch notification count:', err));
+      }
+
+      // Update on page load and every 30 seconds
+      updateNotificationBadge();
+      setInterval(updateNotificationBadge, 30000);
     });
   </script>
+
+  <style>
+    .notification-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: #ef4444;
+      color: white;
+      font-size: 0.65rem;
+      font-weight: 700;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 99px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      border: 2px solid white;
+    }
+  </style>
 
   {% block extra_js %}{% endblock %}
 </body>

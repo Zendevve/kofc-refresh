@@ -237,22 +237,48 @@
         <td>{{ block.hash }}</td>
         <td>{{ block.previous_hash }}</td>
         <td>
+        </td>
+        <td>
           {% if block.transactions %}
           <ul class="tx-list">
             {% for tx in block.transactions %}
-            <li class="tx-item">
-              <strong>ID:</strong> {{ tx.transaction_id }}<br>
-              <strong>Donor:</strong>
-              {% if tx.donor == "Anonymous" %}
-              Anonymous<br>
-              {% else %}
-              {{ tx.donor }}<br>
-              <strong>Email:</strong> {{ tx.email }}<br>
+            <li class="tx-item" style="margin-bottom: 0.5rem;">
+              <div style="font-weight: bold; margin-bottom: 0.25rem;">TX: {{ tx.transaction_id }}</div>
+
+              <div style="margin-bottom: 0.5rem;">
+                <strong>Donor:</strong> {{ tx.donor }}<br>
+                <strong>Email:</strong> {{ tx.email }}<br>
+                <strong>Amount:</strong> ₱{{ tx.amount }}<br>
+                <strong>Date:</strong> {{ tx.donation_date|default:"N/A" }}<br>
+                <strong>Method:</strong> {{ tx.payment_method }}<br>
+                <strong>Status:</strong> {{ tx.status }}
+              </div>
+
+              {% if user.is_authenticated %}
+              {% if user.role == 'member' or user.role == 'officer' or user.role == 'admin' %}
+              <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <!-- Member: Request Receipt -->
+                {% if user.role == 'member' %}
+                <a href="{% url 'request_receipt' tx.transaction_id %}" class="btn btn-sm btn-outline-primary"
+                  style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                  <i class="fas fa-receipt"></i> Request Receipt
+                </a>
+                {% endif %}
+
+                <!-- Admin/Officer: Download & Send -->
+                {% if user.role == 'admin' or user.role == 'officer' %}
+                <a href="{% url 'download_receipt' tx.transaction_id %}" class="btn btn-sm btn-outline-success"
+                  style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                  <i class="fas fa-download"></i>
+                </a>
+                <a href="{% url 'send_receipt' tx.transaction_id %}" class="btn btn-sm btn-outline-info"
+                  style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" title="Send to Donor">
+                  <i class="fas fa-paper-plane"></i>
+                </a>
+                {% endif %}
+              </div>
               {% endif %}
-              <strong>Amount:</strong> ₱{{ tx.amount }}<br>
-              <strong>Date:</strong> {{ tx.donation_date|default:"N/A" }}<br>
-              <strong>Method:</strong> {{ tx.payment_method }}<br>
-              <strong>Status:</strong> {{ tx.status }}
+              {% endif %}
             </li>
             {% endfor %}
           </ul>

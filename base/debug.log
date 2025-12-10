@@ -16999,3 +16999,1351 @@ DEBUG 2025-12-10 07:18:39,160 views User Mr_Admin (role=admin, council=Council 3
 DEBUG 2025-12-10 07:18:39,164 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
 DEBUG 2025-12-10 07:19:06,279 views Fetching blockchain data
 INFO 2025-12-10 07:19:06,283 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 07:33:14,115 views show_manual_link: False, User: AnonymousUser, Role: N/A
+DEBUG 2025-12-10 07:33:14,207 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 07:33:14,546 views show_manual_link: False, User: AnonymousUser, Role: N/A
+DEBUG 2025-12-10 07:33:14,602 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 07:33:19,775 views show_manual_link: False, User: AnonymousUser, Role: N/A
+DEBUG 2025-12-10 07:33:19,817 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 07:34:38,798 views show_manual_link: False, User: AnonymousUser, Role: N/A
+DEBUG 2025-12-10 07:34:38,813 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 07:34:43,794 views show_manual_link: False, User: AnonymousUser, Role: N/A
+DEBUG 2025-12-10 07:34:43,802 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 07:34:49,043 views show_manual_link: False, User: AnonymousUser, Role: N/A
+DEBUG 2025-12-10 07:34:49,052 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 07:39:16,280 views Fetching blockchain data
+INFO 2025-12-10 07:39:16,285 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 07:41:32,504 views Fetching blockchain data
+INFO 2025-12-10 07:41:32,507 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 07:41:35,366 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-10 07:41:35,371 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 07:56:05,141 views show_manual_link: True, User: hoppay, Role: officer
+DEBUG 2025-12-10 07:56:05,182 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 07:56:08,530 views show_manual_link: True, User: hoppay, Role: officer
+DEBUG 2025-12-10 07:56:08,534 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 08:01:47,030 views Events data: [{'council__name': 'Council 6789', 'count': 5, 'council_name': 'Council 6789'}]
+DEBUG 2025-12-10 08:01:47,059 views Donations data: []
+DEBUG 2025-12-10 08:01:47,129 views Members/officers data: [{'council_name': 'Council 6789', 'members': 1, 'officers': 5}]
+DEBUG 2025-12-10 08:01:47,135 views Event types data: [{'category': 'Assembly Meeting', 'count': 1}, {'category': 'Council Meeting', 'count': 2}, {'category': 'Meeting', 'count': 1}, {'category': 'Seminar', 'count': 1}]
+DEBUG 2025-12-10 08:01:47,143 views Donation sources data: []
+DEBUG 2025-12-10 08:01:47,149 views Active members: 0, Total members: 1
+DEBUG 2025-12-10 08:01:47,151 views Member activity data: [{'category': 'Active Members', 'count': 0}, {'category': 'Inactive Members', 'count': 1}]
+DEBUG 2025-12-10 08:01:47,161 views Summary stats: {'total_events': 5.0, 'total_donations': 0.0, 'total_members': 1.0, 'total_officers': 5.0, 'avg_donation': 0.0}
+DEBUG 2025-12-10 08:05:42,049 views show_manual_link: True, User: hoppay, Role: officer
+DEBUG 2025-12-10 08:05:42,083 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 08:32:23,858 views Fetching blockchain data
+INFO 2025-12-10 08:32:23,872 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 08:35:36,915 views Fetching blockchain data
+INFO 2025-12-10 08:35:36,937 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 08:52:57,399 views show_manual_link: True, User: hoppay, Role: officer
+DEBUG 2025-12-10 08:52:57,452 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 09:59:50,737 views Events data: [{'council__name': 'Council 6789', 'count': 5, 'council_name': 'Council 6789'}]
+DEBUG 2025-12-10 09:59:50,741 views Donations data: []
+DEBUG 2025-12-10 09:59:50,754 views Members/officers data: [{'council_name': 'Council 6789', 'members': 1, 'officers': 5}]
+DEBUG 2025-12-10 09:59:50,760 views Event types data: [{'category': 'Assembly Meeting', 'count': 1}, {'category': 'Council Meeting', 'count': 2}, {'category': 'Meeting', 'count': 1}, {'category': 'Seminar', 'count': 1}]
+DEBUG 2025-12-10 09:59:50,762 views Donation sources data: []
+DEBUG 2025-12-10 09:59:50,765 views Active members: 0, Total members: 1
+DEBUG 2025-12-10 09:59:50,765 views Member activity data: [{'category': 'Active Members', 'count': 0}, {'category': 'Inactive Members', 'count': 1}]
+DEBUG 2025-12-10 09:59:50,771 views Summary stats: {'total_events': 5.0, 'total_donations': 0.0, 'total_members': 1.0, 'total_officers': 5.0, 'avg_donation': 0.0}
+DEBUG 2025-12-10 09:59:57,360 views Fetching blockchain data
+INFO 2025-12-10 09:59:57,363 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 09:59:59,629 views User hoppay (role=officer, council=Council 6789): Found 0 pending manual donations
+DEBUG 2025-12-10 10:00:01,676 views Fetching blockchain data
+INFO 2025-12-10 10:00:01,678 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 10:05:19,418 views Events data: [{'council__name': 'Council 6789', 'count': 5, 'council_name': 'Council 6789'}]
+DEBUG 2025-12-10 10:05:19,419 views Donations data: []
+DEBUG 2025-12-10 10:05:19,427 views Members/officers data: [{'council_name': 'Council 6789', 'members': 1, 'officers': 5}]
+DEBUG 2025-12-10 10:05:19,430 views Event types data: [{'category': 'Assembly Meeting', 'count': 1}, {'category': 'Council Meeting', 'count': 2}, {'category': 'Meeting', 'count': 1}, {'category': 'Seminar', 'count': 1}]
+DEBUG 2025-12-10 10:05:19,434 views Donation sources data: []
+DEBUG 2025-12-10 10:05:19,438 views Active members: 0, Total members: 1
+DEBUG 2025-12-10 10:05:19,439 views Member activity data: [{'category': 'Active Members', 'count': 0}, {'category': 'Inactive Members', 'count': 1}]
+DEBUG 2025-12-10 10:05:19,445 views Summary stats: {'total_events': 5.0, 'total_donations': 0.0, 'total_members': 1.0, 'total_officers': 5.0, 'avg_donation': 0.0}
+DEBUG 2025-12-10 10:05:21,390 views Events data: [{'council__name': 'Council 6789', 'count': 5, 'council_name': 'Council 6789'}]
+DEBUG 2025-12-10 10:05:21,398 views Donations data: []
+DEBUG 2025-12-10 10:05:21,408 views Members/officers data: [{'council_name': 'Council 6789', 'members': 1, 'officers': 5}]
+DEBUG 2025-12-10 10:05:21,417 views Event types data: [{'category': 'Assembly Meeting', 'count': 1}, {'category': 'Council Meeting', 'count': 2}, {'category': 'Meeting', 'count': 1}, {'category': 'Seminar', 'count': 1}]
+DEBUG 2025-12-10 10:05:21,420 views Donation sources data: []
+DEBUG 2025-12-10 10:05:21,427 views Active members: 0, Total members: 1
+DEBUG 2025-12-10 10:05:21,429 views Member activity data: [{'category': 'Active Members', 'count': 0}, {'category': 'Inactive Members', 'count': 1}]
+DEBUG 2025-12-10 10:05:21,439 views Summary stats: {'total_events': 5.0, 'total_donations': 0.0, 'total_members': 1.0, 'total_officers': 5.0, 'avg_donation': 0.0}
+DEBUG 2025-12-10 10:13:26,300 views Fetching blockchain data
+INFO 2025-12-10 10:13:26,306 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 10:13:29,682 views Fetching blockchain data
+INFO 2025-12-10 10:13:29,694 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+ERROR 2025-12-10 10:13:33,100 views Error downloading receipt: Reverse for 'get_blockchain_data' not found. 'get_blockchain_data' is not a valid view function or pattern name.
+DEBUG 2025-12-10 10:13:38,236 views Fetching blockchain data
+INFO 2025-12-10 10:13:38,242 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+ERROR 2025-12-10 10:13:40,101 views Error sending receipt: Reverse for 'get_blockchain_data' not found. 'get_blockchain_data' is not a valid view function or pattern name.
+DEBUG 2025-12-10 10:13:42,885 views Fetching blockchain data
+INFO 2025-12-10 10:13:42,895 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+ERROR 2025-12-10 10:13:59,142 views Error sending receipt: Reverse for 'get_blockchain_data' not found. 'get_blockchain_data' is not a valid view function or pattern name.
+ERROR 2025-12-10 10:15:22,105 views Error sending receipt: Reverse for 'get_blockchain_data' not found. 'get_blockchain_data' is not a valid view function or pattern name.
+DEBUG 2025-12-10 10:15:23,349 views Fetching blockchain data
+INFO 2025-12-10 10:15:23,353 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+ERROR 2025-12-10 10:15:25,007 views Error downloading receipt: Reverse for 'get_blockchain_data' not found. 'get_blockchain_data' is not a valid view function or pattern name.
+DEBUG 2025-12-10 10:15:31,978 views Fetching blockchain data
+INFO 2025-12-10 10:15:31,981 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+ERROR 2025-12-10 10:15:33,184 views Error sending receipt: Reverse for 'get_blockchain_data' not found. 'get_blockchain_data' is not a valid view function or pattern name.
+DEBUG 2025-12-10 10:16:09,462 views Fetching blockchain data
+INFO 2025-12-10 10:16:09,496 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 10:17:10,301 views Fetching blockchain data
+INFO 2025-12-10 10:17:10,308 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 10:17:13,484 views Fetching blockchain data
+INFO 2025-12-10 10:17:13,488 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 10:17:16,363 views Fetching blockchain data
+INFO 2025-12-10 10:17:16,365 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 10:17:17,200 views Fetching blockchain data
+INFO 2025-12-10 10:17:17,203 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 10:17:18,375 views Fetching blockchain data
+INFO 2025-12-10 10:17:18,381 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 10:17:19,130 views Fetching blockchain data
+INFO 2025-12-10 10:17:19,133 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 10:17:19,657 views Fetching blockchain data
+INFO 2025-12-10 10:17:19,661 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 10:17:22,851 views Fetching blockchain data
+INFO 2025-12-10 10:17:22,854 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 10:17:27,753 views Fetching blockchain data
+INFO 2025-12-10 10:17:27,755 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 10:17:52,218 views Fetching blockchain data
+INFO 2025-12-10 10:17:52,221 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 10:18:15,595 views show_manual_link: True, User: hoppay, Role: officer
+DEBUG 2025-12-10 10:18:15,655 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 10:18:22,161 views show_manual_link: False, User: AnonymousUser, Role: N/A
+DEBUG 2025-12-10 10:18:22,167 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 10:18:25,960 views show_manual_link: False, User: AnonymousUser, Role: N/A
+DEBUG 2025-12-10 10:18:25,966 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 10:18:30,303 views show_manual_link: False, User: AnonymousUser, Role: N/A
+DEBUG 2025-12-10 10:18:30,311 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 10:19:13,003 views show_manual_link: False, User: AnonymousUser, Role: N/A
+DEBUG 2025-12-10 10:19:13,009 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 10:22:14,640 views Fetching blockchain data
+INFO 2025-12-10 10:22:14,648 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 10:22:33,303 views show_manual_link: False, User: AnonymousUser, Role: N/A
+DEBUG 2025-12-10 10:22:33,319 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 10:23:16,050 views show_manual_link: False, User: harvey, Role: member
+DEBUG 2025-12-10 10:23:16,055 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 10:23:17,218 views Fetching blockchain data
+INFO 2025-12-10 10:23:17,223 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 10:23:21,640 views Fetching blockchain data
+INFO 2025-12-10 10:23:21,645 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 10:24:33,159 views Fetching blockchain data
+INFO 2025-12-10 10:24:33,163 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 10:27:47,914 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-10 10:27:47,917 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 10:30:27,433 views show_manual_link: False, User: harvey, Role: member
+DEBUG 2025-12-10 10:30:27,445 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 10:30:32,901 views show_manual_link: False, User: harvey, Role: member
+DEBUG 2025-12-10 10:30:32,903 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 10:30:36,192 views Fetching blockchain data
+INFO 2025-12-10 10:30:36,195 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 10:30:41,362 views Fetching blockchain data
+INFO 2025-12-10 10:30:41,365 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 10:30:45,920 views Fetching blockchain data
+INFO 2025-12-10 10:30:45,925 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 10:30:48,855 views Fetching blockchain data
+INFO 2025-12-10 10:30:48,858 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 10:50:01,978 views Fetching blockchain data
+INFO 2025-12-10 10:50:01,984 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 10:55:31,643 views Fetching blockchain data
+INFO 2025-12-10 10:55:31,647 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 10:55:33,129 views show_manual_link: False, User: harvey, Role: member
+DEBUG 2025-12-10 10:55:33,134 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 10:55:51,385 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-10 10:55:51,388 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 10:55:59,917 views User Mr_Admin (role=admin, council=Council 3469): Found 1 pending manual donations
+DEBUG 2025-12-10 10:55:59,920 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-10 10:56:01,652 views Fetching blockchain data
+INFO 2025-12-10 10:56:01,654 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 10:56:52,578 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-10 10:56:52,587 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 11:03:18,632 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-10 11:03:18,653 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-10" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-10" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-10 11:03:40,749 views User Mr_Admin (role=admin, council=Council 3469): Found 1 pending manual donations
+DEBUG 2025-12-10 11:03:40,752 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-10 11:05:15,171 views User Mr_Admin (role=admin, council=Council 3469): Found 1 pending manual donations
+DEBUG 2025-12-10 11:05:15,176 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-10 11:05:18,879 views User Mr_Admin (role=admin, council=Council 3469): Found 1 pending manual donations
+DEBUG 2025-12-10 11:05:18,884 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-10 11:07:53,689 views User Mr_Admin (role=admin, council=Council 3469): Found 1 pending manual donations
+DEBUG 2025-12-10 11:07:53,692 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-10 11:07:59,207 views User Mr_Admin (role=admin, council=Council 3469): Found 1 pending manual donations
+DEBUG 2025-12-10 11:07:59,209 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-10 11:08:04,189 views Fetching blockchain data
+INFO 2025-12-10 11:08:04,197 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-10 11:11:21,234 views Fetching blockchain data
+INFO 2025-12-10 11:11:21,237 views Blockchain data retrieved: 10 blocks, 0 pending transactions
