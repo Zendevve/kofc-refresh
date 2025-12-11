@@ -70,6 +70,11 @@ The **Knights of Columbus Management System** is a comprehensive web application
 - 🏆 **Gamified Leaderboards**: Rank members by engagement and contributions
 - 📜 **Auto-Generated Receipts**: Professional donation receipts with e-signatures
 
+### 🆕 Recent Updates (December 2025)
+- **Improved Donation Review UI**: Styled rejection modal with categorized reasons dropdown matching event rejection workflow
+- **Self-Review Prevention**: Users can now see their own pending donations but cannot approve/reject them (segregation of duties)
+- **UI Fixes**: Fixed button hover states for Update Event and Logout buttons
+
 ---
 
 ## 🚀 Quick Start

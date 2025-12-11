@@ -277,6 +277,42 @@
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
   }
 
+  /* Own Donation Styling */
+  .donation-card.own-donation {
+    border-left-color: var(--info-500);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.03), rgba(255, 255, 255, 1));
+  }
+
+  .own-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    color: #1d4ed8;
+  }
+
+  .cannot-review-notice {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: var(--neutral-100);
+    border-radius: var(--radius-lg);
+    color: var(--neutral-500);
+    font-size: var(--text-sm);
+    width: 100%;
+    justify-content: center;
+  }
+
+  .cannot-review-notice i {
+    color: var(--info-500);
+  }
+
   /* List View */
   .list-view .donation-card {
     display: flex;
@@ -558,7 +594,8 @@
 {% if page_obj %}
 <div class="donations-container" id="donationsContainer">
   {% for donation in page_obj %}
-  <div class="donation-card" data-name="{{ donation.first_name }} {{ donation.last_name }}"
+  {% with is_own_donation=donation.submitted_by|default:None %}
+  <div class="donation-card{% if is_own_donation == user %} own-donation{% endif %}" data-name="{{ donation.first_name }} {{ donation.last_name }}"
     data-date="{{ donation.donation_date|date:'Y-m-d' }}" data-amount="{{ donation.amount }}">
     <div class="donation-card-header">
       <div class="donor-info">
@@ -576,11 +613,21 @@
       </div>
     </div>
     <div class="donation-card-body">
+      {% if is_own_donation == user %}
+      <span class="own-badge"><i class="fas fa-user-circle"></i> Your Submission</span>
+      {% else %}
       <span class="pending-badge"><i class="fas fa-clock"></i> Pending</span>
+      {% endif %}
       <span class="donation-meta"><i class="fas fa-receipt"></i> {{ donation.transaction_id }}</span>
       <span class="donation-meta"><i class="fas fa-calendar"></i> {{ donation.donation_date|date:"M j, Y" }}</span>
     </div>
     <div class="donation-card-actions">
+      {% if is_own_donation == user %}
+      <div class="cannot-review-notice">
+        <i class="fas fa-info-circle"></i>
+        <span>You cannot review your own submission</span>
+      </div>
+      {% else %}
       <form method="post" style="flex: 1; display: flex;">
         {% csrf_token %}
         <input type="hidden" name="donation_id" value="{{ donation.id }}">
@@ -592,8 +639,10 @@
         onclick="openRejectModal('{{ donation.id }}', '{{ donation.first_name }} {{ donation.last_name }}')">
         <i class="fas fa-times"></i> Reject
       </button>
+      {% endif %}
     </div>
   </div>
+  {% endwith %}
   {% endfor %}
 </div>
 

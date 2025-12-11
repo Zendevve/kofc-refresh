@@ -1855,11 +1855,13 @@ def manual_donation(request):
 # @permission_required('capstone_project.review_manual_donations', raise_exception=True)
 def review_manual_donations(request):
     if request.user.role == 'admin':
-        pending_donations = Donation.objects.filter(status='pending_manual').exclude(submitted_by=request.user)
+        # Admin sees all pending manual donations (including their own, but marked)
+        pending_donations = Donation.objects.filter(status='pending_manual').order_by('-donation_date')
     else:  # Officer
+        # Officer sees their council's donations (including their own, but marked)
         pending_donations = Donation.objects.filter(status='pending_manual').filter(
             submitted_by__council=request.user.council
-        ).exclude(submitted_by=request.user)
+        ).order_by('-donation_date')
 
     logger.debug(f"User {request.user.username} (role={request.user.role}, council={request.user.council.name if request.user.council else 'None'}): Found {pending_donations.count()} pending manual donations")
     for donation in pending_donations:
