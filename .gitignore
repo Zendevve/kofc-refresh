@@ -1,0 +1,13 @@
+# Ignore root level junk files
+/*.cbr
+/*.pdf
+/*.zip
+/*.png
+/*.jpg
+/*.jpeg
+/*.xlsx
+/debug.log
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
