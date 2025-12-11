@@ -1,35 +1,37 @@
-{% extends 'base.html' %}
+{% extends 'dashboard_base.html' %}
 {% load static %}
 {% load custom_filters %}
-{% block title %}
-Knights of Columbus - Event Attendance
+
+{% block title %}Event Attendance - Knights of Columbus{% endblock %}
+
+{% block page_title %}Event Attendance{% endblock %}
+{% block breadcrumbs %}
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item">Events</span>
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item current">Attendance</span>
+{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'event_list' %}" class="btn btn--ghost">
+  <i class="fas fa-arrow-left"></i>
+  <span>Back to Events</span>
+</a>
 {% endblock %}
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/dashboard_shared.css' %}?v={% now 'U' %}">
+    {% if not is_today %}
+    <div class="alert-message">
+        <i class="fas fa-exclamation-circle"></i>
+        <p>Note: This event is not scheduled for today. Attendance can only be recorded on the day of the event.</p>
+    </div>
+    {% endif %}
 
-<div class="dashboard-container">
-    <div class="content-card">
-        <div class="dashboard-header">
-            <h1>Event Attendance</h1>
-            <div class="header-actions">
-                <a href="{% url 'council_events' %}" class="dashboard-btn secondary back-btn">
-                    <i class="fas fa-arrow-left"></i> Back to Events
-                </a>
-            </div>
-        </div>
-
-        {% if not is_today %}
-        <div class="alert-message">
-            <i class="fas fa-exclamation-circle"></i>
-            <p>Note: This event is not scheduled for today. Attendance can only be recorded on the day of the event.</p>
-        </div>
-        {% endif %}
-
-        <div class="attendance-container">
+    <div class="attendance-container">
             <!-- Event Details Column -->
-            <div class="event-details-column">
-                <div class="event-card">
+        <div class="event-details-column">
+            <div class="event-card">
                     <h2>{{ event.name }}</h2>
                     <span class="status-badge status-{{ event.status }}">{{ event.get_status_display }}</span>
                     
@@ -87,6 +89,14 @@ Knights of Columbus - Event Attendance
                             <div class="search-wrapper">
                                 <input type="text" id="searchMembers" placeholder="Search members..." class="search-input">
                                 <button id="clearSearch" class="clear-search"><i class="fas fa-times"></i></button>
+                            </div>
+                            <div class="sort-wrapper">
+                                <label for="attendanceSort" class="sort-label">Sort by:</label>
+                                <select id="attendanceSort" class="sort-select">
+                                    <option value="all">All Members</option>
+                                    <option value="present">Present Only</option>
+                                    <option value="absent">Absent Only</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -154,6 +164,9 @@ Knights of Columbus - Event Attendance
                         
                         {% if is_today %}
                         <div class="save-attendance-container">
+                            <button type="button" id="downloadEventPDF" class="dashboard-btn" style="background-color: #28a745;">
+                                <i class="fas fa-download"></i> Download CSV
+                            </button>
                             <button type="button" id="saveAttendance" class="dashboard-btn">
                                 <i class="fas fa-save"></i> Save Attendance
                             </button>
@@ -163,8 +176,8 @@ Knights of Columbus - Event Attendance
                 </div>
             </div>
         </div>
-    </div>
-</div>
+
+
 
 <div id="notification" class="notification" role="alert" aria-live="assertive">
     <div class="notification-content">
@@ -307,6 +320,13 @@ Knights of Columbus - Event Attendance
     color: var(--heading-color);
 }
 
+.attendance-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
 .search-wrapper {
     position: relative;
     width: 100%;
@@ -331,6 +351,39 @@ Knights of Columbus - Event Attendance
     color: #6c757d;
     cursor: pointer;
     display: none;
+}
+
+.sort-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sort-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--heading-color);
+    white-space: nowrap;
+}
+
+.sort-select {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid rgba(13, 52, 113, 0.2);
+    border-radius: var(--border-radius);
+    font-size: 0.9rem;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.sort-select:hover {
+    border-color: var(--primary-bg);
+}
+
+.sort-select:focus {
+    outline: none;
+    border-color: var(--primary-bg);
+    box-shadow: 0 0 0 3px rgba(13, 52, 113, 0.1);
 }
 
 .attendance-stats {
@@ -722,137 +775,35 @@ Knights of Columbus - Event Attendance
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Search functionality
     const searchInput = document.getElementById('searchMembers');
     const clearButton = document.getElementById('clearSearch');
     const memberRows = document.querySelectorAll('.member-row');
-    
-    // For debugging - manually test notification
-    window.testNotification = function() {
-        console.log('Test notification triggered');
-        showNotification('Test notification', 'success');
-    };
-    
-    if (searchInput) {
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            
-            // Show/hide clear button
-            clearButton.style.display = searchTerm ? 'block' : 'none';
-            
-            let visibleCount = 0;
-            
-            memberRows.forEach(row => {
-                const memberName = row.getAttribute('data-name').toLowerCase();
-                const isVisible = memberName.includes(searchTerm);
-                
-                row.style.display = isVisible ? '' : 'none';
-                
-                if (isVisible) visibleCount++;
-            });
-            
-            // Update the displayed count
-            document.getElementById('totalMembers').textContent = visibleCount;
-        });
-    }
-    
-    // Clear search
-    if (clearButton) {
-        clearButton.addEventListener('click', function() {
-            searchInput.value = '';
-            searchInput.dispatchEvent(new Event('input'));
-            document.getElementById('totalMembers').textContent = "{{ members|length }}";
-        });
-    }
-    
-    // Close notification
-    const closeNotification = document.getElementById('closeNotification');
-    if (closeNotification) {
-        closeNotification.addEventListener('click', function() {
-            document.getElementById('notification').classList.remove('show');
-        });
-    }
-    
-    // Track attendance changes
-    const attendanceCheckboxes = document.querySelectorAll('.attendance-check');
-    const totalMembers = parseInt("{{ members|length }}");
-    
-    // Count actually checked checkboxes on page load
-    let presentCount = 0;
-    attendanceCheckboxes.forEach(checkbox => {
-        if (checkbox.checked) {
-            presentCount++;
-        }
-    });
-    
-    // Update the initial counts based on actual checkbox state
-    document.getElementById('presentCount').textContent = presentCount;
-    document.getElementById('absentCount').textContent = Math.max(0, totalMembers - presentCount);
-    
-    attendanceCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            // Update counts immediately for UI responsiveness
-            if (this.checked) {
-                presentCount++;
-            } else {
-                presentCount--;
-            }
-            
-            // Ensure presentCount doesn't exceed totalMembers
-            presentCount = Math.min(presentCount, totalMembers);
-            
-            // Update the displayed counts
-            document.getElementById('presentCount').textContent = presentCount;
-            document.getElementById('absentCount').textContent = Math.max(0, totalMembers - presentCount);
-        });
-    });
-    
-    // Confirmation modal
     const confirmationModal = document.getElementById('confirmationModal');
     const confirmButton = document.getElementById('confirmButton');
     const cancelButton = document.getElementById('cancelButton');
     const closeModalBtn = confirmationModal.querySelector('.close');
+    const attendanceCheckboxes = document.querySelectorAll('.attendance-check');
+    const totalMembers = parseInt("{{ members|length }}");
+    const attendanceSortSelect = document.getElementById('attendanceSort');
+    const downloadButton = document.getElementById('downloadEventPDF');
     
-    // Function to open modal
+    let presentCount = 0;
+    
     function openModal(modal) {
         modal.style.display = 'block';
     }
     
-    // Function to close modal
     function closeModal(modal) {
         modal.style.display = 'none';
     }
     
-    // Close modal when clicking close button or cancel
-    closeModalBtn.addEventListener('click', function() {
-        closeModal(confirmationModal);
-    });
-    
-    cancelButton.addEventListener('click', function() {
-        closeModal(confirmationModal);
-    });
-    
-    // Close modal when clicking outside
-    window.addEventListener('click', function(event) {
-        if (event.target === confirmationModal) {
-            closeModal(confirmationModal);
-        }
-    });
-    
-    // Function to show notification
     function showNotification(message, type = 'success') {
         const notification = document.getElementById('notification');
-        if (!notification) {
-            console.error('Notification element not found');
-            return;
-        }
+        if (!notification) return;
         
         const notificationMessage = document.getElementById('notification-message');
         const notificationIcon = notification.querySelector('.notification-content i');
         
-        console.log('Showing notification:', message, type);
-        
-        // Set notification color based on type
         if (type === 'success') {
             notification.style.backgroundColor = '#28a745';
             notificationIcon.className = 'fas fa-check-circle success-icon';
@@ -864,117 +815,186 @@ document.addEventListener('DOMContentLoaded', function() {
             notificationIcon.className = 'fas fa-exclamation-triangle';
         }
         
-        // Update message text
         notificationMessage.textContent = message;
-        
-        // Remove existing show class if present
         notification.classList.remove('show');
-        
-        // Force a reflow to ensure animation works
         void notification.offsetWidth;
-        
-        // Add show class to display notification
         notification.classList.add('show');
-        console.log('Added show class to notification');
         
-        // Auto-hide notification after 4 seconds
         setTimeout(() => {
             notification.classList.remove('show');
-            console.log('Removed show class from notification');
         }, 4000);
     }
     
-    // Save attendance button
-    const saveButton = document.getElementById('saveAttendance');
-    if (saveButton) {
-        saveButton.addEventListener('click', function() {
-            // Show confirmation modal
-            openModal(confirmationModal);
+    attendanceCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) presentCount++;
+    });
+    
+    document.getElementById('presentCount').textContent = presentCount;
+    document.getElementById('absentCount').textContent = Math.max(0, totalMembers - presentCount);
+    
+    attendanceCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                presentCount++;
+            } else {
+                presentCount--;
+            }
+            presentCount = Math.min(presentCount, totalMembers);
+            document.getElementById('presentCount').textContent = presentCount;
+            document.getElementById('absentCount').textContent = Math.max(0, totalMembers - presentCount);
         });
+    });
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            clearButton.style.display = searchTerm ? 'block' : 'none';
+            let visibleCount = 0;
+            memberRows.forEach(row => {
+                const isVisible = row.getAttribute('data-name').toLowerCase().includes(searchTerm);
+                row.style.display = isVisible ? '' : 'none';
+                if (isVisible) visibleCount++;
+            });
+            document.getElementById('totalMembers').textContent = visibleCount;
+        });
+    }
+    
+    if (clearButton) {
+        clearButton.addEventListener('click', function() {
+            searchInput.value = '';
+            searchInput.dispatchEvent(new Event('input'));
+        });
+    }
+    
+    if (attendanceSortSelect) {
+        attendanceSortSelect.addEventListener('change', function() {
+            const filterValue = this.value;
+            let visibleCount = 0;
+            memberRows.forEach(row => {
+                const checkbox = row.querySelector('.attendance-check');
+                const shouldShow = filterValue === 'all' || (filterValue === 'present' && checkbox.checked) || (filterValue === 'absent' && !checkbox.checked);
+                row.style.display = shouldShow ? '' : 'none';
+                if (shouldShow) visibleCount++;
+            });
+            document.getElementById('totalMembers').textContent = visibleCount;
+        });
+    }
+    
+    attendanceCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            if (attendanceSortSelect && attendanceSortSelect.value !== 'all') {
+                attendanceSortSelect.dispatchEvent(new Event('change'));
+            }
+        });
+    });
+    
+    closeModalBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        closeModal(confirmationModal);
+    });
+    
+    cancelButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        closeModal(confirmationModal);
+    });
+    
+    if (downloadButton) {
+        downloadButton.addEventListener('click', function() {
+            const eventName = '{{ event.name }}';
+            const eventCategory = '{{ event.category }}{% if event.subcategory and event.subcategory != "N/A" %} - {{ event.subcategory }}{% endif %}';
+            const eventDate = '{{ event.date_from|date:"F j, Y" }}{% if event.date_until and event.date_until != event.date_from %} to {{ event.date_until|date:"F j, Y" }}{% endif %}';
+            const eventLocation = '{{ event.street }}, {{ event.barangay }}, {{ event.city }}, {{ event.province }}';
+            const eventCouncil = '{% if event.is_global %}All Councils{% else %}{{ event.council.name }}{% endif %}';
+            const eventDescription = '{{ event.description }}';
+            const presentCountText = document.getElementById('presentCount').textContent;
+            const totalMembersText = document.getElementById('totalMembers').textContent;
+            
+            let attendeesList = '';
+            document.querySelectorAll('.member-row').forEach(row => {
+                const nameElement = row.querySelector('.member-name');
+                const roleElement = row.querySelector('.member-role');
+                const checkbox = row.querySelector('.attendance-check');
+                if (nameElement && roleElement) {
+                    const name = nameElement.textContent.trim();
+                    const roleText = roleElement.textContent.trim();
+                    const status = checkbox && checkbox.checked ? 'Present' : 'Absent';
+                    attendeesList += `"${name}","${roleText}","${status}"\n`;
+                }
+            });
+            
+            const csvContent = `Event Name,Category,Date,Location,Council,Description,Total Registered,Total Attended,Total Absent,Generated On
+"${eventName}","${eventCategory}","${eventDate}","${eventLocation}","${eventCouncil}","${eventDescription}","${totalMembersText}","${presentCountText}","${parseInt(totalMembersText) - parseInt(presentCountText)}","${new Date().toLocaleString()}"
+
+Member Name,Role,Status
+${attendeesList}`;
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `Event_Attendance_${eventName.replace(/\s+/g, '_')}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    }
+    
+    document.addEventListener('click', function(e) {
+        let target = e.target;
         
-        // Handle confirmation
-        confirmButton.addEventListener('click', function() {
-            // Close the modal
-            closeModal(confirmationModal);
+        // Check if clicked element is inside a button
+        if (target.tagName !== 'BUTTON') {
+            target = target.closest('button');
+        }
+        
+        if (!target) return;
+        
+        if (target.id === 'saveAttendance') {
+            e.preventDefault();
+            e.stopPropagation();
             
-            // Collect all checked members
             const checkedMembers = [];
-            const checkboxes = document.querySelectorAll('input[name="attendance"]:checked');
-            
-            checkboxes.forEach(checkbox => {
+            document.querySelectorAll('input[name="attendance"]:checked').forEach(checkbox => {
                 checkedMembers.push(checkbox.value);
             });
             
-            // Get CSRF token
-            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            const saveBtn = document.getElementById('saveAttendance');
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            saveBtn.disabled = true;
             
-            // Show saving indicator
-            saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-            saveButton.disabled = true;
-            saveButton.classList.add('loading');
-            
-            // Send all attendance data at once
-            fetch('/event/update-attendance/', {
+            fetch('{% url "update_attendance" %}', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
                 },
                 body: JSON.stringify({
                     event_id: '{{ event.id }}',
                     present_members: checkedMembers
                 })
             })
-            .then(response => {
-                // Ensure we always restore the button after a short delay
-                setTimeout(() => {
-                    saveButton.innerHTML = '<i class="fas fa-save"></i> Save Attendance';
-                    saveButton.disabled = false;
-                    saveButton.classList.remove('loading');
-                }, 1000);
-                
-                return response.json();
-            })
+            .then(res => res.json())
             .then(data => {
+                saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Attendance';
+                saveBtn.disabled = false;
+                
                 if (data.status === 'success') {
-                    // Update the attendance counts with server data
                     document.getElementById('presentCount').textContent = data.present_count;
                     document.getElementById('absentCount').textContent = Math.max(0, data.total_count - data.present_count);
-                    presentCount = data.present_count;
-                    
-                    console.log('Showing success notification');
-                    // Show success notification
-                    showNotification(`Attendance saved successfully! ${data.present_count} members marked present.`, 'success');
+                    showNotification(`Saved! ${data.present_count} present.`, 'success');
                 } else {
-                    console.error('Error updating attendance:', data.message);
-                    // Show error notification
-                    showNotification('Error saving attendance: ' + data.message, 'error');
+                    showNotification('Error: ' + data.message, 'error');
                 }
             })
             .catch(error => {
-                console.error('Error updating attendance:', error);
-                // Show error notification
-                showNotification('Error saving attendance. Please try again.', 'error');
-                
-                // Make sure the button is restored even if there's an error
-                saveButton.innerHTML = '<i class="fas fa-save"></i> Save Attendance';
-                saveButton.disabled = false;
-                saveButton.classList.remove('loading');
+                console.error('Error:', error);
+                saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Attendance';
+                saveBtn.disabled = false;
+                showNotification('Error saving attendance.', 'error');
             });
-            
-            // Failsafe: Ensure button returns to normal state after 5 seconds
-            setTimeout(() => {
-                if (saveButton.classList.contains('loading')) {
-                    saveButton.innerHTML = '<i class="fas fa-save"></i> Save Attendance';
-                    saveButton.disabled = false;
-                    saveButton.classList.remove('loading');
-                    
-                    // Show notification about potential issue
-                    showNotification('Attendance may have been saved. Please check the list.', 'warning');
-                }
-            }, 5000);
-        });
-    }
+        }
+    });
 });
 </script>
-{% endblock %} 
+{% endblock %}

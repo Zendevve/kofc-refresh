@@ -615,11 +615,11 @@
     <div class="user-card-actions">
       {% if user.role == 'member' %}
       <a href="{% url 'promote_user' user.id %}" class="action-btn promote-btn">
-        <i class="fas fa-arrow-up"></i> Promote
+        <i class="fas fa-arrow-up"></i> Set as Officer
       </a>
       {% elif user.role == 'officer' %}
       <a href="{% url 'demote_user' user.id %}" class="action-btn demote-btn">
-        <i class="fas fa-arrow-down"></i> Demote
+        <i class="fas fa-arrow-down"></i> Set as Member
       </a>
       {% endif %}
       <button class="action-btn details-btn" onclick="viewUserDetails('{{ user.id }}')">

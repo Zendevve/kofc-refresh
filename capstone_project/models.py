@@ -66,6 +66,7 @@ class User(AbstractUser):
     ]
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='pending')
     council = models.ForeignKey('Council', on_delete=models.SET_NULL, null=True, blank=True)
+    council_joined_date = models.DateField(null=True, blank=True, help_text="Date when user joined current council")
     age = models.PositiveIntegerField(null=True, blank=True)
     second_name = models.CharField(max_length=100, null=True, blank=True)
     middle_name = models.CharField(max_length=100, null=True, blank=True)
@@ -102,6 +103,26 @@ class User(AbstractUser):
         # Generate middle_initial from middle_name if provided
         if self.middle_name and not self.middle_initial:
             self.middle_initial = self.middle_name[0] + "."
+
+        # Track council changes
+        if self.pk:
+            try:
+                old_user = User.objects.get(pk=self.pk)
+                if old_user.council != self.council:
+                    # Council has changed - update council_joined_date
+                    self.council_joined_date = timezone.now().date()
+                    
+                    # Create a history record for the old council if it exists
+                    if old_user.council:
+                        CouncilPositionHistory.objects.create(
+                            user=self,
+                            council=old_user.council,
+                            role=old_user.role,
+                            start_date=old_user.council_joined_date or old_user.date_joined.date(),
+                            end_date=timezone.now().date()
+                        )
+            except User.DoesNotExist:
+                pass
 
         super().save(*args, **kwargs)
         if self.profile_picture:
@@ -242,6 +263,26 @@ class ForumMessage(models.Model):
 
     class Meta:
         ordering = ['-is_pinned', '-timestamp']
+
+class CouncilPositionHistory(models.Model):
+    """Track user's council position history"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='council_position_history')
+    council = models.ForeignKey(Council, on_delete=models.CASCADE)
+    role = models.CharField(max_length=20, choices=User.ROLE_CHOICES)
+    start_date = models.DateField()
+    end_date = models.DateField(null=True, blank=True)
+    
+    class Meta:
+        ordering = ['-start_date']
+    
+    def __str__(self):
+        end = self.end_date.strftime('%Y-%m-%d') if self.end_date else 'Present'
+        return f"{self.user.username} - {self.role} in {self.council.name} ({self.start_date} to {end})"
+    
+    def get_duration_days(self):
+        """Calculate duration in days"""
+        end = self.end_date if self.end_date else timezone.now().date()
+        return (end - self.start_date).days
 
 class Analytics(models.Model):
     council = models.ForeignKey(Council, on_delete=models.CASCADE)
@@ -536,6 +577,14 @@ class Donation(models.Model):
     signature = models.TextField(blank=True, null=True)
     council = models.ForeignKey('Council', on_delete=models.SET_NULL, null=True, blank=True)
     is_anonymous = models.BooleanField(default=False, help_text="Whether the donor wishes to remain anonymous in public records.")
+    donor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        related_name='donations',
+        null=True,
+        blank=True,
+        help_text="The logged-in user who made this donation"
+    )
     submitted_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,

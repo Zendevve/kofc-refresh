@@ -12,83 +12,15 @@
 
 {% block extra_css %}
 <style>
-  /* Modal Styles - Inline for reliability */
-  .modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
-    z-index: 9999;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-  }
-  .modal-backdrop.active {
-    display: flex;
-  }
-  .modal {
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    max-width: 500px;
-    width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-    animation: modalSlideIn 0.3s ease-out;
-  }
-  @keyframes modalSlideIn {
-    from { opacity: 0; transform: scale(0.95) translateY(20px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-  }
-  .modal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
-  }
-  .modal-header h2 {
-    font-size: 1.25rem;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .modal-close {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: #9ca3af;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 8px;
-    line-height: 1;
-  }
-  .modal-close:hover {
-    background: #f3f4f6;
-    color: #374151;
-  }
-  .modal-body {
-    padding: 1.5rem;
-  }
-  .modal-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.75rem;
-    padding: 1rem 1.5rem;
-    border-top: 1px solid #e5e7eb;
-    background: #f9fafb;
-    border-radius: 0 0 16px 16px;
-  }
-
   .donation-layout {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 2rem;
     align-items: start;
   }
-
+  .impact-card h2 {
+    color: white !important;
+  }
   @media (max-width: 1024px) {
     .donation-layout {
       grid-template-columns: 1fr;
@@ -264,6 +196,14 @@
 {% endblock %}
 
 {% block content %}
+{% if messages %}
+<div style="margin-bottom: 1rem;">
+  {% for message in messages %}
+  <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+  {% endfor %}
+</div>
+{% endif %}
+
 <div class="donation-layout">
   <!-- LEFT: Impact Info -->
   <div class="impact-card">
@@ -323,8 +263,8 @@
 
       <div class="form-row">
         <div class="form-group">
-          <label for="id_amount">Amount (â‚±)</label>
-          <input type="number" id="id_amount" name="amount" required min="1" step="0.01" placeholder="100.00">
+          <label for="id_amount">Amount (₱)</label>
+          <input type="number" id="id_amount" name="amount" required min="100" step="0.01" placeholder="100.00">
           <span class="warning" id="amount_warning"></span>
         </div>
         <div class="form-group">
@@ -334,23 +274,8 @@
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="payment_method">Payment Method</label>
-        <select id="payment_method" name="payment_method" onchange="updatePaymentMethod()">
-          <option value="gcash">GCash (Online Payment)</option>
-          <option value="manual">Manual Entry (Cash/Offline)</option>
-        </select>
-      </div>
-
-      <div id="anonymous-option" class="form-group" style="display: none;">
-        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.875rem; font-weight: normal; text-transform: none;">
-          <input type="checkbox" name="donate_anonymously" style="width: 16px; height: 16px;">
-          Donor wishes to remain anonymous
-        </label>
-      </div>
-
-      <button type="submit" class="btn-submit" id="submit-btn">
-        <i class="fas fa-wallet" id="submit-icon"></i> <span id="submit-text">Proceed to GCash</span>
+      <button type="submit" class="btn-submit">
+        <i class="fas fa-wallet"></i> Proceed to GCash
       </button>
     </form>
 
@@ -358,6 +283,11 @@
       <a href="{% url 'blockchain' %}" class="btn-secondary">
         <i class="fas fa-link"></i> View Blockchain
       </a>
+      {% if show_manual_link %}
+      <a href="{% url 'manual_donation' %}" class="btn-secondary">
+        <i class="fas fa-edit"></i> Manual Entry
+      </a>
+      {% endif %}
     </div>
   </div>
 </div>
@@ -366,28 +296,10 @@
   // Set today's date as default
   document.getElementById('id_donation_date').valueAsDate = new Date();
 
-  // Update UI based on payment method selection
-  function updatePaymentMethod() {
-    var method = document.getElementById('payment_method').value;
-    var submitText = document.getElementById('submit-text');
-    var submitIcon = document.getElementById('submit-icon');
-    var anonOption = document.getElementById('anonymous-option');
-
-    if (method === 'manual') {
-      submitText.textContent = 'Submit for Approval';
-      submitIcon.className = 'fas fa-paper-plane';
-      anonOption.style.display = 'block';
-    } else {
-      submitText.textContent = 'Proceed to GCash';
-      submitIcon.className = 'fas fa-wallet';
-      anonOption.style.display = 'none';
-    }
-  }
-
   function validateForm() {
     const amount = parseFloat(document.getElementById('id_amount').value);
-    if (amount < 1) {
-      document.getElementById('amount_warning').textContent = 'Amount must be at least â‚±1';
+    if (amount < 100) {
+      document.getElementById('amount_warning').textContent = 'Minimum amount is ₱100';
       return false;
     }
     return true;

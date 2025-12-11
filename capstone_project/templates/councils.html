@@ -8,8 +8,183 @@ Knights of Columbus - Councils
 {% block content %}
 <style>
   /* ============================================
-    LAYOUT RESET
-    Ensure full width regardless of parent constraints
+    ANIMATION KEYFRAMES
+    ============================================ */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideInFromBottom {
+    from {
+      transform: translateY(50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideInFromTop {
+    from {
+      transform: translateY(-50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideInFromLeft {
+    from {
+      transform: translateX(-50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideInFromRight {
+    from {
+      transform: translateX(50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes scaleIn {
+    from {
+      transform: scale(0.9);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+  
+  @keyframes glow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 30px rgba(251, 191, 36, 0.6);
+    }
+  }
+  
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+  
+  @keyframes gradientMove {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  
+  @keyframes rotateSlow {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+  
+  @keyframes cardHover {
+    0% {
+      transform: translateY(0) rotateX(0) rotateY(0);
+    }
+    50% {
+      transform: translateY(-8px) rotateX(2deg) rotateY(2deg);
+    }
+    100% {
+      transform: translateY(-8px) rotateX(0) rotateY(0);
+    }
+  }
+  
+  @keyframes ripple {
+    0% {
+      transform: scale(0);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+
+  /* ============================================
+    ANIMATION UTILITY CLASSES
+    ============================================ */
+  .animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  
+  .animate-on-scroll.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .animate-delay-100 { transition-delay: 0.1s; animation-delay: 0.1s; }
+  .animate-delay-200 { transition-delay: 0.2s; animation-delay: 0.2s; }
+  .animate-delay-300 { transition-delay: 0.3s; animation-delay: 0.3s; }
+  .animate-delay-400 { transition-delay: 0.4s; animation-delay: 0.4s; }
+  .animate-delay-500 { transition-delay: 0.5s; animation-delay: 0.5s; }
+
+  /* ============================================
+    LAYOUT RESET WITH ANIMATIONS
     ============================================ */
   body,
   html {
@@ -28,23 +203,23 @@ Knights of Columbus - Councils
   }
 
   /* ============================================
-    PAGE CONTAINER (Like About Us)
+    PAGE CONTAINER WITH ENHANCED ANIMATIONS
     ============================================ */
   .councils-page {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background-color: #f8fafc;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
     width: 100%;
     min-height: 100vh;
-    /* Removed display: flex to behave like standard block */
+    animation: fadeIn 1s ease-out;
   }
 
-  /* --------------------------------------------------
-       HERO SECTION
-    -------------------------------------------------- */
+  /* ============================================
+    HERO SECTION WITH ANIMATED BACKGROUND
+    ============================================ */
   .hero-section {
     position: relative;
     width: 100%;
-    height: 400px;
+    height: 450px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -52,6 +227,7 @@ Knights of Columbus - Councils
     color: white;
     background: url("{% static 'images/kofc-bg.png' %}") no-repeat center center/cover;
     margin-bottom: 0;
+    overflow: hidden;
   }
 
   .hero-section::before {
@@ -63,21 +239,35 @@ Knights of Columbus - Councils
     bottom: 0;
     background: linear-gradient(135deg, rgba(13, 52, 113, 0.9) 0%, rgba(15, 23, 42, 0.85) 100%);
     z-index: 1;
+    animation: fadeIn 1.5s ease-out;
+  }
+
+  .hero-section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+    animation: shimmer 3s infinite linear;
+    z-index: 2;
   }
 
   .hero-content {
     position: relative;
-    z-index: 2;
+    z-index: 3;
     max-width: 800px;
     padding: 0 24px;
     margin: 0 auto;
+    animation: slideInFromBottom 1s ease-out 0.5s both;
   }
 
   .section-badge {
     display: inline-block;
-    background: rgba(251, 191, 36, 0.15);
+    background: linear-gradient(45deg, rgba(251, 191, 36, 0.2), rgba(251, 191, 36, 0.3));
     color: #fbbf24;
-    padding: 6px 16px;
+    padding: 8px 20px;
     border-radius: 50px;
     font-size: 0.875rem;
     font-weight: 600;
@@ -85,6 +275,32 @@ Knights of Columbus - Councils
     text-transform: uppercase;
     margin-bottom: 24px;
     border: 1px solid rgba(251, 191, 36, 0.3);
+    animation: slideInFromTop 0.8s ease-out 0.7s both, 
+               float 3s ease-in-out 2s infinite;
+    transform-origin: center;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .section-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: 0.5s;
+  }
+
+  .section-badge:hover::before {
+    left: 100%;
+  }
+
+  .section-badge i {
+    margin-right: 8px;
+    animation: pulse 2s infinite;
   }
 
   .hero-title {
@@ -93,144 +309,344 @@ Knights of Columbus - Councils
     line-height: 1.1;
     margin-bottom: 24px;
     letter-spacing: -0.02em;
+    background: linear-gradient(45deg, #fff, #fbbf24, #fff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-size: 200% auto;
+    animation: gradientMove 3s ease-in-out infinite;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    animation-delay: 1s;
   }
 
   .hero-subtitle {
     font-size: 1.125rem;
     line-height: 1.6;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(255, 255, 255, 0.95);
     max-width: 600px;
     margin: 0 auto;
+    opacity: 0;
+    animation: slideInFromBottom 0.8s ease-out 1.2s both;
+    backdrop-filter: blur(5px);
+    padding: 20px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
   }
 
-  /* --------------------------------------------------
-       SEARCH & CONTENT
-    -------------------------------------------------- */
+  .hero-subtitle::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #0D3471, #fbbf24, #0D3471);
+    border-radius: 14px;
+    z-index: -1;
+    opacity: 0.3;
+    animation: glow 2s ease-in-out infinite;
+  }
+
+  /* ============================================
+    SEARCH BAR WITH ADVANCED ANIMATIONS
+    ============================================ */
   .search-container {
-    max-width: 900px;
-    margin: -32px auto 48px;
-    /* Negative margin to overlap hero */
+    max-width: 1200px;
+    margin: -48px auto 64px;
     padding: 0 24px;
     position: relative;
     z-index: 10;
-    width: 100%;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform: translateY(0);
+    animation: slideInFromBottom 0.8s ease-out 1.5s both;
   }
 
   .search-input-wrapper {
     background: white;
-    padding: 0 24px;
+    padding: 0 32px;
     border-radius: 99px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
     display: flex;
     align-items: center;
-    gap: 16px;
-    border: 1px solid #e2e8f0;
-    height: 64px;
-    transition: all 0.3s ease;
+    gap: 20px;
+    border: 2px solid #e2e8f0;
+    height: 80px;
+    width: calc(100% + 48px);
+    margin-left: -24px;
+    margin-right: -24px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
-  .search-input-wrapper:focus-within {
-    transform: translateY(-2px);
-    box-shadow: 0 25px 50px rgba(13, 52, 113, 0.15);
+  .search-input-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, #0D3471, #1e40af, #0D3471);
+    background-size: 200% 100%;
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .search-container:hover .search-input-wrapper {
+    transform: scale(1.01);
+  }
+
+  .search-container:focus-within {
+    transform: translateY(-8px);
+    filter: drop-shadow(0 40px 80px rgba(13, 52, 113, 0.25));
+  }
+
+  .search-container:focus-within .search-input-wrapper {
     border-color: #fbbf24;
+    box-shadow: 0 30px 70px rgba(13, 52, 113, 0.25);
+    transform: scale(1.02);
+  }
+
+  .search-container:focus-within .search-input-wrapper::before {
+    opacity: 0.05;
+    animation: gradientMove 3s ease-in-out infinite;
   }
 
   .search-icon {
-    color: #0D3471;
+    color: #64748b;
     font-size: 1.25rem;
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite;
+  }
+
+  .search-container:focus-within .search-icon {
+    color: #fbbf24;
+    transform: scale(1.2) rotate(10deg);
   }
 
   .search-input {
     flex: 1;
     border: none;
     outline: none;
-    font-size: 1rem;
+    font-size: 1.1rem;
+    font-weight: 500;
     color: #1e293b;
     background: transparent;
-    height: 100%;
+    padding: 16px 0;
+    transition: all 0.3s ease;
   }
 
-  /* Grid Area */
+  .search-input::placeholder {
+    color: #94a3b8;
+    transition: color 0.3s ease;
+  }
+
+  .search-input:focus::placeholder {
+    color: #cbd5e1;
+  }
+
+  .search-input:focus {
+    color: #0D3471;
+  }
+
+  /* Ripple effect on search */
+  .search-container {
+    position: relative;
+  }
+
+  .search-container::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100px;
+    height: 100px;
+    background: rgba(251, 191, 36, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    transition: all 0.5s ease;
+  }
+
+  .search-container:focus-within::after {
+    animation: ripple 0.6s ease-out;
+  }
+
+  /* ============================================
+    CONTENT CONTAINER WITH ANIMATIONS
+    ============================================ */
   .content-container {
     max-width: 1200px;
     margin: 0 auto 80px;
     padding: 0 24px;
     width: 100%;
+    animation: fadeIn 1s ease-out 1.8s both;
   }
 
   .grid-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 32px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 48px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid #e2e8f0;
+    position: relative;
+  }
+
+  .grid-header::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100px;
+    height: 2px;
+    background: linear-gradient(90deg, #0D3471, #fbbf24);
+    animation: slideInFromLeft 1s ease-out 2s both;
   }
 
   .results-count {
     color: #64748b;
-    font-size: 0.9rem;
-    font-weight: 500;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 8px 16px;
+    background: rgba(13, 52, 113, 0.05);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    animation: slideInFromLeft 0.8s ease-out 2.2s both;
   }
 
+  .results-count:hover {
+    background: rgba(13, 52, 113, 0.1);
+    transform: translateX(5px);
+    color: #0D3471;
+  }
+
+  /* ============================================
+    COUNCILS GRID WITH STAGGERED ANIMATIONS
+    ============================================ */
   .councils-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     gap: 32px;
   }
 
-  /* Card System */
+  /* Council Card with Enhanced Animations */
   .council-card {
     background: white;
-    border-radius: 16px;
+    border-radius: 20px;
     overflow: hidden;
     border: 1px solid #e2e8f0;
-    transition: all 0.3s ease;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
     display: flex;
     flex-direction: column;
     text-decoration: none;
     color: inherit;
     position: relative;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
     height: 100%;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: slideInFromBottom 0.6s ease-out forwards;
+    perspective: 1000px;
+  }
+
+  .council-card:nth-child(1) { animation-delay: 0.1s; }
+  .council-card:nth-child(2) { animation-delay: 0.2s; }
+  .council-card:nth-child(3) { animation-delay: 0.3s; }
+  .council-card:nth-child(4) { animation-delay: 0.4s; }
+  .council-card:nth-child(5) { animation-delay: 0.5s; }
+  .council-card:nth-child(6) { animation-delay: 0.6s; }
+  .council-card:nth-child(7) { animation-delay: 0.7s; }
+  .council-card:nth-child(8) { animation-delay: 0.8s; }
+
+  .council-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #0D3471, #1e40af, #0D3471);
+    background-size: 200% 100%;
+    animation: gradientMove 3s ease-in-out infinite;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease;
   }
 
   .council-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px -5px rgba(13, 52, 113, 0.12);
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 30px 60px rgba(13, 52, 113, 0.15);
     border-color: #fbbf24;
+    animation: cardHover 0.6s ease-out forwards;
   }
 
+  .council-card:hover::before {
+    transform: scaleX(1);
+  }
+
+  /* Card Banner with Animated Gradient */
   .card-banner {
-    height: 90px;
+    height: 100px;
     background: linear-gradient(135deg, #0D3471 0%, #1e40af 100%);
     position: relative;
+    overflow: hidden;
   }
 
+  .card-banner::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+    animation: shimmer 3s infinite linear;
+  }
+
+  /* Card Logo with Animation */
   .card-logo-wrapper {
-    width: 72px;
-    height: 72px;
-    background: white;
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, white, #f8fafc);
     border-radius: 50%;
-    margin: -36px auto 0;
-    padding: 4px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: -40px auto 0;
+    padding: 8px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     position: relative;
     z-index: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     border: 3px solid white;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .council-card:hover .card-logo-wrapper {
+    transform: scale(1.1) rotate(10deg);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
   }
 
   .card-logo {
     width: 100%;
     height: 100%;
     object-fit: contain;
+    transition: all 0.5s ease;
   }
 
+  .council-card:hover .card-logo {
+    transform: scale(1.05);
+    filter: brightness(1.2);
+  }
+
+  /* Card Body with Content Animations */
   .card-body {
-    padding: 16px 24px 24px;
+    padding: 20px 28px 28px;
     text-align: center;
     flex: 1;
     display: flex;
@@ -238,53 +654,286 @@ Knights of Columbus - Councils
   }
 
   .council-name {
-    font-size: 1.25rem;
+    font-size: 1.35rem;
     font-weight: 700;
     color: #1e293b;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
     line-height: 1.4;
+    transition: color 0.3s ease;
+    position: relative;
+    display: inline-block;
+  }
+
+  .council-name::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #0D3471, #fbbf24);
+    transition: width 0.3s ease;
+  }
+
+  .council-card:hover .council-name {
+    color: #0D3471;
+  }
+
+  .council-card:hover .council-name::after {
+    width: 60%;
   }
 
   .council-district {
-    display: inline-block;
-    background: #f1f5f9;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
     color: #64748b;
-    padding: 4px 12px;
+    padding: 8px 16px;
     border-radius: 99px;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     font-weight: 600;
     margin-bottom: 24px;
+    transition: all 0.3s ease;
+    border: 1px solid #e2e8f0;
+  }
+
+  .council-card:hover .council-district {
+    background: linear-gradient(135deg, #0D3471, #1e40af);
+    color: white;
+    transform: translateY(-2px);
+    border-color: transparent;
+  }
+
+  .council-district i {
+    transition: transform 0.3s ease;
+  }
+
+  .council-card:hover .council-district i {
+    transform: scale(1.2) rotate(10deg);
   }
 
   .card-footer {
     margin-top: auto;
-    padding-top: 16px;
-    border-top: 1px solid #f1f5f9;
+    padding-top: 20px;
+    border-top: 2px solid #f1f5f9;
+    position: relative;
+    overflow: hidden;
   }
 
   .view-btn {
     color: #0D3471;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    transition: gap 0.2s;
+    gap: 8px;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    padding: 8px 16px;
+    border-radius: 6px;
+  }
+
+  .view-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(13, 52, 113, 0.1);
+    border-radius: 6px;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
   }
 
   .council-card:hover .view-btn {
-    gap: 10px;
     color: #ca8a04;
+    gap: 12px;
+    transform: translateX(5px);
   }
 
+  .council-card:hover .view-btn::before {
+    transform: scaleX(1);
+  }
+
+  .view-btn i {
+    transition: all 0.4s ease;
+  }
+
+  .council-card:hover .view-btn i {
+    transform: translateX(5px) rotate(10deg);
+  }
+
+  /* ============================================
+    NO RESULTS STATE WITH ANIMATIONS
+    ============================================ */
   .no-results {
     grid-column: 1 / -1;
     text-align: center;
-    padding: 60px;
-    background: white;
+    padding: 80px 40px;
+    background: linear-gradient(135deg, white, #f8fafc);
     border: 2px dashed #cbd5e1;
-    border-radius: 16px;
+    border-radius: 20px;
     display: none;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: all 0.5s ease;
+  }
+
+  .no-results.visible {
+    opacity: 1;
+    transform: scale(1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.6s ease-out;
+  }
+
+  .no-results::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent 30%, rgba(13, 52, 113, 0.05) 50%, transparent 70%);
+    animation: shimmer 4s infinite linear;
+  }
+
+  .no-results i {
+    font-size: 4rem;
+    color: #94a3b8;
+    margin-bottom: 24px;
+    animation: float 3s ease-in-out infinite, 
+               rotateSlow 20s linear infinite;
+  }
+
+  .no-results p {
+    font-size: 1.2rem;
+    color: #64748b;
+    margin: 0;
+    font-weight: 500;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ============================================
+    LOADING ANIMATION FOR SEARCH
+    ============================================ */
+  .search-loading {
+    position: absolute;
+    top: 50%;
+    right: 32px;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .search-loading.visible {
+    opacity: 1;
+  }
+
+  .search-loading::after {
+    content: '';
+    display: block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #e2e8f0;
+    border-top-color: #0D3471;
+    border-radius: 50%;
+    animation: rotateSlow 1s linear infinite;
+  }
+
+  /* ============================================
+    RESPONSIVE DESIGN WITH ANIMATIONS
+    ============================================ */
+  @media (max-width: 1024px) {
+    .councils-grid {
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    
+    .search-input-wrapper {
+      height: 70px;
+    }
+    
+    .hero-section {
+      height: 400px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero-title {
+      font-size: 2.5rem;
+    }
+    
+    .search-container {
+      margin: -32px auto 48px;
+      padding: 0 16px;
+    }
+    
+    .search-input-wrapper {
+      width: 100% !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      height: 64px;
+      padding: 0 24px;
+    }
+    
+    .content-container {
+      padding: 0 16px;
+    }
+    
+    .councils-grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    
+    .grid-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero-section {
+      height: 350px;
+    }
+    
+    .hero-title {
+      font-size: 2rem;
+    }
+    
+    .hero-subtitle {
+      font-size: 1rem;
+      padding: 16px;
+    }
+    
+    .search-input-wrapper {
+      height: 56px;
+    }
+    
+    .search-input {
+      font-size: 1rem;
+    }
+  }
+
+  /* ============================================
+    SCROLL ANIMATIONS
+    ============================================ */
+  @media (prefers-reduced-motion: no-preference) {
+    .council-card,
+    .grid-header,
+    .search-container {
+      scroll-behavior: smooth;
+    }
   }
 </style>
 
@@ -308,6 +957,7 @@ Knights of Columbus - Councils
       <i class="fas fa-search search-icon"></i>
       <input type="text" id="councilSearch" class="search-input" placeholder="Search councils by name, region, or ID..."
         aria-label="Search councils">
+      <div class="search-loading" id="searchLoading"></div>
     </div>
   </div>
 
@@ -319,11 +969,11 @@ Knights of Columbus - Councils
 
     <div class="councils-grid" id="councilsGrid">
       {% for council in councils %}
-      <a href="{% url 'council_detail' council_id=council.id %}" class="council-card"
+      <a href="{% url 'council_detail' council_id=council.id %}" class="council-card animate-on-scroll"
         data-name="{{ council.name|lower }}" data-district="{{ council.district|lower }}">
         <div class="card-banner"></div>
         <div class="card-logo-wrapper">
-          <img src="{% static 'images/kofc-logo.png' %}" alt="KofC Logo" class="card-logo">
+          <img src="{% static 'images/logo-glow.png' %}" alt="KofC Logo" class="card-logo">
         </div>
         <div class="card-body">
           <h3 class="council-name">{{ council.name }}</h3>
@@ -337,7 +987,7 @@ Knights of Columbus - Councils
         </div>
       </a>
       {% empty %}
-      <div class="no-results" style="display: block;">
+      <div class="no-results" style="display: flex;">
         <i class="fas fa-folder-open"></i>
         <p>No councils found in the database.</p>
       </div>
@@ -354,44 +1004,170 @@ Knights of Columbus - Councils
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    // Search functionality
+    // Initialize all elements
     const searchInput = document.getElementById('councilSearch');
     const cards = document.querySelectorAll('.council-card');
     const noResults = document.getElementById('searchNoResults');
     const resultsCount = document.getElementById('resultsCount');
+    const searchLoading = document.getElementById('searchLoading');
     const totalCouncils = cards.length;
+    
+    // Add scroll animation observer
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -100px 0px'
+    });
+    
+    // Observe all council cards
+    cards.forEach(card => {
+      observer.observe(card);
+    });
+    
+    // Animate initial cards
+    cards.forEach((card, index) => {
+      card.style.animationDelay = `${index * 0.1}s`;
+    });
 
+    // Enhanced search functionality with animations
     if (searchInput) {
+      let searchTimeout;
+      
       searchInput.addEventListener('input', function (e) {
         const term = e.target.value.toLowerCase().trim();
-        let visibleCount = 0;
+        
+        // Show loading animation
+        searchLoading.classList.add('visible');
+        
+        // Clear previous timeout
+        clearTimeout(searchTimeout);
+        
+        // Debounce search
+        searchTimeout = setTimeout(() => {
+          let visibleCount = 0;
+          
+          cards.forEach(card => {
+            const name = card.getAttribute('data-name');
+            const district = card.getAttribute('data-district');
+            
+            if (name.includes(term) || district.includes(term)) {
+              card.style.display = 'flex';
+              card.classList.add('visible');
+              visibleCount++;
+            } else {
+              card.style.display = 'none';
+              card.classList.remove('visible');
+            }
+          });
 
-        cards.forEach(card => {
-          const name = card.getAttribute('data-name');
-          const district = card.getAttribute('data-district');
-
-          if (name.includes(term) || district.includes(term)) {
-            card.style.display = 'flex';
-            visibleCount++;
+          // Hide loading animation
+          searchLoading.classList.remove('visible');
+          
+          // Update results with animation
+          if (visibleCount === 0 && totalCouncils > 0) {
+            noResults.classList.add('visible');
+            setTimeout(() => {
+              noResults.style.display = 'flex';
+            }, 10);
           } else {
-            card.style.display = 'none';
+            noResults.classList.remove('visible');
+            setTimeout(() => {
+              noResults.style.display = 'none';
+            }, 300);
           }
-        });
 
-        // Update UI state
-        if (visibleCount === 0 && totalCouncils > 0) {
-          noResults.style.display = 'block';
-        } else {
-          noResults.style.display = 'none';
-        }
+          // Update count with animation
+          resultsCount.style.opacity = '0';
+          resultsCount.style.transform = 'translateX(-10px)';
+          
+          setTimeout(() => {
+            if (term === '') {
+              resultsCount.textContent = `Showing all ${totalCouncils} councils`;
+            } else {
+              resultsCount.textContent = `Found ${visibleCount} council${visibleCount !== 1 ? 's' : ''}`;
+            }
+            
+            resultsCount.style.opacity = '1';
+            resultsCount.style.transform = 'translateX(0)';
+            resultsCount.style.transition = 'all 0.3s ease';
+          }, 150);
+          
+        }, 300); // Debounce delay
+      });
+    }
 
-        if (term === '') {
-          resultsCount.textContent = `Showing all ${totalCouncils} councils`;
-        } else {
-          resultsCount.textContent = `Found ${visibleCount} council${visibleCount !== 1 ? 's' : ''}`;
+    // Add hover sound effect simulation
+    cards.forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        card.style.zIndex = '10';
+      });
+      
+      card.addEventListener('mouseleave', () => {
+        card.style.zIndex = '1';
+      });
+    });
+
+    // Add keyboard navigation for search
+    if (searchInput) {
+      searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          searchInput.value = '';
+          searchInput.dispatchEvent(new Event('input'));
         }
       });
     }
+
+    // Add focus animation to search on page load
+    setTimeout(() => {
+      searchInput.focus();
+      searchInput.select();
+    }, 2000);
+
+    // Add parallax effect to hero section
+    window.addEventListener('scroll', () => {
+      const heroSection = document.querySelector('.hero-section');
+      const scrolled = window.pageYOffset;
+      
+      if (heroSection && scrolled < heroSection.offsetHeight) {
+        const rate = scrolled * -0.3;
+        heroSection.style.transform = `translateY(${rate}px)`;
+      }
+    });
+
+    // Add ripple effect to cards on click
+    cards.forEach(card => {
+      card.addEventListener('click', function(e) {
+        const ripple = document.createElement('span');
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+        
+        ripple.style.cssText = `
+          position: absolute;
+          border-radius: 50%;
+          background: rgba(251, 191, 36, 0.6);
+          transform: scale(0);
+          animation: ripple 0.6s linear;
+          width: ${size}px;
+          height: ${size}px;
+          top: ${y}px;
+          left: ${x}px;
+          pointer-events: none;
+        `;
+        
+        this.appendChild(ripple);
+        
+        setTimeout(() => {
+          ripple.remove();
+        }, 600);
+      });
+    });
   });
 </script>
 {% endblock %}

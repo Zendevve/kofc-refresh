@@ -20,6 +20,49 @@
 
   <!-- CSS -->
   <link rel="stylesheet" href="{% static 'css/design-system.css' %}?v={% now 'U' %}" />
+  <style>
+    /* === UNIFIED TOAST NOTIFICATIONS (Dashboard + Public) === */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 420px;
+      font-family: 'Inter', sans-serif;
+    }
+    .toast {
+      background: white;
+      border-radius: 16px;
+      padding: 16px 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+      border-left: 6px solid;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      animation: slideIn 0.5s ease-out;
+      min-width: 340px;
+    }
+    .toast.success   { border-color: #16a34a; }
+    .toast.error     { border-color: #dc2626; }
+    .toast.warning   { border-color: #d97706; }
+    .toast.info      { border-color: #3b82f6; }
+    .toast i { font-size: 1.5rem; }
+    .toast.success i   { color: #16a34a; }
+    .toast.error i     { color: #dc2626; }
+    .toast.warning i   { color: #d97706; }
+    .toast.info i      { color: #3b82f6; }
+    .toast-message { font-weight: 500; color: #1f2937; flex: 1; }
+    .toast-close {
+      background: none; border: none; font-size: 1.4rem; cursor: pointer;
+      color: #9ca3af; padding: 4px; border-radius: 50%;
+    }
+    .toast-close:hover { background: #f3f4f6; }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideOut { to { transform: translateX(120%); opacity: 0; } }
+  </style>
   {% block extra_css %}{% endblock %}
 </head>
 
@@ -248,21 +291,15 @@
       </header>
 
       <!-- Notification container -->
-      <!-- Notification container -->
       <div class="toast-container">
         {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">
-          {% if 'success' in message.tags %}<i class="fas fa-check-circle"></i>{% endif %}
-          {% if 'error' in message.tags %}<i class="fas fa-exclamation-circle"></i>{% endif %}
-          {% if 'warning' in message.tags %}<i class="fas fa-exclamation-triangle"></i>{% endif %}
-          {% if 'info' in message.tags %}<i class="fas fa-info-circle"></i>{% endif %}
-          <span>{{ message }}</span>
-          <button type="button" onclick="this.parentElement.remove()" style="margin-left: auto; background: none; border: none; color: inherit; opacity: 0.6; cursor: pointer; padding: 0 4px; font-size: 1.1rem;">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        {% endfor %}
+          {% for message in messages %}
+            <div class="toast {{ message.tags|default:'info' }}">
+              <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% elif message.tags == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+              <div class="toast-message">{{ message }}</div>
+              <button class="toast-close" onclick="this.parentElement.style.animation='slideOut 0.4s ease-in forwards';setTimeout(()=>this.parentElement.remove(),400)">×</button>
+            </div>
+          {% endfor %}
         {% endif %}
       </div>
 
@@ -369,8 +406,6 @@
       border: 2px solid white;
     }
   </style>
-
-  {% block modals %}{% endblock %}
 
   {% block extra_js %}{% endblock %}
 </body>

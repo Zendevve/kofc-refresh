@@ -1,23 +1,156 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
-
 {% block title %}
 Knights of Columbus - Sign In
 {% endblock %}
 
 {% block content %}
 <style>
-  /* =========================================
-     MODERN SPLIT LAYOUT AUTH PAGE
-     ========================================= */
+  /* ============================================
+    ANIMATION KEYFRAMES (Consistent with other pages)
+    ============================================ */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideInFromBottom {
+    from {
+      transform: translateY(50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideInFromLeft {
+    from {
+      transform: translateX(-50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideInFromRight {
+    from {
+      transform: translateX(50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      transform: scale(0.9);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(1deg); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  @keyframes glow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 30px rgba(251, 191, 36, 0.6);
+    }
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  @keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  @keyframes rotateSlow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+
+  @keyframes cardHover {
+    0% { transform: translateY(0) rotateX(0) rotateY(0); }
+    50% { transform: translateY(-8px) rotateX(2deg) rotateY(2deg); }
+    100% { transform: translateY(-8px) rotateX(0) rotateY(0); }
+  }
+
+  @keyframes ripple {
+    0% {
+      transform: scale(0);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+
+  @keyframes sparkle {
+    0%, 100% { opacity: 0; transform: scale(0); }
+    50% { opacity: 1; transform: scale(1); }
+  }
+
+  /* ============================================
+    ANIMATION UTILITY CLASSES
+    ============================================ */
+  .animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .animate-on-scroll.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .animate-delay-100 { transition-delay: 0.1s; animation-delay: 0.1s; }
+  .animate-delay-200 { transition-delay: 0.2s; animation-delay: 0.2s; }
+  .animate-delay-300 { transition-delay: 0.3s; animation-delay: 0.3s; }
+  .animate-delay-400 { transition-delay: 0.4s; animation-delay: 0.4s; }
+  .animate-delay-500 { transition-delay: 0.5s; animation-delay: 0.5s; }
+
+  /* ============================================
+    MODERN SPLIT LAYOUT AUTH PAGE WITH ANIMATIONS
+    ============================================ */
   .auth-container {
     height: calc(100vh - 72px);
     display: grid;
     grid-template-columns: 1fr 1fr;
-    background: white;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
     overflow: hidden;
+    animation: fadeIn 1s ease-out;
   }
 
   @media (max-width: 1100px) {
@@ -33,7 +166,7 @@ Knights of Columbus - Sign In
   }
 
   /* -------------------------------------
-     LEFT SIDE: IMMERSIVE BRANDING
+     LEFT SIDE: IMMERSIVE BRANDING WITH ANIMATIONS
      ------------------------------------- */
   .auth-brand {
     position: relative;
@@ -44,10 +177,12 @@ Knights of Columbus - Sign In
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: var(--space-12);
+    padding: 3rem;
     color: white;
     text-align: center;
     z-index: 10;
+    overflow: hidden;
+    animation: slideInFromLeft 0.8s ease-out 0.3s both;
   }
 
   @media (max-width: 968px) {
@@ -56,7 +191,7 @@ Knights of Columbus - Sign In
     }
   }
 
-  /* Overlay gradient */
+  /* Animated gradient overlay */
   .auth-brand::before {
     content: '';
     position: absolute;
@@ -65,15 +200,32 @@ Knights of Columbus - Sign In
     right: 0;
     bottom: 0;
     background: linear-gradient(135deg, rgba(13, 52, 113, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%);
+    background-size: 200% 200%;
+    animation: gradientMove 6s ease-in-out infinite;
     z-index: -1;
   }
 
-  /* Decorative circles */
+  /* Shimmer effect overlay */
+  .auth-brand::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 25%, rgba(255,255,255,0.08) 50%, transparent 75%);
+    background-size: 400% 100%;
+    animation: shimmer 8s ease-in-out infinite;
+    z-index: 0;
+  }
+
+  /* Animated decorative circles */
   .auth-decor {
     position: absolute;
     border-radius: 50%;
     z-index: -1;
     pointer-events: none;
+    animation: float 6s ease-in-out infinite;
   }
 
   .auth-decor-1 {
@@ -82,6 +234,8 @@ Knights of Columbus - Sign In
     background: radial-gradient(circle, rgba(251, 191, 36, 0.15) 0%, transparent 70%);
     top: -20%;
     right: -20%;
+    animation-delay: 0.5s;
+    filter: blur(20px);
   }
 
   .auth-decor-2 {
@@ -90,124 +244,238 @@ Knights of Columbus - Sign In
     background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
     bottom: -10%;
     left: -10%;
+    animation-delay: 1s;
+    filter: blur(15px);
   }
 
-  /* Brand Content */
+  /* Add floating particles */
+  .auth-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(251, 191, 36, 0.6);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  /* Brand Content with Animations */
   .brand-logo {
-    width: 120px;
-    height: 120px;
-    margin-bottom: var(--space-6);
-    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+    width: 140px;
+    height: 140px;
+    margin-bottom: 1.5rem;
+    filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.4));
+    animation: float 4s ease-in-out infinite, scaleIn 0.8s ease-out 0.5s both;
+    position: relative;
+    z-index: 2;
+    transition: transform 0.5s ease;
+  }
+
+  .brand-logo:hover {
+    transform: scale(1.1) rotate(5deg);
   }
 
   .brand-title {
-    font-size: var(--text-4xl);
+    font-size: 2.5rem;
     font-weight: 800;
-    margin-bottom: var(--space-4);
+    margin-bottom: 0.5rem;
     line-height: 1.1;
+    position: relative;
+    z-index: 2;
+    animation: slideInFromBottom 0.8s ease-out 0.7s both;
   }
 
   .brand-title span {
-    color: var(--accent-400);
+    color: #fbbf24;
+    background: linear-gradient(45deg, #fbbf24, #f59e0b, #fbbf24);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-size: 200% auto;
+    animation: gradientMove 3s ease-in-out infinite;
   }
 
   .brand-subtitle {
-    font-size: var(--text-lg);
-    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.125rem;
+    color: rgba(255, 255, 255, 0.9);
     max-width: 480px;
-    margin-bottom: var(--space-8);
+    margin-bottom: 2rem;
     line-height: 1.6;
+    position: relative;
+    z-index: 2;
+    animation: slideInFromBottom 0.8s ease-out 0.9s both;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
   }
 
-  /* Feature Grid */
+  /* Feature Grid with Staggered Animations */
   .brand-features {
     display: grid;
-    gap: var(--space-6);
+    gap: 1rem;
     text-align: left;
     max-width: 400px;
     width: 100%;
+    position: relative;
+    z-index: 2;
   }
 
   .brand-feature {
     display: flex;
     align-items: flex-start;
-    gap: var(--space-4);
-    background: rgba(255, 255, 255, 0.05);
-    padding: var(--space-4);
-    border-radius: var(--radius-xl);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 1.25rem;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
-    transition: transform 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity: 0;
+    transform: translateX(-30px);
+    animation: slideInFromLeft 0.6s ease-out forwards;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .brand-feature:nth-child(1) { animation-delay: 1.1s; }
+  .brand-feature:nth-child(2) { animation-delay: 1.3s; }
+  .brand-feature:nth-child(3) { animation-delay: 1.5s; }
+
+  .brand-feature::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #fbbf24, #0D3471);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease;
   }
 
   .brand-feature:hover {
-    transform: translateX(5px);
-    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(10px) translateY(-5px);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(251, 191, 36, 0.5);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  }
+
+  .brand-feature:hover::before {
+    transform: scaleX(1);
   }
 
   .feature-icon {
     flex-shrink: 0;
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(251, 191, 36, 0.2);
-    color: var(--accent-400);
-    border-radius: var(--radius-lg);
-    font-size: 1.2rem;
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(251, 191, 36, 0.3));
+    color: #fbbf24;
+    border-radius: 12px;
+    font-size: 1.25rem;
+    transition: all 0.4s ease;
+  }
+
+  .brand-feature:hover .feature-icon {
+    transform: scale(1.1) rotate(10deg);
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.3), rgba(251, 191, 36, 0.4));
   }
 
   .feature-text h4 {
     color: white;
-    font-size: var(--text-base);
+    font-size: 1rem;
     font-weight: 600;
-    margin-bottom: 2px;
+    margin-bottom: 0.25rem;
+    transition: color 0.3s ease;
+  }
+
+  .brand-feature:hover .feature-text h4 {
+    color: #fbbf24;
   }
 
   .feature-text p {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: var(--text-sm);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.875rem;
     margin: 0;
   }
 
-  @media (max-width: 968px) {
-    .auth-brand {
-      display: none;
-    }
-  }
-
   /* -------------------------------------
-     RIGHT SIDE: FORM AREA
+     RIGHT SIDE: FORM AREA WITH ANIMATIONS
      ------------------------------------- */
   .auth-form-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: var(--space-8);
-    background: var(--neutral-50);
+    padding: 2rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 0.8s ease-out 0.5s both;
+  }
+
+  .auth-form-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(13, 52, 113, 0.03) 50%, transparent 70%);
+    animation: shimmer 8s infinite linear;
+    z-index: 0;
   }
 
   .auth-form-card {
     width: 100%;
-    max-width: 420px;
-    padding: var(--space-8);
+    max-width: 440px;
+    padding: 2.5rem;
     background: white;
-    border-radius: var(--radius-2xl);
-    box-shadow: var(--shadow-xl);
-    border: 1px solid var(--neutral-200);
+    border-radius: 24px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.12);
+    border: 1px solid #e2e8f0;
+    position: relative;
+    z-index: 1;
+    animation: slideInFromRight 0.8s ease-out 0.7s both, scaleIn 0.6s ease-out 0.7s both;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .auth-form-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #0D3471, #fbbf24, #0D3471);
+    background-size: 200% 100%;
+    animation: gradientMove 4s ease-in-out infinite;
+    z-index: 2;
+  }
+
+  .auth-form-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 35px 70px rgba(13, 52, 113, 0.15);
+    border-color: #fbbf24;
   }
 
   .form-header {
     text-align: center;
-    margin-bottom: var(--space-8);
+    margin-bottom: 2rem;
+    animation: fadeIn 0.8s ease-out 0.9s both;
   }
 
   .mobile-logo {
     display: none;
-    width: 64px;
-    height: 64px;
-    margin: 0 auto var(--space-4);
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1rem;
+    animation: float 4s ease-in-out infinite;
   }
 
   @media (max-width: 968px) {
@@ -217,26 +485,50 @@ Knights of Columbus - Sign In
   }
 
   .form-header h1 {
-    font-size: var(--text-2xl);
-    color: var(--primary-900);
-    margin-bottom: var(--space-2);
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0D3471;
+    margin-bottom: 0.5rem;
+    position: relative;
+    display: inline-block;
   }
+
+  /* .form-header h1::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #0D3471, #fbbf24);
+    border-radius: 2px;
+    animation: slideInFromBottom 0.8s ease-out 1.1s both;
+  } */
 
   .form-header p {
-    color: var(--neutral-500);
+    color: #64748b;
+    font-size: 1rem;
+    margin-top: 0.5rem;
   }
 
-  /* Form Elements */
+  /* Form Elements with Enhanced Animations */
   .form-group {
-    margin-bottom: var(--space-5);
+    margin-bottom: 1.5rem;
+    animation: fadeIn 0.8s ease-out forwards;
+    opacity: 0;
   }
+
+  .form-group:nth-child(1) { animation-delay: 1.1s; }
+  .form-group:nth-child(2) { animation-delay: 1.3s; }
 
   .form-label {
     display: block;
-    margin-bottom: var(--space-2);
+    margin-bottom: 0.5rem;
     font-weight: 500;
-    color: var(--neutral-700);
-    font-size: var(--text-sm);
+    color: #374151;
+    font-size: 0.875rem;
+    transition: color 0.3s ease;
   }
 
   .input-with-icon {
@@ -245,78 +537,179 @@ Knights of Columbus - Sign In
 
   .input-with-icon i {
     position: absolute;
-    left: var(--space-4);
+    left: 1rem;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--neutral-400);
+    color: #9ca3af;
     pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 1;
   }
 
   .input-field {
     width: 100%;
-    padding: 12px 16px 12px 42px;
-    border: 1px solid var(--neutral-300);
-    border-radius: var(--radius-lg);
-    font-size: var(--text-base);
-    transition: all 0.2s;
+    padding: 0.875rem 1rem 0.875rem 3rem;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    background: white;
+    position: relative;
+    z-index: 0;
+  }
+
+  .input-field::placeholder {
+    color: #9ca3af;
+    transition: color 0.3s ease;
   }
 
   .input-field:focus {
     outline: none;
-    border-color: var(--primary-500);
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    border-color: #0D3471;
+    box-shadow: 0 0 0 4px rgba(13, 52, 113, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .input-field:focus + i {
+    color: #0D3471;
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .input-field:focus::placeholder {
+    color: #cbd5e1;
+  }
+
+  /* Password visibility toggle (optional enhancement) */
+  .password-toggle {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    z-index: 1;
+    transition: color 0.3s ease;
+  }
+
+  .password-toggle:hover {
+    color: #0D3471;
   }
 
   .form-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--space-6);
-    font-size: var(--text-sm);
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+    animation: fadeIn 0.8s ease-out 1.5s both;
   }
 
   .checkbox-label {
     display: flex;
     align-items: center;
-    gap: var(--space-2);
+    gap: 0.5rem;
     cursor: pointer;
-    color: var(--neutral-600);
+    color: #4b5563;
+    transition: color 0.3s ease;
+  }
+
+  .checkbox-label:hover {
+    color: #0D3471;
   }
 
   .forgot-link {
-    color: var(--primary-600);
+    color: #0D3471;
     font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+    padding: 0.25rem 0;
+  }
+
+  .forgot-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #fbbf24;
+    transition: width 0.3s ease;
+  }
+
+  .forgot-link:hover {
+    color: #ca8a04;
+  }
+
+  .forgot-link:hover::after {
+    width: 100%;
   }
 
   .submit-btn {
     width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, var(--primary-700), var(--primary-800));
+    padding: 1rem;
+    background: linear-gradient(135deg, #0D3471 0%, #1e40af 100%);
     color: white;
     border: none;
-    border-radius: var(--radius-lg);
+    border-radius: 12px;
     font-weight: 600;
-    font-size: var(--text-base);
+    font-size: 1rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: var(--space-2);
-    transition: all 0.2s;
-    box-shadow: var(--shadow-primary);
+    gap: 0.5rem;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 0.8s ease-out 1.7s both;
+    box-shadow: 0 10px 25px rgba(13, 52, 113, 0.3);
+  }
+
+  .submit-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: 0.5s;
   }
 
   .submit-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(13, 52, 113, 0.3);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(13, 52, 113, 0.4);
+    background: linear-gradient(135deg, #1e40af 0%, #0D3471 100%);
   }
 
+  .submit-btn:hover::before {
+    left: 100%;
+  }
+
+  .submit-btn:active {
+    transform: translateY(-2px);
+  }
+
+  .submit-btn i {
+    transition: transform 0.3s ease;
+  }
+
+  .submit-btn:hover i {
+    transform: translateX(5px);
+  }
+
+  /* Divider with animation */
   .divider {
     display: flex;
     align-items: center;
-    margin: var(--space-6) 0;
-    color: var(--neutral-400);
-    font-size: var(--text-sm);
+    margin: 2rem 0;
+    color: #9ca3af;
+    font-size: 0.875rem;
+    animation: fadeIn 0.8s ease-out 1.9s both;
+    position: relative;
   }
 
   .divider::before,
@@ -324,22 +717,178 @@ Knights of Columbus - Sign In
     content: '';
     flex: 1;
     height: 1px;
-    background: var(--neutral-200);
+    background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
   }
 
   .divider span {
-    padding: 0 var(--space-4);
+    padding: 0 1rem;
+    background: white;
+    position: relative;
+    z-index: 1;
   }
 
   .switch-auth {
     text-align: center;
-    font-size: var(--text-sm);
-    color: var(--neutral-600);
+    font-size: 0.875rem;
+    color: #4b5563;
+    animation: fadeIn 0.8s ease-out 2.1s both;
   }
 
   .switch-auth a {
-    color: var(--primary-600);
+    color: #0D3471;
     font-weight: 600;
+    text-decoration: none;
+    position: relative;
+    padding: 0.25rem 0;
+    transition: color 0.3s ease;
+  }
+
+  .switch-auth a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #fbbf24;
+    transition: width 0.3s ease;
+  }
+
+  .switch-auth a:hover {
+    color: #ca8a04;
+  }
+
+  .switch-auth a:hover::after {
+    width: 100%;
+  }
+
+  /* Error/Success Messages with Animations */
+  .message-container {
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    color: #dc2626;
+    padding: 1rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 0.875rem;
+    border: 1px solid #fca5a5;
+    animation: slideInFromBottom 0.6s ease-out, pulse 2s ease-in-out infinite;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .message-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #dc2626, #ef4444, #dc2626);
+    animation: gradientMove 3s ease-in-out infinite;
+  }
+
+  .message-container i {
+    margin-right: 0.5rem;
+    animation: bounce 1s ease-in-out infinite;
+  }
+
+  /* ============================================
+    RESPONSIVE DESIGN WITH ANIMATIONS
+    ============================================ */
+  @media (max-width: 1024px) {
+    .auth-container {
+      grid-template-columns: 320px 1fr;
+    }
+
+    .auth-brand {
+      padding: 2rem;
+    }
+
+    .brand-logo {
+      width: 120px;
+      height: 120px;
+    }
+
+    .brand-title {
+      font-size: 2rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .auth-container {
+      grid-template-columns: 1fr;
+      height: auto;
+      min-height: 100vh;
+    }
+
+    .auth-form-card {
+      padding: 2rem;
+      margin: 1rem;
+    }
+
+    .form-header h1 {
+      font-size: 1.5rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .auth-form-wrapper {
+      padding: 1rem;
+    }
+
+    .auth-form-card {
+      padding: 1.5rem;
+    }
+
+    .brand-feature {
+      padding: 1rem;
+    }
+
+    .feature-icon {
+      width: 40px;
+      height: 40px;
+      font-size: 1rem;
+    }
+  }
+
+  /* ============================================
+    LOADING ANIMATION FOR FORM SUBMISSION
+    ============================================ */
+  .form-loading {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: inherit;
+    z-index: 10;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    backdrop-filter: blur(5px);
+  }
+
+  .form-loading.visible {
+    display: flex;
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid #e2e8f0;
+    border-top-color: #0D3471;
+    border-radius: 50%;
+    animation: rotateSlow 1s linear infinite;
+    margin-bottom: 1rem;
+  }
+
+  .loading-text {
+    color: #64748b;
+    font-weight: 500;
   }
 </style>
 
@@ -383,6 +932,12 @@ Knights of Columbus - Sign In
   <div class="auth-form-wrapper">
     <div class="auth-form-card">
 
+      <!-- Loading Overlay -->
+      <div class="form-loading" id="formLoading">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Signing you in...</p>
+      </div>
+
       <div class="form-header">
         <img src="{% static 'images/kofc-logo.png' %}" alt="Logo" class="mobile-logo">
         <h1>Welcome Back</h1>
@@ -391,14 +946,13 @@ Knights of Columbus - Sign In
 
       {% if messages %}
       {% for message in messages %}
-      <div
-        style="background: var(--error-50); color: var(--error-600); padding: 12px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-size: 0.9rem;">
+      <div class="message-container">
         <i class="fas fa-exclamation-circle"></i> {{ message }}
       </div>
       {% endfor %}
       {% endif %}
 
-      <form method="post">
+      <form method="post" id="loginForm">
         {% csrf_token %}
 
         <div class="form-group">
@@ -406,7 +960,7 @@ Knights of Columbus - Sign In
           <div class="input-with-icon">
             <i class="fas fa-user"></i>
             <input type="text" id="username" name="username" class="input-field" placeholder="Enter your username"
-              required>
+              required autocomplete="username">
           </div>
         </div>
 
@@ -415,13 +969,17 @@ Knights of Columbus - Sign In
           <div class="input-with-icon">
             <i class="fas fa-lock"></i>
             <input type="password" id="password" name="password" class="input-field" placeholder="Enter your password"
-              required>
+              required autocomplete="current-password">
+            <button type="button" class="password-toggle" id="passwordToggle">
+              <!-- <i class="fas fa-eye"></i> -->
+            </button>
           </div>
         </div>
 
         <div class="form-actions">
           <label class="checkbox-label">
-            <input type="checkbox" name="remember"> Remember me
+            <input type="checkbox" name="remember" id="remember">
+            Remember me
           </label>
           <a href="#" class="forgot-link">Forgot password?</a>
         </div>
@@ -440,4 +998,162 @@ Knights of Columbus - Sign In
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Create floating particles for left side
+    const authBrand = document.querySelector('.auth-brand');
+    if (authBrand) {
+      for (let i = 0; i < 20; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'auth-particle';
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100}%`;
+        particle.style.width = `${Math.random() * 4 + 2}px`;
+        particle.style.height = particle.style.width;
+        particle.style.animationDelay = `${Math.random() * 5}s`;
+        particle.style.opacity = Math.random() * 0.6 + 0.2;
+        authBrand.appendChild(particle);
+      }
+    }
+
+    // Password visibility toggle
+    const passwordToggle = document.getElementById('passwordToggle');
+    const passwordField = document.getElementById('password');
+
+    if (passwordToggle && passwordField) {
+      passwordToggle.addEventListener('click', function() {
+        const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordField.setAttribute('type', type);
+        this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+      });
+    }
+
+    // Form submission animation
+    const loginForm = document.getElementById('loginForm');
+    const formLoading = document.getElementById('formLoading');
+
+    if (loginForm && formLoading) {
+      loginForm.addEventListener('submit', function(e) {
+        // Show loading animation
+        formLoading.classList.add('visible');
+
+        // Add ripple effect to submit button
+        const submitBtn = this.querySelector('.submit-btn');
+        if (submitBtn) {
+          const ripple = document.createElement('span');
+          const rect = submitBtn.getBoundingClientRect();
+          const size = Math.max(rect.width, rect.height);
+
+          ripple.style.cssText = `
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(251, 191, 36, 0.6);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            width: ${size}px;
+            height: ${size}px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            pointer-events: none;
+            z-index: 1;
+          `;
+
+          submitBtn.appendChild(ripple);
+
+          setTimeout(() => {
+            ripple.remove();
+          }, 600);
+        }
+      });
+    }
+
+    // Input field focus effects
+    const inputFields = document.querySelectorAll('.input-field');
+    inputFields.forEach(input => {
+      input.addEventListener('focus', function() {
+        this.parentElement.parentElement.classList.add('focused');
+      });
+
+      input.addEventListener('blur', function() {
+        this.parentElement.parentElement.classList.remove('focused');
+      });
+    });
+
+    // Brand feature hover enhancements
+    const brandFeatures = document.querySelectorAll('.brand-feature');
+    brandFeatures.forEach(feature => {
+      feature.addEventListener('mouseenter', function() {
+        this.style.zIndex = '10';
+      });
+
+      feature.addEventListener('mouseleave', function() {
+        this.style.zIndex = '2';
+      });
+    });
+
+    // Form card hover effect
+    const formCard = document.querySelector('.auth-form-card');
+    if (formCard) {
+      formCard.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-5px)';
+      });
+
+      formCard.addEventListener('mouseleave', function() {
+        if (!this.classList.contains('submitting')) {
+          this.style.transform = 'translateY(0)';
+        }
+      });
+    }
+
+    // Remember me checkbox animation
+    const rememberCheckbox = document.getElementById('remember');
+    if (rememberCheckbox) {
+      rememberCheckbox.addEventListener('change', function() {
+        const label = this.closest('.checkbox-label');
+        if (this.checked) {
+          label.style.color = '#0D3471';
+          label.style.fontWeight = '600';
+        } else {
+          label.style.color = '#4b5563';
+          label.style.fontWeight = '400';
+        }
+      });
+    }
+
+    // Auto-focus username field with animation
+    setTimeout(() => {
+      const usernameField = document.getElementById('username');
+      if (usernameField) {
+        usernameField.focus();
+
+        // Add focus animation
+        usernameField.style.animation = 'pulse 1s ease-in-out';
+        setTimeout(() => {
+          usernameField.style.animation = '';
+        }, 1000);
+      }
+    }, 1000);
+
+    // Add scroll animation for mobile logo
+    const mobileLogo = document.querySelector('.mobile-logo');
+    if (mobileLogo) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.animationPlayState = 'running';
+          }
+        });
+      }, { threshold: 0.5 });
+
+      observer.observe(mobileLogo);
+    }
+
+    // Prevent form resubmission on page refresh
+    if (window.history.replaceState) {
+      window.history.replaceState(null, null, window.location.href);
+    }
+  });
+</script>
 {% endblock %}

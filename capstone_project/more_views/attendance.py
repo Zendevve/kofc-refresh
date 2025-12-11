@@ -338,13 +338,13 @@ def scan_qr(request):
 
             if not created:
                 if attendance.is_present:
-                    return JsonResponse({'status': 'success', 'message': f'{member.get_full_name()} was already marked present'})
+                    return JsonResponse({'status': 'success', 'message': f'{member.get_full_name()} was already marked present', 'member_name': member.get_full_name()})
                 else:
                     attendance.is_present = True
                     attendance.recorded_by = request.user
                     attendance.save()
 
-            return JsonResponse({'status': 'success', 'message': f'Attendance recorded for {member.get_full_name()}'})
+            return JsonResponse({'status': 'success', 'message': f'Attendance recorded for {member.get_full_name()}', 'member_name': member.get_full_name()})
 
         except json.JSONDecodeError:
             return JsonResponse({'status': 'error', 'message': 'Invalid JSON'}, status=400)

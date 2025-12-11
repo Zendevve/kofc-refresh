@@ -8,30 +8,195 @@ Knights of Columbus - Donations
 {% block content %}
 <style>
   /* ============================================
-   SHARED DESIGN SYSTEM
-   ============================================ */
+    ANIMATION KEYFRAMES
+    ============================================ */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideInFromBottom {
+    from {
+      transform: translateY(50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideInFromLeft {
+    from {
+      transform: translateX(-50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideInFromRight {
+    from {
+      transform: translateX(50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes scaleIn {
+    from {
+      transform: scale(0.9);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+  
+  @keyframes glow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 30px rgba(251, 191, 36, 0.6);
+    }
+  }
+  
+  /* SLOWER SHIMMER EFFECT */
+  @keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+  }
+  
+  @keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  @keyframes rotateSlow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+  
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    25% { transform: scale(1.1); }
+    50% { transform: scale(1); }
+    75% { transform: scale(1.05); }
+  }
+  
+  @keyframes coinSpin {
+    from { transform: rotateY(0); }
+    to { transform: rotateY(360deg); }
+  }
+  
+  @keyframes ripple {
+    0% {
+      transform: scale(0);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+  
+  @keyframes progressPulse {
+    0%, 100% { 
+      transform: scaleX(1);
+      opacity: 1;
+    }
+    50% { 
+      transform: scaleX(1.05);
+      opacity: 0.8;
+    }
+  }
+
+  /* ============================================
+    ANIMATION UTILITY CLASSES
+    ============================================ */
+  .animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  
+  .animate-on-scroll.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .animate-delay-100 { transition-delay: 0.1s; animation-delay: 0.1s; }
+  .animate-delay-200 { transition-delay: 0.2s; animation-delay: 0.2s; }
+  .animate-delay-300 { transition-delay: 0.3s; animation-delay: 0.3s; }
+  .animate-delay-400 { transition-delay: 0.4s; animation-delay: 0.4s; }
+  .animate-delay-500 { transition-delay: 0.5s; animation-delay: 0.5s; }
+
+  /* ============================================
+    LAYOUT RESET
+    ============================================ */
   * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
   }
 
-  .donations-page {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: #0f172a;
-    color: #1a1a2e;
-    height: 100vh;
-    /* Force full height */
-    position: relative;
-    overflow: hidden;
-    /* Prevent scrolling if it fits */
-    display: flex;
-    align-items: center;
-    /* Center vertical */
-    justify-content: center;
+  body,
+  html {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden;
   }
 
-  /* Background with Detailed Overlay */
+  main {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+  }
+
+  /* ============================================
+    DONATIONS PAGE WITH ANIMATED BACKGROUND
+    ============================================ */
+  .donations-page {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: white;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+    animation: fadeIn 1s ease-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+  }
+
+  /* Animated Background with Particles */
   .donations-bg {
     position: absolute;
     top: 0;
@@ -40,6 +205,24 @@ Knights of Columbus - Donations
     bottom: 0;
     background: url('{% static "images/donation-bg.jpg" %}') no-repeat center/cover;
     z-index: 0;
+    animation: scaleIn 2s ease-out;
+  }
+
+  .particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .particle {
+    position: absolute;
+    background: rgba(251, 191, 36, 0.3);
+    border-radius: 50%;
+    animation: float 20s infinite linear;
   }
 
   .donations-overlay {
@@ -48,143 +231,347 @@ Knights of Columbus - Donations
     left: 0;
     right: 0;
     bottom: 0;
-    /* Darker gradient to separate from Navbar */
-    background: linear-gradient(180deg, rgba(2, 6, 23, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
-    z-index: 1;
+    background: linear-gradient(135deg, 
+      rgba(13, 52, 113, 0.95) 0%, 
+      rgba(15, 23, 42, 0.98) 50%,
+      rgba(13, 52, 113, 0.95) 100%);
+    z-index: 2;
+    animation: gradientMove 10s ease infinite;
+    background-size: 200% 200%;
   }
 
-  /* Main Content Container */
+  /* ============================================
+    MAIN CONTENT CONTAINER WITH ANIMATIONS
+    ============================================ */
   .donations-container {
     position: relative;
-    z-index: 2;
+    z-index: 3;
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 24px;
     display: grid;
     grid-template-columns: 1fr 480px;
-    /* Fixed width for form */
-    gap: 64px;
+    gap: 80px;
     align-items: center;
-    height: 100%;
+    animation: slideInFromBottom 1s ease-out 0.5s both;
   }
 
-  @media (max-width: 1024px) {
-    .donations-page {
-      height: auto;
-      min-height: 100vh;
-      overflow-y: auto;
-      padding: 100px 0;
-    }
-
-    .donations-container {
-      grid-template-columns: 1fr;
-      height: auto;
-    }
-  }
-
-  /* Left Column: Impact & Trust */
+  /* ============================================
+    LEFT: IMPACT CONTENT WITH ENHANCED ANIMATIONS
+    ============================================ */
   .impact-content {
     color: #fff;
+    opacity: 0;
+    transform: translateX(-30px);
+    animation: slideInFromLeft 1s ease-out 0.8s forwards;
   }
 
   .hero-badge {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 6px 14px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 8px 20px;
+    background: linear-gradient(45deg, rgba(251, 191, 36, 0.2), rgba(251, 191, 36, 0.3));
+    border: 1px solid rgba(251, 191, 36, 0.3);
     border-radius: 99px;
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 0.75rem;
+    font-weight: 700;
     color: #fbbf24;
     margin-bottom: 24px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    animation: slideInFromLeft 0.8s ease-out 1s both, 
+               float 3s ease-in-out infinite 2s;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-badge i {
+    animation: heartbeat 1.5s ease-in-out infinite;
+  }
+
+  .hero-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: 0.5s;
+  }
+
+  .hero-badge:hover::before {
+    left: 100%;
   }
 
   .impact-content h1 {
-    font-size: clamp(32px, 4vw, 56px);
-    font-weight: 700;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 800;
     line-height: 1.1;
     margin-bottom: 20px;
     letter-spacing: -0.02em;
+    background: linear-gradient(45deg, #fff, #fbbf24, #fff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-size: 200% auto;
+    animation: gradientMove 3s ease-in-out infinite;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    animation-delay: 1.2s;
   }
 
   .impact-content p {
-    font-size: 16px;
+    font-size: 1.125rem;
     line-height: 1.6;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.9);
     margin-bottom: 32px;
     max-width: 500px;
+    opacity: 0;
+    animation: slideInFromLeft 0.8s ease-out 1.5s both;
+    backdrop-filter: blur(5px);
+    padding: 20px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
   }
 
+  .impact-content p::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #0D3471, #fbbf24, #0D3471);
+    border-radius: 14px;
+    z-index: -1;
+    opacity: 0.2;
+    animation: glow 2s ease-in-out infinite;
+  }
+
+  /* Trust Features with Animated Icons */
   .trust-features {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
+    margin-top: 32px;
   }
 
   .feature-item {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity: 0;
+    transform: translateX(-20px);
+    animation: slideInFromLeft 0.6s ease-out forwards;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-item:nth-child(1) { animation-delay: 1.8s; }
+  .feature-item:nth-child(2) { animation-delay: 2s; }
+  .feature-item:nth-child(3) { animation-delay: 2.2s; }
+
+  .feature-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(10px) scale(1.02);
+    border-color: rgba(251, 191, 36, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+
+  /* SLOWER SHIMMER EFFECT ON FEATURE ITEMS */
+  .feature-item::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      45deg, 
+      transparent 30%, 
+      rgba(255, 255, 255, 0.1) 50%, 
+      transparent 70%
+    );
+    animation: shimmer 8s infinite linear; /* SLOWER: 8s instead of 4s */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .feature-item:hover::before {
+    opacity: 1;
   }
 
   .feature-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.1);
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(13, 52, 113, 0.3));
     display: flex;
     align-items: center;
     justify-content: center;
     color: #fbbf24;
-    font-size: 16px;
+    font-size: 20px;
+    transition: all 0.4s ease;
+    position: relative;
+    z-index: 1;
+  }
+
+  .feature-item:hover .feature-icon {
+    transform: scale(1.1) rotate(10deg);
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.3), rgba(13, 52, 113, 0.4));
+    box-shadow: 0 8px 25px rgba(251, 191, 36, 0.3);
   }
 
   .feature-text {
-    font-weight: 500;
+    font-weight: 600;
     color: #fff;
-    font-size: 15px;
+    font-size: 1rem;
+    flex: 1;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
   }
 
-  /* Right Column: Donation Form */
+  .feature-item:hover .feature-text {
+    color: #fbbf24;
+    transform: translateX(5px);
+  }
+
+  /* ============================================
+    RIGHT: DONATION FORM WITH FIXED LABELS
+    ============================================ */
   .form-card {
-    background: #fff;
-    border-radius: 16px;
-    padding: 32px;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
-    max-height: 85vh;
-    overflow-y: auto;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateX(30px);
+    animation: slideInFromRight 1s ease-out 0.8s forwards;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .form-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #0D3471, #fbbf24, #0D3471);
+    background-size: 200% 100%;
+    animation: gradientMove 3s ease-in-out infinite;
+  }
+
+  .form-card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent 30%, rgba(13, 52, 113, 0.05) 50%, transparent 70%);
+    animation: shimmer 4s infinite linear;
+    z-index: 0;
   }
 
   .form-header {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 32px;
+    position: relative;
+    z-index: 1;
   }
 
   .form-header h2 {
-    font-size: 22px;
+    font-size: 2rem;
     color: #0f172a;
-    font-weight: 700;
-    margin-bottom: 4px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    background: linear-gradient(45deg, #0D3471, #1e40af);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientMove 3s ease-in-out infinite;
   }
 
   .form-header p {
     color: #64748b;
-    font-size: 13px;
+    font-size: 0.95rem;
+    font-weight: 500;
   }
 
-  /* Compact Form Styles */
+  .form-icon {
+    font-size: 3rem;
+    color: #fbbf24;
+    margin-bottom: 16px;
+    animation: coinSpin 4s linear infinite, float 3s ease-in-out infinite;
+  }
+
+  /* Form Groups with FIXED LABELS (not floating) */
   .form-group {
-    margin-bottom: 14px;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+  }
+
+  .form-group:hover {
+    transform: translateY(-2px);
+  }
+
+  /* FIXED LABELS - Always visible above inputs */
+  .form-group label {
+    display: block;
+    font-size: 0.9rem; /* Larger font size */
+    font-weight: 700;
+    color: #475569;
+    margin-bottom: 8px; /* More spacing */
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.3s ease;
+    position: static; /* Changed from absolute */
+    top: auto;
+    left: auto;
+    transform: none;
+    background: none;
+    padding: 0;
+  }
+
+  /* Special styling for Amount PHP label */
+  .form-group label[for="id_amount"] {
+    font-size: 1rem; /* Even larger for Amount */
+    color: #0D3471;
+    font-weight: 800;
+  }
+
+  .form-group:hover label {
+    color: #0D3471;
+  }
+
+  /* Hide placeholder text since we have labels */
+  .form-group input::placeholder {
+    color: transparent;
+  }
+
+  .form-group input:focus::placeholder {
+    color: #cbd5e1;
   }
 
   .form-row {
     display: flex;
-    gap: 12px;
+    gap: 16px;
   }
 
   .col-half {
@@ -195,185 +582,336 @@ Knights of Columbus - Donations
     width: 80px;
   }
 
-  .form-group label {
-    display: block;
-    font-size: 12px;
-    font-weight: 600;
-    color: #475569;
-    margin-bottom: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-  }
-
   .form-group input,
   .form-group select {
     width: 100%;
-    padding: 10px 12px;
-    font-size: 14px;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    transition: all 0.2s;
+    padding: 14px 16px;
+    font-size: 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     font-family: inherit;
     background: #f8fafc;
+    color: #1e293b;
+    position: relative;
+    z-index: 1;
   }
 
-  .form-group input:focus {
+  .form-group input:focus,
+  .form-group select:focus {
     border-color: #0D3471;
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(13, 52, 113, 0.1);
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(13, 52, 113, 0.1);
     outline: none;
+    transform: translateY(-2px);
   }
 
+  .form-group input:valid {
+    border-color: #10b981;
+  }
+
+  .form-group input:invalid:not(:placeholder-shown) {
+    border-color: #ef4444;
+  }
+
+  /* Warning Messages with Animation */
   .warning {
     color: #ef4444;
-    font-size: 11px;
-    margin-top: 4px;
+    font-size: 0.75rem;
+    margin-top: 6px;
     display: block;
+    opacity: 0;
+    transform: translateY(-5px);
+    transition: all 0.3s ease;
+    font-weight: 500;
   }
 
+  .warning.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Success Messages */
+  .success {
+    color: #10b981;
+    font-size: 0.75rem;
+    margin-top: 6px;
+    display: block;
+    opacity: 0;
+    transform: translateY(-5px);
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+
+  .success.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Buttons with Enhanced Animations */
   .btn {
     width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 15px;
+    padding: 16px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     border: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: 0.5s;
+  }
+
+  .btn:hover::before {
+    left: 100%;
   }
 
   .btn-primary {
-    background: #0D3471;
+    background: linear-gradient(135deg, #0D3471 0%, #1e40af 100%);
     color: #fff;
     margin-top: 8px;
+    box-shadow: 0 8px 30px rgba(13, 52, 113, 0.3);
   }
 
   .btn-primary:hover {
-    background: #0a2a5e;
-    transform: translateY(-1px);
+    background: linear-gradient(135deg, #0a2a5e 0%, #1e3a8a 100%);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 15px 40px rgba(13, 52, 113, 0.4);
+  }
+
+  .btn-primary:active {
+    transform: translateY(-1px) scale(0.98);
   }
 
   .btn-secondary {
     background: transparent;
     color: #64748b;
-    margin-top: 12px;
-    border: 1px dashed #cbd5e1;
-    padding: 10px;
-    font-size: 13px;
+    margin-top: 16px;
+    border: 2px dashed #cbd5e1;
+    padding: 14px;
+    font-size: 0.9rem;
   }
 
   .btn-secondary:hover {
-    background: #f8fafc;
-    border-color: #475569;
+    background: rgba(13, 52, 113, 0.05);
+    border-color: #0D3471;
     color: #0f172a;
+    transform: translateY(-2px);
   }
 
+  /* Manual Actions */
   .manual-actions {
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px solid #e2e8f0;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 2px solid #e2e8f0;
     text-align: center;
-    font-size: 12px;
+    font-size: 0.85rem;
+    position: relative;
+    z-index: 1;
   }
 
-  /* Scrollbar for form if screen is too short */
-  .form-card::-webkit-scrollbar {
-    width: 6px;
+  .manual-actions a {
+    color: #64748b;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    padding: 4px 8px;
+    border-radius: 6px;
   }
 
-  .form-card::-webkit-scrollbar-track {
-    background: transparent;
+  .manual-actions a:hover {
+    color: #0D3471;
+    background: rgba(13, 52, 113, 0.1);
   }
 
-  .form-card::-webkit-scrollbar-thumb {
+  /* ============================================
+    PROGRESS BAR ANIMATION
+    ============================================ */
+  .progress-bar {
+    height: 4px;
     background: #e2e8f0;
-    border-radius: 4px;
+    border-radius: 2px;
+    margin: 32px 0;
+    overflow: hidden;
+    position: relative;
   }
 
-  /* Modal Styles */
-  .modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
-    z-index: 9999;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #0D3471, #fbbf24);
+    width: 0%;
+    border-radius: 2px;
+    transition: width 0.5s ease;
+    position: relative;
+    overflow: hidden;
   }
-  .modal-backdrop.active {
-    display: flex;
-  }
-  .modal {
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    max-width: 500px;
+
+  .progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
     width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-    animation: modalSlideIn 0.3s ease-out;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: shimmer 2s infinite linear;
   }
-  @keyframes modalSlideIn {
-    from { opacity: 0; transform: scale(0.95) translateY(20px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
+
+  /* ============================================
+    RESPONSIVE DESIGN WITH ANIMATIONS
+    ============================================ */
+  @media (max-width: 1024px) {
+    .donations-page {
+      height: auto;
+      min-height: 100vh;
+      padding: 60px 0;
+    }
+
+    .donations-container {
+      grid-template-columns: 1fr;
+      gap: 60px;
+      height: auto;
+    }
+    
+    .impact-content {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    
+    .impact-content p {
+      max-width: 100%;
+      margin: 0 auto 32px;
+    }
+    
+    .trust-features {
+      max-width: 500px;
+      margin: 32px auto 0;
+    }
+    
+    .form-card {
+      max-width: 500px;
+      margin: 0 auto;
+    }
   }
-  .modal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
+
+  @media (max-width: 768px) {
+    .donations-container {
+      padding: 0 16px;
+      gap: 40px;
+    }
+    
+    .form-card {
+      padding: 32px 24px;
+    }
+    
+    .form-row {
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .col-third {
+      width: 100%;
+    }
+    
+    .impact-content h1 {
+      font-size: 2.5rem;
+    }
+    
+    .impact-content p {
+      font-size: 1rem;
+      padding: 16px;
+    }
+    
+    .feature-item {
+      padding: 14px 16px;
+    }
+    
+    .feature-icon {
+      width: 40px;
+      height: 40px;
+      font-size: 18px;
+    }
+    
+    /* Make labels even more visible on mobile */
+    .form-group label {
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+    }
+    
+    .form-group label[for="id_amount"] {
+      font-size: 1.1rem;
+    }
   }
-  .modal-header h2 {
-    font-size: 1.25rem;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: #111827;
+
+  @media (max-width: 480px) {
+    .donations-page {
+      padding: 40px 0;
+    }
+    
+    .form-card {
+      padding: 24px 20px;
+    }
+    
+    .impact-content h1 {
+      font-size: 2rem;
+    }
+    
+    .hero-badge {
+      font-size: 0.7rem;
+      padding: 6px 16px;
+    }
+    
+    .form-header h2 {
+      font-size: 1.75rem;
+    }
+    
+    .btn {
+      padding: 14px;
+    }
+    
+    /* Ensure labels are very visible on small screens */
+    .form-group label {
+      font-size: 1rem;
+      margin-bottom: 12px;
+    }
+    
+    .form-group label[for="id_amount"] {
+      font-size: 1.2rem;
+      color: #0D3471;
+    }
   }
-  .modal-close {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: #9ca3af;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 8px;
-    line-height: 1;
+
+  /* ============================================
+    SCROLL ANIMATIONS
+    ============================================ */
+  @media (prefers-reduced-motion: no-preference) {
+    .feature-item,
+    .form-card,
+    .impact-content {
+      scroll-behavior: smooth;
+    }
   }
-  .modal-close:hover {
-    background: #f3f4f6;
-    color: #374151;
-  }
-  .modal-body {
-    padding: 1.5rem;
-  }
-  .modal-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.75rem;
-    padding: 1rem 1.5rem;
-    border-top: 1px solid #e5e7eb;
-    background: #f9fafb;
-    border-radius: 0 0 16px 16px;
-  }
-  .input-group { margin-bottom: 1rem; }
-  .input-label { display: block; font-size: 0.75rem; font-weight: 600; color: #374151; margin-bottom: 0.25rem; text-transform: uppercase; }
-  .input { width: 100%; padding: 0.75rem 1rem; font-size: 0.875rem; border: 1px solid #e5e7eb; border-radius: 8px; background: #f9fafb; }
-  .input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); background: white; }
-  .btn-modal-primary { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; }
-  .btn-modal-ghost { background: transparent; color: #6b7280; border: none; padding: 0.75rem 1rem; cursor: pointer; font-weight: 500; }
 </style>
 
 <div class="donations-page">
   <div class="donations-bg"></div>
+  <div class="particles" id="particles"></div>
   <div class="donations-overlay"></div>
 
   <div class="donations-container">
@@ -384,6 +922,11 @@ Knights of Columbus - Donations
       <p>Your generosity supports our charitable initiatives, from disaster relief to pro-life programs. Tracked by
         blockchain technology for complete transparency.</p>
 
+      <!-- Progress Bar -->
+      <div class="progress-bar">
+        <div class="progress-fill" id="donationProgress" data-percent="75"></div>
+      </div>
+
       <div class="trust-features">
         <div class="feature-item">
           <div class="feature-icon"><i class="fas fa-link"></i></div>
@@ -393,12 +936,17 @@ Knights of Columbus - Donations
           <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
           <div class="feature-text">Secure GCash Transactions</div>
         </div>
+        <div class="feature-item">
+          <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+          <div class="feature-text">Real-time Impact Analytics</div>
+        </div>
       </div>
     </div>
 
     <!-- RIGHT: Form -->
     <div class="form-card">
       <div class="form-header">
+        <i class="fas fa-hand-holding-usd form-icon"></i>
         <h2>Secure Donation</h2>
         <p>Enter details for GCash securely.</p>
       </div>
@@ -437,10 +985,11 @@ Knights of Columbus - Donations
             <span class="warning" id="email_warning"></span>
           </div>
           <div class="form-group col-third">
-            <label for="id_middle_initial">M.I.</label>
+            <label for="id_middle_initial">Middle Initial</label>
             <input type="text" id="id_middle_initial" name="middle_initial"
               value="{{ form.middle_initial.value|default:'' }}" pattern="[A-Z]" oninput="validateMiddleInitial(this)"
               maxlength="1" placeholder="A">
+            <span class="warning" id="middle_initial_warning"></span>
           </div>
         </div>
 
@@ -453,184 +1002,324 @@ Knights of Columbus - Donations
             <span class="warning" id="amount_warning"></span>
           </div>
           <div class="form-group col-half">
-            <label for="id_donation_date">Date</label>
+            <label for="id_donation_date">Donation Date</label>
             <input type="date" id="id_donation_date" name="donation_date"
               value="{{ form.donation_date.value|default:'' }}" required oninput="validateDate(this)">
             <span class="warning" id="donation_date_warning"></span>
           </div>
         </div>
 
-        <!-- Payment Method -->
-        <div class="form-row">
-          <div class="form-group col-half">
-            <label for="payment_method">Payment Method</label>
-            <select name="payment_method" id="payment_method" required onchange="updatePaymentMethod()" style="padding: 12px 16px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; width: 100%;">
-              <option value="gcash">GCash (Online Payment)</option>
-              {% if user.is_authenticated %}
-              <option value="manual">Manual Entry (Cash/Offline)</option>
-              {% endif %}
-            </select>
-          </div>
-        </div>
+        <!-- Success Message -->
+        <div class="success" id="formSuccess"></div>
 
-        <!-- Anonymous Option (for Manual only) -->
-        <div id="anonymous-option" style="display: none; margin-bottom: 1rem;">
-          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; color: #6b7280;">
-            <input type="checkbox" name="donate_anonymously" id="donate_anonymously" style="width: 18px; height: 18px;">
-            <span>Donate anonymously</span>
-          </label>
-        </div>
-
-        <button type="submit" class="btn btn-primary" id="submit-btn">
-          <span id="submit-text">Proceed to GCash</span>
-          <i id="submit-icon" class="fas fa-arrow-right" style="margin-left: 8px;"></i>
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-lock"></i> Proceed to Donate
         </button>
       </form>
 
       <button id="view-blockchain" class="btn btn-secondary">
         <i class="fas fa-link"></i> View Blockchain
       </button>
+
+      {% if show_manual_link %}
+      <div class="manual-actions">
+        <a href="{% url 'manual_donation' %}"><i class="fas fa-hand-holding"></i> Manual Donation</a> |
+        <a href="{% url 'review_manual_donations' %}"><i class="fas fa-search"></i> Review Donations</a>
+      </div>
+      {% endif %}
     </div>
   </div>
 </div>
 
-
 <script>
-  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes
+  document.addEventListener('DOMContentLoaded', function () {
+    // Create animated particles
+    const particlesContainer = document.getElementById('particles');
+    const particleCount = 30;
+    
+    for (let i = 0; i < particleCount; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      
+      // Random properties
+      const size = Math.random() * 10 + 5;
+      const x = Math.random() * 100;
+      const y = Math.random() * 100;
+      const delay = Math.random() * 20;
+      const duration = Math.random() * 10 + 10;
+      
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      particle.style.left = `${x}%`;
+      particle.style.top = `${y}%`;
+      particle.style.opacity = Math.random() * 0.3 + 0.1;
+      particle.style.animationDelay = `${delay}s`;
+      particle.style.animationDuration = `${duration}s`;
+      
+      particlesContainer.appendChild(particle);
+    }
 
-  function validateName(input) {
-    const warning = document.getElementById(input.id.replace('id_', '') + '_warning');
-    let regex;
+    // Animate progress bar
+    const progressBar = document.getElementById('donationProgress');
+    if (progressBar) {
+      const percent = progressBar.getAttribute('data-percent');
+      setTimeout(() => {
+        progressBar.style.width = `${percent}%`;
+        progressBar.style.animation = 'progressPulse 2s ease-in-out infinite';
+      }, 1000);
+    }
 
-    if (input.id === 'id_first_name') {
-      // First name: must start with capital and contain only letters
-      regex = /^[A-Z][a-zA-Z]*$/;
-      if (!input.value) {
-        warning.textContent = 'First name is required.';
-        return false;
-      } else if (!regex.test(input.value)) {
-        warning.textContent = 'Must start with a capital letter (Letters only).';
+    // Form validation with enhanced animations
+    function showWarning(elementId, message, isError = true) {
+      const warning = document.getElementById(elementId);
+      const input = document.getElementById('id_' + elementId.replace('_warning', ''));
+      
+      warning.textContent = message;
+      warning.className = isError ? 'warning show' : 'success show';
+      input.style.borderColor = isError ? '#ef4444' : '#10b981';
+      
+      // Add shake animation for errors
+      if (isError) {
+        input.style.animation = 'shake 0.5s ease';
+        setTimeout(() => {
+          input.style.animation = '';
+        }, 500);
+      }
+    }
+
+    function hideWarning(elementId) {
+      const warning = document.getElementById(elementId);
+      const input = document.getElementById('id_' + elementId.replace('_warning', ''));
+      
+      warning.textContent = '';
+      warning.className = 'warning';
+      input.style.borderColor = '#e2e8f0';
+    }
+
+    // Validation functions with animation support
+    function validateName(input) {
+      const field = input.id.replace('id_', '');
+      const warningId = `${field}_warning`;
+      let regex;
+
+      if (field === 'first_name') {
+        regex = /^[A-Z][a-zA-Z]*$/;
+        if (!input.value) {
+          showWarning(warningId, 'First name is required.');
+          return false;
+        } else if (!regex.test(input.value)) {
+          showWarning(warningId, 'Must start with a capital letter (Letters only).');
+          return false;
+        }
+      } else {
+        regex = /^[A-Z][a-zA-Z]*( [A-Z][a-zA-Z]*)*$/;
+        if (!input.value) {
+          showWarning(warningId, 'Last name is required.');
+          return false;
+        } else if (!regex.test(input.value)) {
+          showWarning(warningId, 'Must start with a capital letter.');
+          return false;
+        }
+      }
+
+      showWarning(warningId, '✓ Valid', false);
+      return true;
+    }
+
+    function validateMiddleInitial(input) {
+      const warningId = 'middle_initial_warning';
+      const regex = /^[A-Z]$/;
+
+      if (input.value && !regex.test(input.value)) {
+        showWarning(warningId, 'Single capital letter.');
         return false;
       }
-    } else {
-      // Last name: must start with capital, can have compound names
-      regex = /^[A-Z][a-zA-Z]*( [A-Z][a-zA-Z]*)*$/;
+
+      hideWarning(warningId);
+      return true;
+    }
+
+    function validateEmail(input) {
+      const warningId = 'email_warning';
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
       if (!input.value) {
-        warning.textContent = 'Last name is required.';
+        showWarning(warningId, 'Email is required.');
         return false;
       } else if (!regex.test(input.value)) {
-        warning.textContent = 'Must start with a capital letter.';
+        showWarning(warningId, 'Please enter a valid email address.');
         return false;
       }
+
+      showWarning(warningId, '✓ Valid email format', false);
+      return true;
     }
 
-    warning.textContent = '';
-    return true;
-  }
+    function validateAmount(input) {
+      const warningId = 'amount_warning';
+      const amount = parseFloat(input.value);
 
-  function validateMiddleInitial(input) {
-    const warning = document.getElementById('middle_initial_warning');
-    const regex = /^[A-Z]$/;
+      if (!input.value) {
+        showWarning(warningId, 'Amount is required.');
+        return false;
+      } else if (isNaN(amount) || amount <= 0) {
+        showWarning(warningId, 'Please enter a valid positive amount.');
+        return false;
+      } else if (amount > 1000000) {
+        showWarning(warningId, 'Maximum donation amount is ₱1,000,000.');
+        return false;
+      }
 
-    if (input.value && !regex.test(input.value)) {
-      warning.textContent = 'Single capital letter.';
+      // Format the amount with animation
+      input.value = amount.toFixed(2);
+      showWarning(warningId, `✓ ₱${amount.toLocaleString('en-PH', { minimumFractionDigits: 2 })}`, false);
+      return true;
+    }
+
+    function validateDate(input) {
+      const warningId = 'donation_date_warning';
+
+      if (!input.value) {
+        showWarning(warningId, 'Donation date is required.');
+        return false;
+      }
+
+      const selectedDate = new Date(input.value);
+      const today = new Date();
+
+      selectedDate.setHours(0, 0, 0, 0);
+      today.setHours(0, 0, 0, 0);
+
+      if (selectedDate > today) {
+        showWarning(warningId, 'Donation date cannot be in the future.');
+        return false;
+      }
+
+      showWarning(warningId, '✓ Valid date', false);
+      return true;
+    }
+
+    function validateForm() {
+      const firstNameValid = validateName(document.getElementById('id_first_name'));
+      const middleInitialValid = validateMiddleInitial(document.getElementById('id_middle_initial'));
+      const lastNameValid = validateName(document.getElementById('id_last_name'));
+      const emailValid = validateEmail(document.getElementById('id_email'));
+      const amountValid = validateAmount(document.getElementById('id_amount'));
+      const dateValid = validateDate(document.getElementById('id_donation_date'));
+
+      if (firstNameValid && middleInitialValid && lastNameValid && emailValid && amountValid && dateValid) {
+        // Show success animation
+        const successMsg = document.getElementById('formSuccess');
+        successMsg.textContent = '✓ All fields validated successfully!';
+        successMsg.classList.add('show');
+        
+        // Add loading animation to button
+        const submitBtn = document.querySelector('.btn-primary');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        submitBtn.disabled = true;
+        
+        // Simulate processing animation
+        setTimeout(() => {
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
+        }, 2000);
+        
+        return true;
+      }
+      
       return false;
     }
 
-    warning.textContent = '';
-    return true;
-  }
+    // Add input focus animations
+    const inputs = document.querySelectorAll('input, select');
+    inputs.forEach(input => {
+      input.addEventListener('focus', function() {
+        this.parentElement.style.transform = 'translateY(-4px)';
+        // Highlight the label
+        const label = this.previousElementSibling;
+        if (label && label.tagName === 'LABEL') {
+          label.style.color = '#0D3471';
+          label.style.fontWeight = '800';
+        }
+      });
+      
+      input.addEventListener('blur', function() {
+        this.parentElement.style.transform = 'translateY(0)';
+        // Reset label color
+        const label = this.previousElementSibling;
+        if (label && label.tagName === 'LABEL') {
+          if (this.id === 'id_amount') {
+            label.style.color = '#0D3471';
+          } else {
+            label.style.color = '#475569';
+          }
+          label.style.fontWeight = '700';
+        }
+      });
+    });
 
-  function validateEmail(input) {
-    const warning = document.getElementById('email_warning');
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!input.value) {
-      warning.textContent = 'Email is required.';
-      return false;
-    } else if (!regex.test(input.value)) {
-      warning.textContent = 'Please enter a valid email address.';
-      return false;
+    // Pre-focus on Amount field for better UX
+    const amountField = document.getElementById('id_amount');
+    if (amountField) {
+      setTimeout(() => {
+        amountField.focus();
+      }, 1500);
     }
 
-    warning.textContent = '';
-    return true;
-  }
-
-  function validateAmount(input) {
-    const warning = document.getElementById('amount_warning');
-    const amount = parseFloat(input.value);
-
-    if (!input.value) {
-      warning.textContent = 'Amount is required.';
-      return false;
-    } else if (isNaN(amount) || amount <= 0) {
-      warning.textContent = 'Please enter a valid positive amount.';
-      return false;
+    // Blockchain button animation
+    const blockchainBtn = document.getElementById('view-blockchain');
+    if (blockchainBtn) {
+      blockchainBtn.addEventListener('mouseenter', function() {
+        this.querySelector('i').style.animation = 'rotateSlow 2s linear infinite';
+      });
+      
+      blockchainBtn.addEventListener('mouseleave', function() {
+        this.querySelector('i').style.animation = '';
+      });
+      
+      blockchainBtn.addEventListener('click', function () {
+        // Add ripple effect
+        const ripple = document.createElement('span');
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = event.clientX - rect.left - size / 2;
+        const y = event.clientY - rect.top - size / 2;
+        
+        ripple.style.cssText = `
+          position: absolute;
+          border-radius: 50%;
+          background: rgba(13, 52, 113, 0.3);
+          transform: scale(0);
+          animation: ripple 0.6s linear;
+          width: ${size}px;
+          height: ${size}px;
+          top: ${y}px;
+          left: ${x}px;
+          pointer-events: none;
+          z-index: 1;
+        `;
+        
+        this.appendChild(ripple);
+        
+        setTimeout(() => {
+          ripple.remove();
+          window.location.href = '{% url "blockchain" %}';
+        }, 600);
+      });
     }
 
-    warning.textContent = '';
-    return true;
-  }
-
-  function validateDate(input) {
-    const warning = document.getElementById('donation_date_warning');
-
-    if (!input.value) {
-      warning.textContent = 'Donation date is required.';
-      return false;
-    }
-
-    const selectedDate = new Date(input.value);
-    const today = new Date();
-
-    // Set both dates to midnight for proper comparison
-    selectedDate.setHours(0, 0, 0, 0);
-    today.setHours(0, 0, 0, 0);
-
-    // Compare dates
-    if (selectedDate > today) {
-      warning.textContent = 'Donation date cannot be in the future.';
-      return false;
-    }
-
-    warning.textContent = '';
-    return true;
-  }
-
-  function validateForm() {
-    const firstNameValid = validateName(document.getElementById('id_first_name'));
-    const middleInitialValid = validateMiddleInitial(document.getElementById('id_middle_initial'));
-    const lastNameValid = validateName(document.getElementById('id_last_name'));
-    const emailValid = validateEmail(document.getElementById('id_email'));
-    const amountValid = validateAmount(document.getElementById('id_amount'));
-    const dateValid = validateDate(document.getElementById('id_donation_date'));
-
-    return firstNameValid && middleInitialValid && lastNameValid && emailValid &&
-      amountValid && dateValid;
-  }
-
-  document.getElementById('view-blockchain').addEventListener('click', function () {
-    window.location.href = '{% url "blockchain" %}';
+    // Add shake animation for invalid inputs
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+      }
+    `;
+    document.head.appendChild(style);
   });
-
-  // Payment method dropdown handler
-  function updatePaymentMethod() {
-    var method = document.getElementById('payment_method').value;
-    var submitText = document.getElementById('submit-text');
-    var submitIcon = document.getElementById('submit-icon');
-    var anonymousOption = document.getElementById('anonymous-option');
-
-    if (method === 'gcash') {
-      submitText.textContent = 'Proceed to GCash';
-      submitIcon.className = 'fas fa-arrow-right';
-      anonymousOption.style.display = 'none';
-    } else {
-      submitText.textContent = 'Submit for Approval';
-      submitIcon.className = 'fas fa-paper-plane';
-      anonymousOption.style.display = 'block';
-    }
-  }
 </script>
 <script src="{% static 'js/payment.js' %}?v={% now 'U' %}"></script>
 {% endblock %}

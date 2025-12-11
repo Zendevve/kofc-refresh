@@ -4,234 +4,1445 @@
 
 {% block content %}
 <style>
-  .events-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
+  /* ============================================
+    ANIMATION KEYFRAMES (Reusing from councils)
+    ============================================ */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideInFromBottom {
+    from {
+      transform: translateY(50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideInFromLeft {
+    from {
+      transform: translateX(-50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideInFromRight {
+    from {
+      transform: translateX(50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes scaleIn {
+    from {
+      transform: scale(0.9);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+  
+  @keyframes glow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(37, 99, 235, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 30px rgba(37, 99, 235, 0.6);
+    }
+  }
+  
+  @keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+  }
+  
+  @keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  @keyframes rotateSlow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+  
+  @keyframes cardHover {
+    0% {
+      transform: translateY(0) rotateX(0) rotateY(0);
+    }
+    50% {
+      transform: translateY(-8px) rotateX(2deg) rotateY(2deg);
+    }
+    100% {
+      transform: translateY(-8px) rotateX(0) rotateY(0);
+    }
+  }
+  
+  @keyframes ripple {
+    0% {
+      transform: scale(0);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+  
+  @keyframes countdownPulse {
+    0%, 100% { 
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
+    }
+    50% { 
+      transform: scale(1.05);
+      box-shadow: 0 0 0 10px rgba(37, 99, 235, 0);
+    }
+  }
+  
+  @keyframes calendarFlip {
+    0% { transform: rotateX(0); }
+    100% { transform: rotateX(360deg); }
   }
 
-  .events-header {
+  /* ============================================
+    ANIMATION UTILITY CLASSES
+    ============================================ */
+  .animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  
+  .animate-on-scroll.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .animate-delay-100 { transition-delay: 0.1s; animation-delay: 0.1s; }
+  .animate-delay-200 { transition-delay: 0.2s; animation-delay: 0.2s; }
+  .animate-delay-300 { transition-delay: 0.3s; animation-delay: 0.3s; }
+  .animate-delay-400 { transition-delay: 0.4s; animation-delay: 0.4s; }
+  .animate-delay-500 { transition-delay: 0.5s; animation-delay: 0.5s; }
+
+  /* ============================================
+    LAYOUT RESET WITH ANIMATIONS
+    ============================================ */
+  body,
+  html {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  main {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+    overflow-x: hidden;
+  }
+
+  /* ============================================
+    PAGE CONTAINER WITH ENHANCED ANIMATIONS
+    ============================================ */
+  .events-page {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    width: 100%;
+    min-height: 100vh;
+    animation: fadeIn 1s ease-out;
+  }
+
+  /* ============================================
+    HERO SECTION WITH ANIMATED BACKGROUND
+    ============================================ */
+  .hero-section {
+    position: relative;
+    width: 100%;
+    height: 450px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    margin-bottom: 2rem;
+    color: white;
+    background: url("{% static 'images/kofc-bg.png' %}") no-repeat center center/cover;
+    margin-bottom: 0;
+    overflow: hidden;
   }
 
-  .events-header h1 {
+  .hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(13, 52, 113, 0.95) 0%, rgba(37, 99, 235, 0.9) 100%);
+    z-index: 1;
+    animation: fadeIn 1.5s ease-out;
+  }
+
+  .hero-section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%);
+    animation: shimmer 4s infinite linear;
+    z-index: 2;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 3;
+    max-width: 800px;
+    padding: 0 24px;
+    margin: 0 auto;
+    animation: slideInFromBottom 1s ease-out 0.5s both;
+  }
+
+  .calendar-icon {
+    font-size: 4rem;
+    color: #fbbf24;
+    margin-bottom: 20px;
+    animation: float 3s ease-in-out infinite, calendarFlip 6s linear infinite;
+    text-shadow: 0 0 30px rgba(251, 191, 36, 0.5);
+  }
+
+  .section-badge {
+    display: inline-block;
+    background: linear-gradient(45deg, rgba(251, 191, 36, 0.2), rgba(251, 191, 36, 0.3));
+    color: #fbbf24;
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    animation: slideInFromTop 0.8s ease-out 0.7s both, 
+               pulse 2s ease-in-out 2s infinite;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .section-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: 0.5s;
+  }
+
+  .section-badge:hover::before {
+    left: 100%;
+  }
+
+  .hero-title {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 24px;
+    letter-spacing: -0.02em;
+    background: linear-gradient(45deg, #fff, #93c5fd, #fff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-size: 200% auto;
+    animation: gradientMove 3s ease-in-out infinite;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    animation-delay: 1s;
+  }
+
+  .hero-subtitle {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.95);
+    max-width: 600px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: slideInFromBottom 0.8s ease-out 1.2s both;
+    backdrop-filter: blur(5px);
+    padding: 20px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+  }
+
+  .hero-subtitle::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #0D3471, #60a5fa, #0D3471);
+    border-radius: 14px;
+    z-index: -1;
+    opacity: 0.3;
+    animation: glow 2s ease-in-out infinite;
+  }
+
+  /* ============================================
+    STATS BAR WITH ANIMATED COUNTERS
+    ============================================ */
+  .stats-bar {
+    max-width: 1200px;
+    margin: -48px auto 64px;
+    padding: 0 24px;
+    position: relative;
+    z-index: 10;
+    animation: slideInFromBottom 0.8s ease-out 1.5s both;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    background: white;
+    padding: 32px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    border: 2px solid #e0f2fe;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stats-grid::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #0D3471, #60a5fa, #0D3471);
+    background-size: 200% 100%;
+    animation: gradientMove 3s ease-in-out infinite;
+  }
+
+  .stat-item {
+    text-align: center;
+    padding: 20px;
+    border-radius: 16px;
+    background: #f8fafc;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-item:hover {
+    transform: translateY(-8px);
+    background: white;
+    box-shadow: 0 15px 40px rgba(37, 99, 235, 0.15);
+  }
+
+  .stat-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(37, 99, 235, 0.05) 50%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .stat-item:hover::before {
+    opacity: 1;
+    animation: shimmer 2s infinite linear;
+  }
+
+  .stat-icon {
     font-size: 2.5rem;
-    color: var(--primary-900);
-    margin-bottom: 0.5rem;
+    color: #0D3471;
+    margin-bottom: 12px;
+    transition: all 0.4s ease;
   }
 
-  .events-header p {
-    color: var(--neutral-600);
+  .stat-item:hover .stat-icon {
+    color: #2563eb;
+    transform: scale(1.2) rotate(10deg);
+    animation: bounce 0.8s ease;
+  }
+
+  .stat-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 4px;
+    transition: all 0.4s ease;
+  }
+
+  .stat-item:hover .stat-number {
+    color: #0D3471;
+    text-shadow: 0 0 20px rgba(37, 99, 235, 0.3);
+  }
+
+  .stat-label {
+    font-size: 0.9rem;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: color 0.3s ease;
+  }
+
+  .stat-item:hover .stat-label {
+    color: #2563eb;
+  }
+
+  /* ============================================
+    FILTER BAR WITH ENHANCED ANIMATIONS
+    ============================================ */
+  .filter-bar-container {
+    max-width: 1200px;
+    margin: 0 auto 64px;
+    padding: 0 24px;
+    animation: fadeIn 1s ease-out 1.8s both;
   }
 
   .filter-bar {
     display: flex;
-    gap: 1rem;
+    gap: 16px;
     flex-wrap: wrap;
-    margin-bottom: 2rem;
-    padding: 1rem;
+    padding: 28px;
     background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-radius: 20px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.08);
+    border: 2px solid #e2e8f0;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
   }
 
-  .filter-bar input,
-  .filter-bar select {
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--neutral-200);
-    border-radius: 8px;
-    font-size: 0.9rem;
+  .filter-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(13, 52, 113, 0.02), rgba(37, 99, 235, 0.03));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .filter-bar:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 25px 70px rgba(13, 52, 113, 0.15);
+    border-color: #60a5fa;
+  }
+
+  .filter-bar:hover::before {
+    opacity: 1;
+    animation: shimmer 3s infinite linear;
+  }
+
+  .filter-input {
     flex: 1;
-    min-width: 150px;
+    min-width: 200px;
+    padding: 16px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #1e293b;
+    background: #f8fafc;
+    transition: all 0.3s ease;
+    position: relative;
   }
 
-  .filter-bar input:focus,
-  .filter-bar select:focus {
+  .filter-input:focus {
     outline: none;
-    border-color: var(--primary-500);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    border-color: #2563eb;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .filter-select {
+    flex: 1;
+    min-width: 180px;
+    padding: 16px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #1e293b;
+    background: #f8fafc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 16px center;
+    background-size: 16px;
+    appearance: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .filter-select:focus {
+    outline: none;
+    border-color: #2563eb;
+    background-color: white;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .filter-select option {
+    padding: 12px;
+    background: white;
+    color: #1e293b;
+  }
+
+  /* ============================================
+    EVENTS GRID WITH STAGGERED ANIMATIONS
+    ============================================ */
+  .events-container {
+    max-width: 1200px;
+    margin: 0 auto 80px;
+    padding: 0 24px;
+    width: 100%;
+    animation: fadeIn 1s ease-out 2s both;
+  }
+
+  .grid-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 48px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid #e2e8f0;
+    position: relative;
+  }
+
+  .grid-header::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 120px;
+    height: 2px;
+    background: linear-gradient(90deg, #0D3471, #60a5fa);
+    animation: slideInFromLeft 1s ease-out 2.2s both;
+  }
+
+  .results-count {
+    color: #64748b;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 12px 24px;
+    background: rgba(37, 99, 235, 0.05);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    animation: slideInFromLeft 0.8s ease-out 2.4s both;
+    border: 1px solid rgba(37, 99, 235, 0.1);
+  }
+
+  .results-count:hover {
+    background: rgba(37, 99, 235, 0.1);
+    transform: translateX(5px);
+    color: #2563eb;
+    border-color: rgba(37, 99, 235, 0.2);
   }
 
   .events-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 32px;
   }
 
+  /* Event Card with Enhanced Animations */
   .event-card {
     background: white;
-    border-radius: 16px;
+    border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid #e2e8f0;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    height: 100%;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: slideInFromBottom 0.6s ease-out forwards;
+    perspective: 1000px;
+  }
+
+  .event-card:nth-child(1) { animation-delay: 0.1s; }
+  .event-card:nth-child(2) { animation-delay: 0.2s; }
+  .event-card:nth-child(3) { animation-delay: 0.3s; }
+  .event-card:nth-child(4) { animation-delay: 0.4s; }
+  .event-card:nth-child(5) { animation-delay: 0.5s; }
+  .event-card:nth-child(6) { animation-delay: 0.6s; }
+  .event-card:nth-child(7) { animation-delay: 0.7s; }
+  .event-card:nth-child(8) { animation-delay: 0.8s; }
+
+  .event-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--event-color, #0D3471), #60a5fa, var(--event-color, #0D3471));
+    background-size: 200% 100%;
+    animation: gradientMove 3s ease-in-out infinite;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease;
+    z-index: 2;
   }
 
   .event-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 35px 80px rgba(13, 52, 113, 0.15);
+    border-color: #60a5fa;
+    animation: cardHover 0.6s ease-out forwards;
   }
 
+  .event-card:hover::before {
+    transform: scaleX(1);
+  }
+
+  /* Category-specific colors */
+  .event-card[data-category="charity"] { --event-color: #10b981; }
+  .event-card[data-category="fundraising"] { --event-color: #8b5cf6; }
+  .event-card[data-category="community"] { --event-color: #f59e0b; }
+  .event-card[data-category="religious"] { --event-color: #ef4444; }
+  .event-card[data-category="meeting"] { --event-color: #3b82f6; }
+  .event-card[data-category="social"] { --event-color: #ec4899; }
+
+  /* Event Header with Animated Gradient */
   .event-header {
-    background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
-    padding: 1.25rem;
+    padding: 1.5rem;
     color: white;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--event-color, #0D3471) 0%, color-mix(in srgb, var(--event-color, #0D3471) 60%, white) 100%);
+  }
+
+  .event-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%);
+    animation: shimmer 4s infinite linear;
   }
 
   .event-category {
     display: inline-block;
-    padding: 0.25rem 0.75rem;
-    background: rgba(255,255,255,0.2);
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
     border-radius: 99px;
     font-size: 0.75rem;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 0.5rem;
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+  }
+
+  .event-card:hover .event-category {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   }
 
   .event-name {
-    font-size: 1.25rem;
-    font-weight: 700;
+    font-size: 1.5rem;
+    font-weight: 800;
     margin: 0;
+    color: white;
+    line-height: 1.3;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
   }
 
+  .event-card:hover .event-name {
+    transform: translateX(5px);
+    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Event Body with Enhanced Animations */
   .event-body {
-    padding: 1.25rem;
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(to bottom, white, #f8fafc);
   }
 
   .event-meta {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
   }
 
   .event-meta-item {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    color: var(--neutral-600);
-    font-size: 0.9rem;
+    gap: 12px;
+    color: #475569;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: rgba(241, 245, 249, 0.5);
+  }
+
+  .event-card:hover .event-meta-item {
+    background: rgba(37, 99, 235, 0.05);
+    transform: translateX(5px);
+    color: #0D3471;
   }
 
   .event-meta-item i {
     width: 20px;
-    color: var(--primary-500);
+    color: var(--event-color, #2563eb);
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+  }
+
+  .event-card:hover .event-meta-item i {
+    color: #2563eb;
+    transform: scale(1.2) rotate(5deg);
   }
 
   .event-description {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--neutral-100);
-    color: var(--neutral-700);
-    font-size: 0.9rem;
-    line-height: 1.5;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid #f1f5f9;
+    color: #475569;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    position: relative;
     overflow: hidden;
+    flex: 1;
   }
 
+  .event-description::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 0;
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--event-color, #2563eb), transparent);
+    transition: width 0.5s ease;
+  }
+
+  .event-card:hover .event-description::before {
+    width: 120px;
+  }
+
+  /* Event Council Badge with Animation */
   .event-council-badge {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 0.75rem;
-    background: var(--primary-50);
-    color: var(--primary-700);
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    margin-top: 1rem;
+    gap: 10px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(37, 99, 235, 0.05));
+    color: #0D3471;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    border: 1px solid rgba(37, 99, 235, 0.2);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+    align-self: flex-start;
   }
 
-  .empty-state {
+  .event-council-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: 0.5s;
+  }
+
+  .event-card:hover .event-council-badge {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(37, 99, 235, 0.1));
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.15);
+    border-color: rgba(37, 99, 235, 0.3);
+    color: #2563eb;
+  }
+
+  .event-card:hover .event-council-badge::before {
+    left: 100%;
+  }
+
+  .event-council-badge i {
+    transition: all 0.3s ease;
+  }
+
+  .event-card:hover .event-council-badge i {
+    transform: scale(1.2) rotate(10deg);
+    color: #1d4ed8;
+  }
+
+  /* Global Event Badge */
+  .event-council-badge.global {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+    color: #047857;
+    border-color: rgba(16, 185, 129, 0.2);
+  }
+
+  .event-card:hover .event-council-badge.global {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.1));
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.3);
+    color: #10b981;
+  }
+
+  /* Date Badge with Countdown Animation */
+  .date-badge {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: rgba(255, 255, 255, 0.95);
+    color: #0D3471;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
     text-align: center;
-    padding: 4rem 2rem;
-    color: var(--neutral-400);
+    z-index: 2;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s ease;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+  }
+
+  .event-card:hover .date-badge {
+    background: white;
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    animation: countdownPulse 2s infinite;
+  }
+
+  .date-badge.upcoming {
+    background: rgba(16, 185, 129, 0.95);
+    color: white;
+  }
+
+  .date-badge.today {
+    background: rgba(251, 191, 36, 0.95);
+    color: #0D3471;
+    animation: pulse 2s infinite;
+  }
+
+  /* ============================================
+    EMPTY STATE WITH ANIMATIONS
+    ============================================ */
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 80px 40px;
+    background: linear-gradient(135deg, white, #f8fafc);
+    border: 2px dashed #cbd5e1;
+    border-radius: 20px;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: all 0.5s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .empty-state.visible {
+    opacity: 1;
+    transform: scale(1);
+    animation: fadeIn 0.6s ease-out;
+  }
+
+  .empty-state::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent 30%, rgba(37, 99, 235, 0.05) 50%, transparent 70%);
+    animation: shimmer 4s infinite linear;
   }
 
   .empty-state i {
     font-size: 4rem;
-    margin-bottom: 1rem;
+    color: #94a3b8;
+    margin-bottom: 24px;
+    animation: float 3s ease-in-out infinite, 
+               rotateSlow 20s linear infinite;
   }
 
   .empty-state p {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
+    color: #64748b;
+    margin: 0;
+    font-weight: 500;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ============================================
+    LOADING ANIMATIONS
+    ============================================ */
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+
+  .loading-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .loader {
+    width: 60px;
+    height: 60px;
+    border: 4px solid #e2e8f0;
+    border-top: 4px solid #2563eb;
+    border-radius: 50%;
+    animation: rotateSlow 1s linear infinite;
+  }
+
+  /* ============================================
+    RESPONSIVE DESIGN WITH ANIMATIONS
+    ============================================ */
+  @media (max-width: 1024px) {
+    .events-grid {
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .hero-section {
+      height: 400px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero-title {
+      font-size: 2.5rem;
+    }
+    
+    .stats-bar,
+    .filter-bar-container,
+    .events-container {
+      padding: 0 16px;
+      margin-bottom: 48px;
+    }
+    
+    .stats-grid {
+      grid-template-columns: 1fr;
+      padding: 24px;
+    }
+    
+    .filter-bar {
+      flex-direction: column;
+      padding: 20px;
+    }
+    
+    .filter-input,
+    .filter-select {
+      min-width: 100%;
+    }
+    
+    .events-grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    
+    .grid-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    
+    .results-count {
+      align-self: flex-start;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero-section {
+      height: 350px;
+    }
+    
+    .hero-title {
+      font-size: 2rem;
+    }
+    
+    .hero-subtitle {
+      font-size: 1rem;
+      padding: 16px;
+    }
+    
+    .calendar-icon {
+      font-size: 3rem;
+    }
+    
+    .stats-bar {
+      margin: -32px auto 48px;
+    }
+    
+    .stat-number {
+      font-size: 2rem;
+    }
+  }
+
+  /* ============================================
+    SCROLL ANIMATIONS
+    ============================================ */
+  @media (prefers-reduced-motion: no-preference) {
+    .event-card,
+    .grid-header,
+    .stats-bar,
+    .filter-bar-container {
+      scroll-behavior: smooth;
+    }
   }
 </style>
 
-<div class="events-container">
-  <div class="events-header">
-    <h1><i class="fas fa-calendar-check"></i> Upcoming Events</h1>
-    <p>Browse all approved Knights of Columbus events</p>
-  </div>
+<div class="events-page">
 
-  <form class="filter-bar" method="GET" action="{% url 'approved_events' %}">
-    <input type="text" name="search" placeholder="Search events..." value="{{ search_query|default:'' }}">
-    <select name="category" onchange="this.form.submit()">
-      <option value="all">All Categories</option>
-      {% for cat in categories %}
-      <option value="{{ cat }}" {% if category_filter == cat %}selected{% endif %}>{{ cat|title }}</option>
-      {% endfor %}
-    </select>
-    <select name="council" onchange="this.form.submit()">
-      <option value="all">All Councils</option>
-      {% for c in councils %}
-      <option value="{{ c.id }}" {% if council_filter == c.id|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>
-      {% endfor %}
-    </select>
-  </form>
+  <!-- Hero Section -->
+  <header class="hero-section">
+    <div class="hero-content">
+      <i class="fas fa-calendar-alt calendar-icon"></i>
+      <span class="section-badge"><i class="fas fa-calendar-check"></i> Events Calendar</span>
+      <h1 class="hero-title">Upcoming Events</h1>
+      <p class="hero-subtitle">
+        Discover and join our upcoming Knights of Columbus events.
+        Stay connected with our community activities and charitable initiatives.
+      </p>
+    </div>
+  </header>
 
-  {% if events %}
-  <div class="events-grid">
-    {% for event in events %}
-    <div class="event-card">
-      <div class="event-header">
-        <span class="event-category">{{ event.category|default:"Event" }}</span>
-        <h3 class="event-name">{{ event.name }}</h3>
+  <!-- Stats Bar -->
+  <div class="stats-bar">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <i class="fas fa-calendar-day stat-icon"></i>
+        <div class="stat-number" id="totalEvents">{{ events|length }}</div>
+        <div class="stat-label">Total Events</div>
       </div>
-      <div class="event-body">
-        <div class="event-meta">
-          <div class="event-meta-item">
-            <i class="fas fa-calendar-alt"></i>
-            <span>
-              {{ event.date_from|date:"M d, Y" }}
-              {% if event.date_until and event.date_until != event.date_from %}
-              - {{ event.date_until|date:"M d, Y" }}
-              {% endif %}
-            </span>
-          </div>
-          {% if event.city %}
-          <div class="event-meta-item">
-            <i class="fas fa-map-marker-alt"></i>
-            <span>{{ event.barangay|default:"" }}{% if event.barangay %}, {% endif %}{{ event.city }}, {{ event.province }}</span>
-          </div>
-          {% endif %}
-        </div>
-        {% if event.description %}
-        <p class="event-description">{{ event.description }}</p>
-        {% endif %}
-        {% if event.council %}
-        <div class="event-council-badge">
-          <i class="fas fa-shield-alt"></i>
-          {{ event.council.name }}
-        </div>
-        {% else %}
-        <div class="event-council-badge" style="background: var(--success-50); color: var(--success-700);">
-          <i class="fas fa-globe"></i>
-          Global Event
-        </div>
-        {% endif %}
+      <div class="stat-item">
+        <i class="fas fa-users stat-icon"></i>
+        <div class="stat-number" id="activeCouncils">{{ councils|length }}</div>
+        <div class="stat-label">Active Councils</div>
+      </div>
+      <div class="stat-item">
+        <i class="fas fa-tags stat-icon"></i>
+        <div class="stat-number">{{ categories|length }}</div>
+        <div class="stat-label">Categories</div>
+      </div>
+      <div class="stat-item">
+        <i class="fas fa-star stat-icon"></i>
+        <div class="stat-number" id="featuredEvents">5</div>
+        <div class="stat-label">Featured Events</div>
       </div>
     </div>
-    {% endfor %}
   </div>
-  {% else %}
-  <div class="empty-state">
-    <i class="fas fa-calendar-times"></i>
-    <p>No upcoming events found.</p>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar-container">
+    <form class="filter-bar" method="GET" action="{% url 'approved_events' %}">
+      <input type="text" name="search" class="filter-input" placeholder="Search events by name or description..." 
+             value="{{ search_query|default:'' }}" aria-label="Search events">
+      <select name="category" class="filter-select" onchange="this.form.submit()">
+        <option value="all">All Categories</option>
+        {% for cat in categories %}
+        <option value="{{ cat }}" {% if category_filter == cat %}selected{% endif %}>{{ cat|title }}</option>
+        {% endfor %}
+      </select>
+      <select name="council" class="filter-select" onchange="this.form.submit()">
+        <option value="all">All Councils</option>
+        {% for c in councils %}
+        <option value="{{ c.id }}" {% if council_filter == c.id|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>
+        {% endfor %}
+      </select>
+    </form>
   </div>
-  {% endif %}
+
+  <!-- Main Content -->
+  <div class="events-container">
+    <div class="grid-header">
+      <span class="results-count" id="resultsCount">
+        {% if search_query or category_filter != 'all' or council_filter != 'all' %}
+        Showing {{ events|length }} event{{ events|length|pluralize }}
+        {% else %}
+        All {{ events|length }} upcoming events
+        {% endif %}
+      </span>
+    </div>
+
+    <div class="events-grid" id="eventsGrid">
+      {% if events %}
+        {% for event in events %}
+        <div class="event-card animate-on-scroll" 
+             data-category="{{ event.category|default:'meeting'|lower }}"
+             data-search="{{ event.name|lower }} {{ event.description|default:''|lower }} {{ event.council.name|default:''|lower }}">
+          
+          <!-- Date Badge -->
+          <div class="date-badge {% if event.is_today %}today{% else %}upcoming{% endif %}">
+            <div class="date-day">{{ event.date_from|date:"d" }}</div>
+            <div class="date-month">{{ event.date_from|date:"M" }}</div>
+          </div>
+          
+          <!-- Event Header -->
+          <div class="event-header">
+            <span class="event-category">{{ event.category|default:"Event" }}</span>
+            <h3 class="event-name">{{ event.name }}</h3>
+          </div>
+          
+          <!-- Event Body -->
+          <div class="event-body">
+            <div class="event-meta">
+              <div class="event-meta-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>
+                  {{ event.date_from|date:"M d, Y" }}
+                  {% if event.date_until and event.date_until != event.date_from %}
+                  - {{ event.date_until|date:"M d, Y" }}
+                  {% endif %}
+                </span>
+              </div>
+              {% if event.city %}
+              <div class="event-meta-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>{{ event.barangay|default:"" }}{% if event.barangay %}, {% endif %}{{ event.city }}, {{ event.province }}</span>
+              </div>
+              {% endif %}
+            </div>
+            
+            {% if event.description %}
+            <p class="event-description">{{ event.description|truncatechars:120 }}</p>
+            {% endif %}
+            
+            {% if event.council %}
+            <div class="event-council-badge">
+              <i class="fas fa-shield-alt"></i>
+              {{ event.council.name }}
+            </div>
+            {% else %}
+            <div class="event-council-badge global">
+              <i class="fas fa-globe"></i>
+              Global Event
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+      <div class="empty-state visible" id="noEvents">
+        <i class="fas fa-calendar-times"></i>
+        <p>No upcoming events found.</p>
+      </div>
+      {% endif %}
+
+      <!-- JS Search No Results State -->
+      <div class="empty-state" id="searchNoResults">
+        <i class="fas fa-search"></i>
+        <p>No events match your search criteria.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loader"></div>
+  </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Initialize all elements
+    const filterInput = document.querySelector('[name="search"]');
+    const filterCategory = document.querySelector('[name="category"]');
+    const filterCouncil = document.querySelector('[name="council"]');
+    const eventsGrid = document.getElementById('eventsGrid');
+    const eventCards = document.querySelectorAll('.event-card');
+    const noEvents = document.getElementById('noEvents');
+    const searchNoResults = document.getElementById('searchNoResults');
+    const resultsCount = document.getElementById('resultsCount');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const totalEvents = document.getElementById('totalEvents');
+    
+    // Animated counters for stats
+    const counters = document.querySelectorAll('.stat-number');
+    counters.forEach(counter => {
+      const target = parseInt(counter.textContent);
+      const increment = target / 50;
+      let current = 0;
+      
+      const updateCounter = () => {
+        if (current < target) {
+          current += increment;
+          counter.textContent = Math.ceil(current);
+          requestAnimationFrame(updateCounter);
+        } else {
+          counter.textContent = target;
+        }
+      };
+      
+      // Start counter animation when stats are visible
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            setTimeout(updateCounter, 200);
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.5 });
+      
+      observer.observe(counter);
+    });
+
+    // Add scroll animation observer
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -100px 0px'
+    });
+    
+    // Observe all event cards
+    eventCards.forEach(card => {
+      observer.observe(card);
+    });
+    
+    // Animate initial cards
+    eventCards.forEach((card, index) => {
+      card.style.animationDelay = `${index * 0.1}s`;
+    });
+
+    // Enhanced filter functionality with animations
+    if (filterInput) {
+      let filterTimeout;
+      
+      filterInput.addEventListener('input', function (e) {
+        const term = e.target.value.toLowerCase().trim();
+        
+        // Show loading animation
+        loadingOverlay.classList.add('active');
+        
+        // Clear previous timeout
+        clearTimeout(filterTimeout);
+        
+        // Debounce filter
+        filterTimeout = setTimeout(() => {
+          let visibleCount = 0;
+          
+          eventCards.forEach(card => {
+            const searchData = card.getAttribute('data-search');
+            
+            if (searchData.includes(term)) {
+              card.style.display = 'flex';
+              card.classList.add('visible');
+              visibleCount++;
+            } else {
+              card.style.display = 'none';
+              card.classList.remove('visible');
+            }
+          });
+
+          // Hide loading animation
+          setTimeout(() => {
+            loadingOverlay.classList.remove('active');
+          }, 300);
+          
+          // Handle no results
+          if (visibleCount === 0 && eventCards.length > 0) {
+            searchNoResults.classList.add('visible');
+            setTimeout(() => {
+              searchNoResults.style.display = 'block';
+            }, 10);
+          } else {
+            searchNoResults.classList.remove('visible');
+            setTimeout(() => {
+              searchNoResults.style.display = 'none';
+            }, 300);
+          }
+
+          // Update results count with animation
+          resultsCount.style.opacity = '0';
+          resultsCount.style.transform = 'translateX(-10px)';
+          
+          setTimeout(() => {
+            if (term === '') {
+              resultsCount.textContent = `All ${eventCards.length} upcoming events`;
+            } else {
+              resultsCount.textContent = `Found ${visibleCount} event${visibleCount !== 1 ? 's' : ''}`;
+            }
+            
+            resultsCount.style.opacity = '1';
+            resultsCount.style.transform = 'translateX(0)';
+            resultsCount.style.transition = 'all 0.3s ease';
+          }, 150);
+          
+        }, 500); // Debounce delay
+      });
+    }
+
+    // Form submission loading
+    const filterForm = document.querySelector('.filter-bar');
+    if (filterForm) {
+      filterForm.addEventListener('submit', function(e) {
+        loadingOverlay.classList.add('active');
+        
+        setTimeout(() => {
+          loadingOverlay.classList.remove('active');
+        }, 1500);
+      });
+    }
+
+    // Add hover effects
+    eventCards.forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        card.style.zIndex = '10';
+      });
+      
+      card.addEventListener('mouseleave', () => {
+        card.style.zIndex = '1';
+      });
+    });
+
+    // Add keyboard navigation
+    if (filterInput) {
+      filterInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          filterInput.value = '';
+          filterInput.dispatchEvent(new Event('input'));
+        }
+      });
+    }
+
+    // Add parallax effect to hero section
+    window.addEventListener('scroll', () => {
+      const heroSection = document.querySelector('.hero-section');
+      const scrolled = window.pageYOffset;
+      
+      if (heroSection && scrolled < heroSection.offsetHeight) {
+        const rate = scrolled * -0.3;
+        heroSection.style.transform = `translateY(${rate}px)`;
+      }
+    });
+
+    // Add ripple effect to cards on click
+    eventCards.forEach(card => {
+      card.addEventListener('click', function(e) {
+        // Only create ripple if it's not a form submit click
+        if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT') return;
+        
+        const ripple = document.createElement('span');
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+        
+        ripple.style.cssText = `
+          position: absolute;
+          border-radius: 50%;
+          background: rgba(96, 165, 250, 0.6);
+          transform: scale(0);
+          animation: ripple 0.6s linear;
+          width: ${size}px;
+          height: ${size}px;
+          top: ${y}px;
+          left: ${x}px;
+          pointer-events: none;
+          z-index: 1;
+        `;
+        
+        this.appendChild(ripple);
+        
+        setTimeout(() => {
+          ripple.remove();
+        }, 600);
+      });
+    });
+
+    // Initialize featured events count
+    const featuredCount = document.querySelectorAll('.event-card[data-category="featured"]').length;
+    const featuredEvents = document.getElementById('featuredEvents');
+    if (featuredEvents && featuredCount > 0) {
+      featuredEvents.textContent = featuredCount;
+    }
+  });
+</script>
 {% endblock %}

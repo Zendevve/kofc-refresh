@@ -379,8 +379,9 @@ def dashboard(request):
 
 def admin_dashboard(request):
     """Dashboard view for admins"""
-    from datetime import date
+    from datetime import date, timedelta
     from .bible_verses import get_daily_bible_verse
+    from django.db.models import Count
     today = date.today()
 
     user = request.user
@@ -412,6 +413,135 @@ def admin_dashboard(request):
     # Check if we need to show inactive warning popup
     show_inactive_warning = request.session.pop('show_inactive_warning', False)
 
+    # === ACTIVITY LOG DATA ===
+    activities = []
+
+    # Get recent event attendances
+    recent_attendances = EventAttendance.objects.filter(member=user, is_present=True).select_related('event').order_by('-recorded_at')[:10]
+    for attendance in recent_attendances:
+        activities.append({
+            'type': 'attendance',
+            'title': f'Attended {attendance.event.name}',
+            'description': f'Event on {attendance.event.date_from.strftime("%b %d, %Y")}',
+            'date': attendance.recorded_at.date() if hasattr(attendance.recorded_at, 'date') else attendance.recorded_at,
+        })
+
+    # Get recent event creates
+    recent_events = Event.objects.filter(created_by=user).order_by('-created_at')[:5]
+    for event in recent_events:
+        activities.append({
+            'type': 'event',
+            'title': f'Created event: {event.name}',
+            'description': f'{event.category}',
+            'date': event.created_at.date() if hasattr(event.created_at, 'date') else event.created_at,
+        })
+
+    # Get recruitment activities
+    recruitments = user.recruitments.all().order_by('-date_recruited')[:5]
+    for recruitment in recruitments:
+        activities.append({
+            'type': 'recruitment',
+            'title': f'Recruited {recruitment.recruited.first_name} {recruitment.recruited.last_name}',
+            'description': 'New member',
+            'date': recruitment.date_recruited,
+        })
+
+    # Sort activities by date (all are now date objects)
+    activities.sort(key=lambda x: x['date'], reverse=True)
+    activities = activities[:15]
+
+    # === ANALYTICS DATA ===
+    # Event category activity statistics
+    event_category_stats = {}
+    user_events = EventAttendance.objects.filter(member=user, is_present=True).select_related('event')
+    total_events = user_events.count()
+
+    if total_events > 0:
+        category_counts = user_events.values('event__category').annotate(count=Count('id'))
+        for cat in category_counts:
+            category = cat['event__category'] or 'Other'
+            count = cat['count']
+            percentage = int((count / total_events) * 100) if total_events > 0 else 0
+            event_category_stats[category] = {
+                'count': count,
+                'percentage': percentage
+            }
+
+    # Monthly activity statistics
+    monthly_activity_stats = {}
+    for i in range(6):
+        month_date = today - timedelta(days=30*i)
+        month_key = month_date.strftime('%b %Y')
+        month_start = month_date.replace(day=1)
+        if i == 0:
+            month_end = today
+        else:
+            month_end = (month_date.replace(day=1) - timedelta(days=1)).replace(day=1) + timedelta(days=32)
+            month_end = month_end.replace(day=1) - timedelta(days=1)
+
+        count = EventAttendance.objects.filter(
+            member=user,
+            is_present=True,
+            recorded_at__date__gte=month_start,
+            recorded_at__date__lte=month_end
+        ).count()
+
+        monthly_activity_stats[month_key] = {
+            'count': count,
+            'percentage': 0
+        }
+
+    max_monthly = max([v['count'] for v in monthly_activity_stats.values()]) if monthly_activity_stats else 1
+    if max_monthly > 0:
+        for month in monthly_activity_stats:
+            monthly_activity_stats[month]['percentage'] = int((monthly_activity_stats[month]['count'] / max_monthly) * 100)
+
+    # Donation statistics
+    donation_stats = {}
+    try:
+        from capstone_project.models import Donation
+        user_donations = Donation.objects.filter(donor=user, status__in=['completed', 'pending_manual'])
+        total_donated = sum([d.amount for d in user_donations])
+
+        month_start = today.replace(day=1)
+        this_month_donations = Donation.objects.filter(
+            donor=user,
+            status__in=['completed', 'pending_manual'],
+            donation_date__gte=month_start
+        )
+        this_month_total = sum([d.amount for d in this_month_donations])
+
+        donation_stats = {
+            'total': f'{total_donated:.2f}',
+            'this_month': f'{this_month_total:.2f}',
+            'count': user_donations.count()
+        }
+    except:
+        donation_stats = {
+            'total': '0.00',
+            'this_month': '0.00',
+            'count': 0
+        }
+
+    membership_duration = (today - user.date_joined.date()).days if user.date_joined else 0
+    council_duration = None
+    if hasattr(user, 'council_joined_date') and user.council_joined_date:
+        council_duration = (today - user.council_joined_date).days
+
+    # Get past council positions
+    past_council_positions = []
+    try:
+        from capstone_project.models import CouncilPositionHistory
+        past_positions = user.council_position_history.filter(end_date__isnull=False).order_by('-end_date')[:5]
+        for position in past_positions:
+            past_council_positions.append({
+                'role': position.role,
+                'council': position.council,
+                'duration_days': position.get_duration_days()
+            })
+    except:
+        pass
+
     context = {
         'user': user,
         'user_list': user_list,
@@ -422,15 +552,26 @@ def admin_dashboard(request):
         'user_recruitment_count': user_recruitment_count,
         'pending_users_count': pending_users_count,
         'daily_verse': daily_verse,
-        'show_inactive_warning': show_inactive_warning
+        'show_inactive_warning': show_inactive_warning,
+        # Activity log data
+        'activities': activities,
+        'role_history': [],
+        'membership_duration': membership_duration,
+        'council_duration': council_duration,
+        'past_council_positions': past_council_positions,
+        # Analytics data
+        'event_category_stats': event_category_stats,
+        'monthly_activity_stats': monthly_activity_stats,
+        'donation_stats': donation_stats,
     }
 
     return render(request, 'dashboard.html', context)
 
 def officer_dashboard(request):
     """Dashboard view for officers"""
-    from datetime import date
+    from datetime import date, timedelta
     from .bible_verses import get_daily_bible_verse
+    from django.db.models import Count
     today = date.today()
 
     user = request.user
@@ -474,6 +615,152 @@ def officer_dashboard(request):
     # Check if we need to show inactive warning popup
     show_inactive_warning = request.session.pop('show_inactive_warning', False)
 
+    # === ACTIVITY LOG DATA ===
+    activities = []
+
+    # Get recent event attendances
+    recent_attendances = EventAttendance.objects.filter(member=user, is_present=True).select_related('event').order_by('-recorded_at')[:10]
+    for attendance in recent_attendances:
+        activities.append({
+            'type': 'attendance',
+            'title': f'Attended {attendance.event.name}',
+            'description': f'Event on {attendance.event.date_from.strftime("%b %d, %Y")}',
+            'date': attendance.recorded_at.date() if hasattr(attendance.recorded_at, 'date') else attendance.recorded_at,
+        })
+
+    # Get recent event creates
+    recent_events = Event.objects.filter(created_by=user).order_by('-created_at')[:5]
+    for event in recent_events:
+        activities.append({
+            'type': 'event',
+            'title': f'Created event: {event.name}',
+            'description': f'{event.category}',
+            'date': event.created_at.date() if hasattr(event.created_at, 'date') else event.created_at,
+        })
+
+    # Get recruitment activities
+    recruitments = user.recruitments.all().order_by('-date_recruited')[:5]
+    for recruitment in recruitments:
+        activities.append({
+            'type': 'recruitment',
+            'title': f'Recruited {recruitment.recruited.first_name} {recruitment.recruited.last_name}',
+            'description': 'New member',
+            'date': recruitment.date_recruited,
+        })
+
+    # Get council position history (council movements)
+    try:
+        from capstone_project.models import CouncilPositionHistory
+        council_history = CouncilPositionHistory.objects.filter(user=user).order_by('-end_date')[:5]
+        for history in council_history:
+            if history.end_date:
+                activities.append({
+                    'type': 'council_movement',
+                    'title': f'Moved from {history.council.name}',
+                    'description': f'Was {history.role} for {history.get_duration_days()} days',
+                    'date': history.end_date,
+                })
+    except:
+        pass
+
+    # Sort activities by date (all are now date objects)
+    activities.sort(key=lambda x: x['date'], reverse=True)
+    activities = activities[:15]
+
+    # === ANALYTICS DATA ===
+    # Event category activity statistics
+    event_category_stats = {}
+    valid_categories = ['Exemplification', 'Service Program', 'Council Meeting', 'Assembly Meeting']
+    user_events = EventAttendance.objects.filter(member=user, is_present=True).select_related('event')
+    total_events = user_events.count()
+
+    if total_events > 0:
+        category_counts = user_events.values('event__category').annotate(count=Count('id'))
+        for cat in category_counts:
+            category = cat['event__category'] or 'Other'
+            if category in valid_categories:
+                count = cat['count']
+                percentage = int((count / total_events) * 100) if total_events > 0 else 0
+                event_category_stats[category] = {
+                    'count': count,
+                    'percentage': percentage
+                }
+
+    # Monthly activity statistics
+    monthly_activity_stats = {}
+    for i in range(6):
+        month_date = today - timedelta(days=30*i)
+        month_key = month_date.strftime('%b %Y')
+        month_start = month_date.replace(day=1)
+        if i == 0:
+            month_end = today
+        else:
+            month_end = (month_date.replace(day=1) - timedelta(days=1)).replace(day=1) + timedelta(days=32)
+            month_end = month_end.replace(day=1) - timedelta(days=1)
+
+        count = EventAttendance.objects.filter(
+            member=user,
+            is_present=True,
+            recorded_at__date__gte=month_start,
+            recorded_at__date__lte=month_end
+        ).count()
+
+        monthly_activity_stats[month_key] = {
+            'count': count,
+            'percentage': 0
+        }
+
+    max_monthly = max([v['count'] for v in monthly_activity_stats.values()]) if monthly_activity_stats else 1
+    if max_monthly > 0:
+        for month in monthly_activity_stats:
+            monthly_activity_stats[month]['percentage'] = int((monthly_activity_stats[month]['count'] / max_monthly) * 100)
+
+    # Donation statistics
+    donation_stats = {}
+    try:
+        from capstone_project.models import Donation
+        user_donations = Donation.objects.filter(donor=user, status__in=['completed', 'pending_manual'])
+        total_donated = sum([d.amount for d in user_donations])
+
+        month_start = today.replace(day=1)
+        this_month_donations = Donation.objects.filter(
+            donor=user,
+            status__in=['completed', 'pending_manual'],
+            donation_date__gte=month_start
+        )
+        this_month_total = sum([d.amount for d in this_month_donations])
+
+        donation_stats = {
+            'total': f'{total_donated:.2f}',
+            'this_month': f'{this_month_total:.2f}',
+            'count': user_donations.count()
+        }
+    except:
+        donation_stats = {
+            'total': '0.00',
+            'this_month': '0.00',
+            'count': 0
+        }
+
+    membership_duration = (today - user.date_joined.date()).days if user.date_joined else 0
+    council_duration = None
+    if hasattr(user, 'council_joined_date') and user.council_joined_date:
+        council_duration = (today - user.council_joined_date).days
+
+    # Get past council positions
+    past_council_positions = []
+    try:
+        from capstone_project.models import CouncilPositionHistory
+        past_positions = user.council_position_history.filter(end_date__isnull=False).order_by('-end_date')[:5]
+        for position in past_positions:
+            past_council_positions.append({
+                'role': position.role,
+                'council': position.council,
+                'duration_days': position.get_duration_days()
+            })
+    except:
+        pass
+
     context = {
         'user': user,
         'user_list': user_list,
@@ -485,15 +772,26 @@ def officer_dashboard(request):
         'user_recruitment_count': user_recruitment_count,
         'pending_users_count': pending_users_count,
         'daily_verse': daily_verse,
-        'show_inactive_warning': show_inactive_warning
+        'show_inactive_warning': show_inactive_warning,
+        # Activity log data
+        'activities': activities,
+        'role_history': [],
+        'membership_duration': membership_duration,
+        'council_duration': council_duration,
+        'past_council_positions': past_council_positions,
+        # Analytics data
+        'event_category_stats': event_category_stats,
+        'monthly_activity_stats': monthly_activity_stats,
+        'donation_stats': donation_stats,
     }
 
     return render(request, 'dashboard.html', context)
 
 def member_dashboard(request):
     """Dashboard view for members"""
-    from datetime import date
+    from datetime import date, timedelta
     from .bible_verses import get_daily_bible_verse
+    from django.db.models import Count, Q as DjangoQ
     today = date.today()
 
     user = request.user
@@ -533,6 +831,161 @@ def member_dashboard(request):
     # Check if we need to show inactive warning popup
     show_inactive_warning = request.session.pop('show_inactive_warning', False)
 
+    # === ACTIVITY LOG DATA ===
+    # Get user's activities for the activity log
+    activities = []
+
+    # Get recent event attendances
+    recent_attendances = EventAttendance.objects.filter(member=user, is_present=True).select_related('event').order_by('-recorded_at')[:10]
+    for attendance in recent_attendances:
+        activities.append({
+            'type': 'attendance',
+            'title': f'Attended {attendance.event.name}',
+            'description': f'Event on {attendance.event.date_from.strftime("%b %d, %Y")}',
+            'date': attendance.recorded_at.date() if hasattr(attendance.recorded_at, 'date') else attendance.recorded_at,
+        })
+
+    # Get recent event joins
+    recent_events = Event.objects.filter(created_by=user).order_by('-created_at')[:5]
+    for event in recent_events:
+        activities.append({
+            'type': 'event',
+            'title': f'Created event: {event.name}',
+            'description': f'{event.category}',
+            'date': event.created_at.date() if hasattr(event.created_at, 'date') else event.created_at,
+        })
+
+    # Get recruitment activities
+    recruitments = user.recruitments.all().order_by('-date_recruited')[:5]
+    for recruitment in recruitments:
+        activities.append({
+            'type': 'recruitment',
+            'title': f'Recruited {recruitment.recruited.first_name} {recruitment.recruited.last_name}',
+            'description': 'New member',
+            'date': recruitment.date_recruited,
+        })
+
+    # Get council position history (council movements)
+    try:
+        from capstone_project.models import CouncilPositionHistory
+        council_history = CouncilPositionHistory.objects.filter(user=user).order_by('-end_date')[:5]
+        for history in council_history:
+            if history.end_date:
+                activities.append({
+                    'type': 'council_movement',
+                    'title': f'Moved from {history.council.name}',
+                    'description': f'Was {history.role} for {history.get_duration_days()} days',
+                    'date': history.end_date,
+                })
+    except:
+        pass
+
+    # Sort activities by date (all are now date objects)
+    activities.sort(key=lambda x: x['date'], reverse=True)
+    activities = activities[:15]  # Limit to 15 most recent
+
+    # === ANALYTICS DATA ===
+    # Event category activity statistics
+    event_category_stats = {}
+    valid_categories = ['Exemplification', 'Service Program', 'Council Meeting', 'Assembly Meeting']
+    user_events = EventAttendance.objects.filter(member=user, is_present=True).select_related('event')
+    total_events = user_events.count()
+
+    if total_events > 0:
+        category_counts = user_events.values('event__category').annotate(count=Count('id'))
+        max_count = max([c['count'] for c in category_counts]) if category_counts else 1
+
+        for cat in category_counts:
+            category = cat['event__category'] or 'Other'
+            if category in valid_categories:
+                count = cat['count']
+                percentage = int((count / total_events) * 100) if total_events > 0 else 0
+                event_category_stats[category] = {
+                    'count': count,
+                    'percentage': percentage
+                }
+
+    # Monthly activity statistics (last 6 months)
+    monthly_activity_stats = {}
+    for i in range(6):
+        month_date = today - timedelta(days=30*i)
+        month_key = month_date.strftime('%b %Y')
+        month_start = month_date.replace(day=1)
+        if i == 0:
+            month_end = today
+        else:
+            month_end = (month_date.replace(day=1) - timedelta(days=1)).replace(day=1) + timedelta(days=32)
+            month_end = month_end.replace(day=1) - timedelta(days=1)
+
+        count = EventAttendance.objects.filter(
+            member=user,
+            is_present=True,
+            recorded_at__date__gte=month_start,
+            recorded_at__date__lte=month_end
+        ).count()
+
+        monthly_activity_stats[month_key] = {
+            'count': count,
+            'percentage': 0
+        }
+
+    # Calculate percentages for monthly stats
+    max_monthly = max([v['count'] for v in monthly_activity_stats.values()]) if monthly_activity_stats else 1
+    if max_monthly > 0:
+        for month in monthly_activity_stats:
+            monthly_activity_stats[month]['percentage'] = int((monthly_activity_stats[month]['count'] / max_monthly) * 100)
+
+    # Donation statistics
+    donation_stats = {}
+    try:
+        from capstone_project.models import Donation
+        user_donations = Donation.objects.filter(donor=user, status__in=['completed', 'pending_manual'])
+        total_donated = sum([d.amount for d in user_donations])
+
+        # This month donations
+        month_start = today.replace(day=1)
+        this_month_donations = Donation.objects.filter(
+            donor=user,
+            status__in=['completed', 'pending_manual'],
+            donation_date__gte=month_start
+        )
+        this_month_total = sum([d.amount for d in this_month_donations])
+
+        donation_stats = {
+            'total': f'{total_donated:.2f}',
+            'this_month': f'{this_month_total:.2f}',
+            'count': user_donations.count()
+        }
+    except:
+        donation_stats = {
+            'total': '0.00',
+            'this_month': '0.00',
+            'count': 0
+        }
+
+    # Membership duration
+    from datetime import datetime
+    membership_duration = (today - user.date_joined.date()).days if user.date_joined else 0
+
+    # Council duration (if available)
+    council_duration = None
+    if hasattr(user, 'council_joined_date') and user.council_joined_date:
+        council_duration = (today - user.council_joined_date).days
+
+    # Get past council positions
+    past_council_positions = []
+    try:
+        from capstone_project.models import CouncilPositionHistory
+        past_positions = user.council_position_history.filter(end_date__isnull=False).order_by('-end_date')[:5]
+        for position in past_positions:
+            past_council_positions.append({
+                'role': position.role,
+                'council': position.council,
+                'duration_days': position.get_duration_days()
+            })
+    except:
+        pass
+
     context = {
         'user': user,
         'events': events,
@@ -543,7 +996,17 @@ def member_dashboard(request):
         'council_updates': council_updates,
         'user_recruitment_count': user_recruitment_count,
         'daily_verse': daily_verse,
-        'show_inactive_warning': show_inactive_warning
+        'show_inactive_warning': show_inactive_warning,
+        # Activity log data
+        'activities': activities,
+        'role_history': [],  # Can be extended with role change history
+        'membership_duration': membership_duration,
+        'council_duration': council_duration,
+        'past_council_positions': past_council_positions,
+        # Analytics data
+        'event_category_stats': event_category_stats,
+        'monthly_activity_stats': monthly_activity_stats,
+        'donation_stats': donation_stats,
     }
 
     return render(request, 'dashboard.html', context)
@@ -1119,7 +1582,7 @@ def analytics_view(request):
         'best_event': best_event,
 
         # Narrative Insights
-        'headline': f"{'📈 Strong Growth!' if donation_growth > 10 else '📊 Steady Progress' if donation_growth >= 0 else '📉 Needs Attention'}",
+        'headline': f"{'📈 Strong Growth!' if donation_growth > 10 else '📊 Steady Progress' if donation_growth >= 0 else '📉 <span style=\"color: white\">Needs Attention</span>'}",
         'participation_insight': f"{participation_rate}% of members have attended at least one event" +
                                  (f" - {'Excellent!' if participation_rate > 70 else 'Good' if participation_rate > 50 else 'Room for improvement'}" if participation_rate > 0 else ""),
         'donation_insight': f"{donation_rate}% of members have donated" +
@@ -1555,14 +2018,6 @@ def edit_event(request, event_id):
     # For GET request, prepare the form
     councils = Council.objects.all() if request.user.role == 'admin' else None
 
-    # Check if AJAX request - render partial
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return render(request, 'partials/_edit_event_form.html', {
-            'event': event,
-            'councils': councils,
-            'is_admin': request.user.role == 'admin'
-        })
-
     # Pass the event and councils to the template
     return render(request, 'edit_event.html', {
         'event': event,
@@ -1759,49 +2214,20 @@ def donations(request):
     show_manual_link = request.user.is_authenticated and request.user.role in ['admin', 'officer']
     logger.debug(f"show_manual_link: {show_manual_link}, User: {request.user}, Role: {getattr(request.user, 'role', 'N/A')}")
     if request.method == 'POST':
-        payment_method = request.POST.get('payment_method', 'gcash')
         form = DonationForm(request.POST, request.FILES)
-        logger.debug(f"Form fields: {form.as_p()}, Payment method: {payment_method}")
+        logger.debug(f"Form fields: {form.as_p()}")
         if form.is_valid():
             donation = form.save(commit=False)
             donation.submitted_by = request.user if request.user.is_authenticated else None
+            donation.donor = request.user if request.user.is_authenticated else None
+            donation.transaction_id = f"GCASH-{uuid.uuid4().hex[:8]}"
+            donation.payment_method = 'gcash'
+            donation.status = 'pending'
+            donation.signature = ''
             donation.donation_date = date.today()
-
-            if payment_method == 'manual':
-                # Manual donation flow - requires login and council
-                if not request.user.is_authenticated:
-                    messages.error(request, 'You must be logged in to submit manual donations.')
-                    return redirect('donations')
-                if not request.user.council:
-                    messages.error(request, 'You must be assigned to a council to submit a manual donation.')
-                    return redirect('donations')
-
-                donation.transaction_id = f"KC-{uuid.uuid4().hex[:8]}"
-                donation.payment_method = 'manual'
-                donation.status = 'pending_manual'
-                donation.council = request.user.council
-                donation.signature = ''
-
-                # Handle anonymous donation
-                if request.POST.get('donate_anonymously'):
-                    donation.first_name = "Anonymous"
-                    donation.middle_initial = ""
-                    donation.last_name = ""
-                    donation.email = ""
-
-                donation.save()
-                logger.info(f"Manual donation created: ID={donation.id}, Amount={donation.amount}, Status={donation.status}")
-                messages.success(request, 'Manual donation submitted for review.')
-                return redirect('donations')
-            else:
-                # GCash payment flow
-                donation.transaction_id = f"GCASH-{uuid.uuid4().hex[:8]}"
-                donation.payment_method = 'gcash'
-                donation.status = 'pending'
-                donation.signature = ''
-                donation.save()
-                logger.info(f"GCash donation created: ID={donation.id}, Email={donation.email}, Amount={donation.amount}")
-                return initiate_gcash_payment(request, donation)
+            donation.save()
+            logger.info(f"GCash donation created: ID={donation.id}, Email={donation.email}, Amount={donation.amount}")
+            return initiate_gcash_payment(request, donation)
         else:
             logger.debug(f"Form errors: {form.errors}")
             messages.error(request, 'Please correct the errors in the form.')
@@ -1823,6 +2249,7 @@ def manual_donation(request):
             donation = form.save(commit=False)
             donation.payment_method = 'manual'
             donation.submitted_by = request.user
+            donation.donor = request.user
             # Assign the council of the submitting user
             if request.user.council:
                 donation.council = request.user.council
@@ -1855,13 +2282,11 @@ def manual_donation(request):
 # @permission_required('capstone_project.review_manual_donations', raise_exception=True)
 def review_manual_donations(request):
     if request.user.role == 'admin':
-        # Admin sees all pending manual donations (including their own, but marked)
-        pending_donations = Donation.objects.filter(status='pending_manual').order_by('-donation_date')
+        pending_donations = Donation.objects.filter(status='pending_manual')
     else:  # Officer
-        # Officer sees their council's donations (including their own, but marked)
         pending_donations = Donation.objects.filter(status='pending_manual').filter(
             submitted_by__council=request.user.council
-        ).order_by('-donation_date')
+        ).exclude(submitted_by=request.user)
 
     logger.debug(f"User {request.user.username} (role={request.user.role}, council={request.user.council.name if request.user.council else 'None'}): Found {pending_donations.count()} pending manual donations")
     for donation in pending_donations:
@@ -2211,15 +2636,8 @@ def get_blockchain_data(request):
 
         # Process chain
         for block in chain:
-            # Convert timestamp string to datetime object for template date filter
-            if isinstance(block.get('timestamp'), str):
-                try:
-                    block['timestamp'] = datetime.fromisoformat(block['timestamp'].replace('Z', '+00:00'))
-                except (ValueError, AttributeError):
-                    block['timestamp'] = None
             for tx in block['transactions']:
                 process_transaction(tx)
-
 
         # Process pending transactions
         for tx in pending_transactions:
@@ -2227,7 +2645,7 @@ def get_blockchain_data(request):
 
         logger.info(f"Blockchain data retrieved: {len(chain)} blocks, {len(pending_transactions)} pending transactions")
         return render(request, 'blockchain.html', {
-            'chain': chain[::-1],  # Reverse order: newest blocks first
+            'chain': chain,
             'pending_transactions': pending_transactions,
             'is_privileged': is_privileged
         })
@@ -2266,119 +2684,22 @@ def request_receipt(request, transaction_id):
 
 @login_required
 def download_receipt(request, transaction_id):
-    """Generate and download a PDF receipt for a donation"""
+    """Allow admins/officers to download a receipt"""
     if request.user.role not in ['admin', 'officer']:
         messages.error(request, "You do not have permission to download receipts.")
         return redirect('blockchain')
 
     try:
-        from io import BytesIO
-        from reportlab.lib.pagesizes import letter
-        from reportlab.lib.colors import HexColor
-        from reportlab.pdfgen import canvas
-
         donation = get_object_or_404(Donation, transaction_id=transaction_id)
-
-        # Create PDF buffer
-        buffer = BytesIO()
-        p = canvas.Canvas(buffer, pagesize=letter)
-        width, height = letter
-
-        # Colors
-        primary_color = HexColor('#1e40af')
-        accent_color = HexColor('#dc2626')
-        text_color = HexColor('#1f2937')
-        light_gray = HexColor('#6b7280')
-
-        # Header
-        p.setFillColor(primary_color)
-        p.rect(0, height - 120, width, 120, fill=True, stroke=False)
-
-        # Title
-        p.setFillColor(HexColor('#ffffff'))
-        p.setFont("Helvetica-Bold", 24)
-        p.drawCentredString(width/2, height - 50, "KNIGHTS OF COLUMBUS")
-        p.setFont("Helvetica", 14)
-        p.drawCentredString(width/2, height - 75, "Official Donation Receipt")
-
-        # Transaction ID box
-        p.setFillColor(accent_color)
-        p.roundRect(width/2 - 120, height - 110, 240, 28, 5, fill=True, stroke=False)
-        p.setFillColor(HexColor('#ffffff'))
-        p.setFont("Helvetica-Bold", 11)
-        p.drawCentredString(width/2, height - 100, f"Transaction: {transaction_id}")
-
-        # Main content
-        y_pos = height - 180
-        left_margin = 72
-
-        # Donor Information
-        p.setFillColor(text_color)
-        p.setFont("Helvetica-Bold", 14)
-        p.drawString(left_margin, y_pos, "Donor Information")
-        y_pos -= 5
-        p.setStrokeColor(primary_color)
-        p.setLineWidth(2)
-        p.line(left_margin, y_pos, left_margin + 150, y_pos)
-        y_pos -= 25
-
-        p.setFont("Helvetica", 11)
-        donor_name = f"{donation.first_name} {donation.middle_initial}. {donation.last_name}".strip() if donation.first_name != "Anonymous" else "Anonymous Donor"
-        p.drawString(left_margin, y_pos, f"Name: {donor_name}")
-        y_pos -= 20
-        p.drawString(left_margin, y_pos, f"Email: {donation.email if donation.email else 'Not provided'}")
-        y_pos -= 40
-
-        # Donation Details
-        p.setFont("Helvetica-Bold", 14)
-        p.drawString(left_margin, y_pos, "Donation Details")
-        y_pos -= 5
-        p.line(left_margin, y_pos, left_margin + 150, y_pos)
-        y_pos -= 25
-
-        p.setFont("Helvetica", 11)
-        p.drawString(left_margin, y_pos, f"Date: {donation.donation_date.strftime('%B %d, %Y') if donation.donation_date else 'N/A'}")
-        y_pos -= 20
-        p.drawString(left_margin, y_pos, f"Payment Method: {donation.get_payment_method_display()}")
-        y_pos -= 20
-        p.drawString(left_margin, y_pos, f"Status: {donation.get_status_display()}")
-        y_pos -= 40
-
-        # Amount Box
-        p.setFillColor(HexColor('#f0fdf4'))
-        p.setStrokeColor(HexColor('#16a34a'))
-        p.setLineWidth(2)
-        p.roundRect(left_margin, y_pos - 50, width - 2*left_margin, 60, 10, fill=True, stroke=True)
-
-        p.setFillColor(light_gray)
-        p.setFont("Helvetica", 12)
-        p.drawCentredString(width/2, y_pos - 10, "Amount Donated")
-
-        p.setFillColor(HexColor('#16a34a'))
-        p.setFont("Helvetica-Bold", 28)
-        p.drawCentredString(width/2, y_pos - 40, f"PHP {donation.amount:,.2f}")
-
-        # Footer
-        p.setFillColor(light_gray)
-        p.setFont("Helvetica", 9)
-        p.drawCentredString(width/2, 80, "This receipt is generated electronically and is valid without signature.")
-        p.drawCentredString(width/2, 65, "For questions, please contact your local Knights of Columbus council.")
-        p.drawCentredString(width/2, 50, f"Generated on: {datetime.now().strftime('%B %d, %Y at %I:%M %p')}")
-
-        p.setFont("Helvetica-Oblique", 8)
-        p.drawCentredString(width/2, 35, "This donation is recorded on our immutable blockchain ledger for transparency.")
-
-        p.showPage()
-        p.save()
-
-        buffer.seek(0)
-        return FileResponse(buffer, as_attachment=True, filename=f"Receipt-{transaction_id}.pdf", content_type='application/pdf')
-
+        if donation.receipt:
+            return FileResponse(donation.receipt.open(), as_attachment=True, filename=f"Receipt-{transaction_id}.jpg")
+        else:
+            messages.error(request, "No receipt available for this transaction.")
+            return redirect('blockchain')
     except Exception as e:
-        logger.error(f"Error generating receipt: {str(e)}")
-        messages.error(request, "Error generating receipt file.")
+        logger.error(f"Error downloading receipt: {str(e)}")
+        messages.error(request, "Error retrieving receipt file.")
         return redirect('blockchain')
-
 
 @login_required
 def send_receipt(request, transaction_id):
@@ -2841,7 +3162,7 @@ def event_attendance(request, event_id):
 
     # Check if the event is happening today
     today = date.today()
-    is_today = (event.date_from <= today <= (event.date_until or event.date_from))
+    is_today = True  # Temporarily set to True for testing - remove this line later
 
     # Get members and officers based on the event's council or global status
     if event.is_global:
@@ -2891,11 +3212,13 @@ def update_attendance(request):
     try:
         data = json.loads(request.body)
         event_id = data.get('event_id')
+        logger.info(f"update_attendance called: event_id={event_id}, user={request.user.username}, data keys={list(data.keys())}")
 
         # Check if this is a batch update or individual update
         if 'present_members' in data:
             # Batch update
             present_members = data.get('present_members', [])
+            logger.info(f"Batch update: present_members={present_members}")
 
             # Validate input
             if not event_id:
@@ -2904,6 +3227,7 @@ def update_attendance(request):
             try:
                 # Get event
                 event = get_object_or_404(Event, id=event_id)
+                logger.info(f"Event found: {event.name}, status={event.status}")
 
                 # Check if the event is approved
                 if event.status != 'approved':
@@ -2919,6 +3243,7 @@ def update_attendance(request):
                 if not (event.date_from <= today <= (event.date_until or event.date_from)):
                     # Temporarily comment out this check for testing
                     # return JsonResponse({'status': 'error', 'message': 'Can only update attendance on the day of the event'}, status=400)
+                    logger.info(f"Date check bypassed: event dates {event.date_from} to {event.date_until}, today={today}")
                     pass
 
                 # Get all members and officers for this event
@@ -2936,14 +3261,17 @@ def update_attendance(request):
                 with transaction.atomic():
                     # First, mark all as absent
                     EventAttendance.objects.filter(event=event).update(is_present=False)
+                    logger.info(f"Marked all as absent for event {event.id}")
 
                     # Then mark selected members as present
                     for member_id in present_members:
                         try:
                             member = User.objects.get(id=member_id)
+                            logger.info(f"Processing member {member_id}: {member.get_full_name()}")
 
                             # Check if the officer is trying to update attendance for a member outside their council
                             if request.user.role == 'officer' and member.council != request.user.council:
+                                logger.info(f"Skipping member {member_id} - different council")
                                 continue
 
                             attendance, created = EventAttendance.objects.update_or_create(
@@ -2954,11 +3282,14 @@ def update_attendance(request):
                                     'recorded_by': request.user
                                 }
                             )
+                            logger.info(f"Updated attendance for {member.get_full_name()}: created={created}, is_present={attendance.is_present}")
                         except User.DoesNotExist:
+                            logger.warning(f"User {member_id} not found")
                             continue
 
                 # Get updated count
                 present_count = EventAttendance.objects.filter(event=event, is_present=True).count()
+                logger.info(f"Final present count: {present_count}")
 
                 # Calculate total count based on user role and event type
                 if event.is_global:
@@ -2994,6 +3325,7 @@ def update_attendance(request):
             except Event.DoesNotExist:
                 return JsonResponse({'status': 'error', 'message': 'Event not found'}, status=404)
             except Exception as e:
+                logger.error(f"Error in update_attendance batch update: {str(e)}", exc_info=True)
                 return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
         else:
@@ -3339,6 +3671,7 @@ def change_council(request, user_id):
 
         try:
             new_council = Council.objects.get(id=new_council_id)
+            old_council = user_to_change.council
 
             # Update the user's council
             user_to_change.council = new_council

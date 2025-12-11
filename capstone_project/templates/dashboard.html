@@ -29,7 +29,8 @@ Dashboard{% endif %}
     border-radius: var(--radius-xl);
     padding: var(--space-5);
     display: flex;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: center;
     gap: var(--space-4);
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--neutral-200);
@@ -80,8 +81,9 @@ Dashboard{% endif %}
     font-size: var(--text-2xl);
     font-weight: var(--font-bold);
     color: var(--neutral-900);
-    line-height: 1;
+    line-height: 2;
     margin-bottom: var(--space-1);
+    text-align: center;
   }
 
   .stat-label {
@@ -189,7 +191,7 @@ Dashboard{% endif %}
 
   /* Bible Verse */
   .verse-card {
-    background: linear-gradient(135deg, var(--primary-800) 0%, var(--primary-900) 100%);
+    background: linear-gradient(135deg, var(--primary-700) 0%, var(--primary-600) 100%);
     color: white;
     padding: var(--space-5);
     border-radius: var(--radius-xl);
@@ -274,6 +276,115 @@ Dashboard{% endif %}
     font-weight: var(--font-semibold);
     background: var(--success-50);
     color: var(--success-700);
+  }
+
+  /* Analytics Section */
+  .analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-5);
+    margin-top: var(--space-6);
+  }
+
+  .analytics-card {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: var(--space-5);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--neutral-200);
+  }
+
+  .analytics-card-title {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-900);
+    margin-bottom: var(--space-4);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .analytics-card-title i {
+    color: var(--primary-600);
+  }
+
+  .category-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .category-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-2) 0;
+  }
+
+  .category-name {
+    font-size: var(--text-sm);
+    color: var(--neutral-700);
+    font-weight: var(--font-medium);
+    flex: 1;
+  }
+
+  .category-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--neutral-100);
+    border-radius: 3px;
+    margin: 0 var(--space-3);
+    overflow: hidden;
+  }
+
+  .category-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-500), var(--primary-600));
+    border-radius: 3px;
+    transition: width 0.3s ease;
+  }
+
+  .category-percentage {
+    font-size: var(--text-xs);
+    color: var(--neutral-600);
+    font-weight: var(--font-semibold);
+    min-width: 40px;
+    text-align: right;
+  }
+
+  .donation-summary {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .donation-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-2) var(--space-3);
+    background: var(--neutral-50);
+    border-radius: var(--radius-lg);
+  }
+
+  .donation-label {
+    font-size: var(--text-sm);
+    color: var(--neutral-700);
+  }
+
+  .donation-amount {
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
+    color: var(--success-600);
+  }
+
+  .activity-log-sidebar {
+    background: white;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--neutral-200);
+    max-height: 600px;
+    overflow-y: auto;
   }
 </style>
 {% endblock %}
@@ -387,7 +498,7 @@ Dashboard{% endif %}
         <h3><i class="fas fa-calendar-alt"></i> Upcoming Events</h3>
         <a href="{% url 'event_list' %}" class="btn btn--ghost btn--sm">View All</a>
       </div>
-      <div class="dashboard-card-body" style="padding: 0;">
+      <div style="max-height: 300px; overflow-y: auto;">
         {% if events %}
         <table class="events-table">
           <thead>
@@ -398,7 +509,7 @@ Dashboard{% endif %}
             </tr>
           </thead>
           <tbody>
-            {% for event in events|slice:":5" %}
+            {% for event in events|slice:":3" %}
             <tr>
               <td>
                 <div class="event-name">{{ event.name }}</div>
@@ -415,6 +526,87 @@ Dashboard{% endif %}
           No upcoming events scheduled.
         </div>
         {% endif %}
+      </div>
+    </div>
+
+    <!-- Analytics Section -->
+    <div class="analytics-grid">
+      <!-- Event Category Activity -->
+      <div class="analytics-card">
+        <div class="analytics-card-title">
+          <i class="fas fa-chart-bar"></i>
+          Event Category Activity
+        </div>
+        <div class="category-list">
+          {% if event_category_stats %}
+            {% for category, stats in event_category_stats.items %}
+            <div class="category-item">
+              <span class="category-name">{{ category }}</span>
+              <div class="category-bar">
+                <div class="category-bar-fill" style="width: {{ stats.percentage }}%"></div>
+              </div>
+              <span class="category-percentage">{{ stats.percentage }}%</span>
+            </div>
+            {% endfor %}
+          {% else %}
+          <div style="text-align: center; color: var(--neutral-500); padding: var(--space-4);">
+            <p style="margin: 0; font-size: var(--text-sm);">No event data available</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Monthly Activity -->
+      <div class="analytics-card">
+        <div class="analytics-card-title">
+          <i class="fas fa-calendar-check"></i>
+          Monthly Activity
+        </div>
+        <div class="category-list">
+          {% if monthly_activity_stats %}
+            {% for month, count in monthly_activity_stats.items %}
+            <div class="category-item">
+              <span class="category-name">{{ month }}</span>
+              <div class="category-bar">
+                <div class="category-bar-fill" style="width: {{ count.percentage }}%"></div>
+              </div>
+              <span class="category-percentage">{{ count.count }}</span>
+            </div>
+            {% endfor %}
+          {% else %}
+          <div style="text-align: center; color: var(--neutral-500); padding: var(--space-4);">
+            <p style="margin: 0; font-size: var(--text-sm);">No activity data available</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Donation Summary -->
+      <div class="analytics-card">
+        <div class="analytics-card-title">
+          <i class="fas fa-hand-holding-heart"></i>
+          Donation Summary
+        </div>
+        <div class="donation-summary">
+          {% if donation_stats %}
+          <div class="donation-item">
+            <span class="donation-label">Total Donated</span>
+            <span class="donation-amount">₱{{ donation_stats.total|default:"0.00" }}</span>
+          </div>
+          <div class="donation-item">
+            <span class="donation-label">This Month</span>
+            <span class="donation-amount">₱{{ donation_stats.this_month|default:"0.00" }}</span>
+          </div>
+          <div class="donation-item">
+            <span class="donation-label">Donations Count</span>
+            <span class="donation-amount">{{ donation_stats.count|default:"0" }}</span>
+          </div>
+          {% else %}
+          <div style="text-align: center; color: var(--neutral-500); padding: var(--space-4);">
+            <p style="margin: 0; font-size: var(--text-sm);">No donations yet</p>
+          </div>
+          {% endif %}
+        </div>
       </div>
     </div>
   </div>
@@ -445,6 +637,9 @@ Dashboard{% endif %}
         </div>
       </div>
     </div>
+
+    <!-- Activity Log -->
+    {% include 'partials/activity_log.html' %}
   </div>
 </div>
 

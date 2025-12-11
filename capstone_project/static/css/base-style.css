@@ -51,15 +51,6 @@ nav ul li a {
     font-weight: 200;
 }
 
-nav ul li a:hover {
-    text-decoration: underline;
-}
-
-nav ul li a.active {
-    color: #f4b41a;
-    font-weight: 500;
-    text-decoration: underline;
-}
 
 .hamburger {
     display: none;

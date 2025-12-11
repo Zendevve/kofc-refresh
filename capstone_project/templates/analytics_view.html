@@ -31,6 +31,7 @@
     font-size: 1.5rem;
     font-weight: 700;
     margin: 0 0 0.25rem;
+    color: var(--accent-400);
   }
 
   .insights-hero-text p {
@@ -364,7 +365,7 @@
 <!-- Hero Insight -->
 <div class="insights-hero">
   <div class="insights-hero-text">
-    <h2>{{ data_summaries.headline }}</h2>
+    <h2>{{ data_summaries.headline|safe }}</h2>
     <p>{{ data_summaries.alert }}</p>
   </div>
   <div class="engagement-score">
@@ -444,7 +445,7 @@
   </div>
   <div class="insight-card">
     <h4><i class="fas fa-donate" style="color: #22c55e;"></i> Donations</h4>
-    <p>{{ data_summaries.donation_insight }}</p>
+    <p>{{ data_summaries.donation_insight }} Non-member donations represent {{ data_summaries.non_member_donation_percentage|default:"0" }}% of total contributions.</p>
   </div>
   <div class="insight-card">
     <h4><i class="fas fa-star" style="color: #f59e0b;"></i> Top Performers</h4>
@@ -609,11 +610,17 @@
 
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    // Register the datalabels plugin
+    Chart.register(ChartDataLabels);
+
     Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
     Chart.defaults.color = '#64748b';
     Chart.defaults.plugins.legend.labels.usePointStyle = true;
+    // Disable datalabels globally, enable per-chart
+    Chart.defaults.plugins.datalabels = { display: false };
 
     const colors = {
       primary: '#2563eb',
@@ -624,6 +631,15 @@
       cyan: '#0891b2'
     };
 
+    // Helper: Calculate percentage
+    const calcPercent = (value, dataset) => {
+      const total = dataset.reduce((a, b) => a + b, 0);
+      return total > 0 ? Math.round((value / total) * 100) : 0;
+    };
+
+    // Helper: Format currency
+    const formatCurrency = (val) => '₱' + val.toLocaleString();
+
     const eventsData = JSON.parse(document.getElementById('eventsData')?.textContent || '{}');
     const membersOfficersData = JSON.parse(document.getElementById('membersOfficersData')?.textContent || '{}');
     const eventTypesData = JSON.parse(document.getElementById('eventTypesData')?.textContent || '{}');
@@ -633,28 +649,95 @@
     const donationSourcesData = JSON.parse(document.getElementById('donationSourcesData')?.textContent || '{}');
     const degreeDistributionData = JSON.parse(document.getElementById('degreeDistributionData')?.textContent || '{}');
 
-    // Payment Methods Chart (GCash vs Manual)
+    // Payment Methods Chart (GCash vs Manual) - WITH PERCENTAGES
     if (donationSourcesData.labels?.length) {
       new Chart(document.getElementById('donationSourcesChart').getContext('2d'), {
         type: 'doughnut',
-        data: { labels: donationSourcesData.labels, datasets: [{ data: donationSourcesData.data, backgroundColor: [colors.primary, colors.success], borderWidth: 0 }] },
-        options: { responsive: true, maintainAspectRatio: false, cutout: '60%', plugins: { legend: { position: 'bottom' } } }
+        data: {
+          labels: donationSourcesData.labels,
+          datasets: [{
+            data: donationSourcesData.data,
+            backgroundColor: [colors.primary, colors.success],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '60%',
+          plugins: {
+            legend: { position: 'bottom' },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => {
+                  const pct = calcPercent(ctx.raw, ctx.dataset.data);
+                  return `${ctx.label}: ${formatCurrency(ctx.raw)} (${pct}%)`;
+                }
+              }
+            },
+            datalabels: {
+              display: true,
+              color: '#fff',
+              font: { weight: 'bold', size: 13 },
+              formatter: (value, ctx) => {
+                const pct = calcPercent(value, ctx.dataset.data);
+                return pct > 5 ? pct + '%' : '';
+              }
+            }
+          }
+        }
       });
     }
 
-    // Member Degree Distribution Chart
+    // Member Degree Distribution Chart - WITH PERCENTAGES
     if (degreeDistributionData.labels?.length) {
+      const degreeTotal = degreeDistributionData.data.reduce((a, b) => a + b, 0);
       new Chart(document.getElementById('degreeDistributionChart').getContext('2d'), {
         type: 'bar',
         data: {
           labels: degreeDistributionData.labels,
-          datasets: [{ label: 'Members', data: degreeDistributionData.data, backgroundColor: [colors.primary, colors.secondary, colors.success, colors.purple, '#94a3b8'], borderRadius: 6 }]
+          datasets: [{
+            label: 'Members',
+            data: degreeDistributionData.data,
+            backgroundColor: [colors.primary, colors.secondary, colors.success, colors.purple, '#94a3b8'],
+            borderRadius: 6
+          }]
         },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'y',  // Horizontal bar for better readability
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => {
+                  const pct = degreeTotal > 0 ? Math.round((ctx.raw / degreeTotal) * 100) : 0;
+                  return `${ctx.raw} members (${pct}% of total)`;
+                }
+              }
+            },
+            datalabels: {
+              display: true,
+              anchor: 'end',
+              align: 'end',
+              color: '#374151',
+              font: { weight: '600', size: 11 },
+              formatter: (value) => {
+                const pct = degreeTotal > 0 ? Math.round((value / degreeTotal) * 100) : 0;
+                return `${value} (${pct}%)`;
+              }
+            }
+          },
+          scales: {
+            x: { beginAtZero: true, grid: { display: false } },
+            y: { grid: { display: false } }
+          }
+        }
       });
     }
 
-    // Event Participation
+    // Event Participation - WITH ATTENDANCE RATE PERCENTAGES
     if (eventParticipationData.labels?.length) {
       new Chart(document.getElementById('eventParticipationChart').getContext('2d'), {
         type: 'bar',
@@ -666,19 +749,51 @@
           ]
         },
         options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: { legend: { position: 'top' } },
-          scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, beginAtZero: true } }
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'top' },
+            tooltip: {
+              callbacks: {
+                afterBody: (ctx) => {
+                  const idx = ctx[0].dataIndex;
+                  const attended = eventParticipationData.attended[idx];
+                  const notAttended = eventParticipationData.not_attended[idx];
+                  const total = attended + notAttended;
+                  const rate = total > 0 ? Math.round((attended / total) * 100) : 0;
+                  return `\nAttendance Rate: ${rate}%`;
+                }
+              }
+            },
+            datalabels: {
+              display: (ctx) => ctx.datasetIndex === 0, // Only show on "Attended" bars
+              anchor: 'center',
+              align: 'center',
+              color: '#fff',
+              font: { weight: 'bold', size: 11 },
+              formatter: (value, ctx) => {
+                const idx = ctx.dataIndex;
+                const attended = eventParticipationData.attended[idx];
+                const notAttended = eventParticipationData.not_attended[idx];
+                const total = attended + notAttended;
+                const rate = total > 0 ? Math.round((attended / total) * 100) : 0;
+                return rate > 0 ? rate + '%' : '';
+              }
+            }
+          },
+          scales: {
+            x: { stacked: true, grid: { display: false } },
+            y: { stacked: true, beginAtZero: true, title: { display: true, text: 'Number of Members' } }
+          }
         }
       });
     }
 
-    // Predictive Chart
+    // Predictive Chart - WITH VALUE LABELS ON POINTS
     if (predictiveData.historical_labels?.length || predictiveData.forecast_labels?.length) {
       const allLabels = [...(predictiveData.historical_labels || []), ...(predictiveData.forecast_labels || [])];
       const historicalData = [...(predictiveData.historical_data || []), ...Array(predictiveData.forecast_labels?.length || 0).fill(null)];
 
-      // Connect forecast to last historical point by including it as the first forecast value
       const lastHistoricalValue = predictiveData.historical_data?.length ? predictiveData.historical_data[predictiveData.historical_data.length - 1] : null;
       const forecastData = [...Array(Math.max(0, (predictiveData.historical_data?.length || 0) - 1)).fill(null), lastHistoricalValue, ...(predictiveData.forecast_data || [])];
 
@@ -687,48 +802,201 @@
         data: {
           labels: allLabels,
           datasets: [
-            { label: 'Historical', data: historicalData, borderColor: colors.primary, backgroundColor: 'rgba(37,99,235,0.1)', fill: true, tension: 0.4, pointRadius: 4 },
-            { label: 'Forecast', data: forecastData, borderColor: colors.secondary, borderDash: [5, 5], backgroundColor: 'rgba(245,158,11,0.1)', fill: true, tension: 0.4, pointRadius: 4 }
+            { label: 'Historical', data: historicalData, borderColor: colors.primary, backgroundColor: 'rgba(37,99,235,0.1)', fill: true, tension: 0.4, pointRadius: 5, pointHoverRadius: 7 },
+            { label: 'Forecast', data: forecastData, borderColor: colors.secondary, borderDash: [5, 5], backgroundColor: 'rgba(245,158,11,0.1)', fill: true, tension: 0.4, pointRadius: 5, pointHoverRadius: 7 }
           ]
         },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } }
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'top' },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => ctx.raw !== null ? `${ctx.dataset.label}: ${formatCurrency(ctx.raw)}` : ''
+              }
+            },
+            datalabels: {
+              display: (ctx) => ctx.raw !== null && (ctx.dataIndex === 0 || ctx.dataIndex === ctx.dataset.data.filter(v => v !== null).length - 1),
+              anchor: 'end',
+              align: 'top',
+              color: '#374151',
+              font: { weight: '600', size: 10 },
+              formatter: (value) => value !== null ? formatCurrency(value) : ''
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { callback: (val) => '₱' + val.toLocaleString() }
+            }
+          }
+        }
       });
     }
 
-
-    // Donation by Role
+    // Donation by Role - WITH PERCENTAGES
     if (donationByRoleData.labels?.length) {
       new Chart(document.getElementById('donationByRoleChart').getContext('2d'), {
         type: 'doughnut',
-        data: { labels: donationByRoleData.labels, datasets: [{ data: donationByRoleData.data, backgroundColor: [colors.primary, colors.secondary, colors.purple, colors.success], borderWidth: 0 }] },
-        options: { responsive: true, maintainAspectRatio: false, cutout: '60%', plugins: { legend: { position: 'bottom' } } }
+        data: {
+          labels: donationByRoleData.labels,
+          datasets: [{
+            data: donationByRoleData.data,
+            backgroundColor: [colors.primary, colors.secondary, colors.purple, colors.success],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '60%',
+          plugins: {
+            legend: { position: 'bottom' },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => {
+                  const pct = calcPercent(ctx.raw, ctx.dataset.data);
+                  return `${ctx.label}: ${formatCurrency(ctx.raw)} (${pct}%)`;
+                }
+              }
+            },
+            datalabels: {
+              display: true,
+              color: '#fff',
+              font: { weight: 'bold', size: 13 },
+              formatter: (value, ctx) => {
+                const pct = calcPercent(value, ctx.dataset.data);
+                return pct > 5 ? pct + '%' : '';
+              }
+            }
+          }
+        }
       });
     }
 
-    // Event Types
+    // Event Types - WITH PERCENTAGES
     if (eventTypesData.labels?.length) {
-      new Chart(document.getElementById('eventTypesChart').getContext('2d'), {
-        type: 'doughnut',
-        data: { labels: eventTypesData.labels, datasets: [{ data: eventTypesData.data, backgroundColor: [colors.primary, colors.secondary, colors.success, colors.purple, colors.cyan, colors.danger], borderWidth: 0 }] },
-        options: { responsive: true, maintainAspectRatio: false, cutout: '60%', plugins: { legend: { position: 'bottom' } } }
-      });
+      const validCategories = ['Exemplification', 'Service Program', 'Council Meeting', 'Assembly Meeting'];
+      const filteredLabels = eventTypesData.labels.filter(label => validCategories.includes(label));
+      const filteredData = eventTypesData.data.filter((_, index) => validCategories.includes(eventTypesData.labels[index]));
+
+      if (filteredLabels.length > 0) {
+        new Chart(document.getElementById('eventTypesChart').getContext('2d'), {
+          type: 'doughnut',
+          data: {
+            labels: filteredLabels,
+            datasets: [{
+              data: filteredData,
+              backgroundColor: [colors.primary, colors.secondary, colors.success, colors.purple],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '60%',
+            plugins: {
+              legend: { position: 'bottom' },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => {
+                    const pct = calcPercent(ctx.raw, ctx.dataset.data);
+                    return `${ctx.label}: ${ctx.raw} events (${pct}%)`;
+                  }
+                }
+              },
+              datalabels: {
+                display: true,
+                color: '#fff',
+                font: { weight: 'bold', size: 13 },
+                formatter: (value, ctx) => {
+                  const pct = calcPercent(value, ctx.dataset.data);
+                  return pct > 5 ? pct + '%' : '';
+                }
+              }
+            }
+          }
+        });
+      }
     }
 
-    // Events Chart
+    // Events Chart - WITH COUNT LABELS
     if (eventsData.labels?.length) {
       new Chart(document.getElementById('eventsChart').getContext('2d'), {
         type: 'bar',
-        data: { labels: eventsData.labels, datasets: [{ label: 'Events', data: eventsData.data, backgroundColor: colors.primary, borderRadius: 6 }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+        data: {
+          labels: eventsData.labels,
+          datasets: [{
+            label: 'Events',
+            data: eventsData.data,
+            backgroundColor: colors.primary,
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            datalabels: {
+              display: true,
+              anchor: 'end',
+              align: 'end',
+              color: '#374151',
+              font: { weight: '600', size: 11 },
+              formatter: (value) => value > 0 ? value : ''
+            }
+          },
+          scales: {
+            y: { beginAtZero: true },
+            x: { grid: { display: false } }
+          }
+        }
       });
     }
 
-    // Members/Officers
+    // Members/Officers - WITH COUNT + PERCENTAGE LABELS
     if (membersOfficersData.labels?.length) {
       new Chart(document.getElementById('membersOfficersChart').getContext('2d'), {
         type: 'bar',
-        data: { labels: membersOfficersData.labels, datasets: [{ label: 'Members', data: membersOfficersData.members, backgroundColor: colors.primary, borderRadius: 4 }, { label: 'Officers', data: membersOfficersData.officers, backgroundColor: colors.secondary, borderRadius: 4 }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } }
+        data: {
+          labels: membersOfficersData.labels,
+          datasets: [
+            { label: 'Members', data: membersOfficersData.members, backgroundColor: colors.primary, borderRadius: 4 },
+            { label: 'Officers', data: membersOfficersData.officers, backgroundColor: colors.secondary, borderRadius: 4 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'top' },
+            tooltip: {
+              callbacks: {
+                afterBody: (ctx) => {
+                  const idx = ctx[0].dataIndex;
+                  const members = membersOfficersData.members[idx] || 0;
+                  const officers = membersOfficersData.officers[idx] || 0;
+                  const total = members + officers;
+                  return `\nTotal: ${total} users`;
+                }
+              }
+            },
+            datalabels: {
+              display: true,
+              anchor: 'end',
+              align: 'end',
+              color: '#374151',
+              font: { weight: '600', size: 10 },
+              formatter: (value) => value > 0 ? value : ''
+            }
+          },
+          scales: {
+            y: { beginAtZero: true },
+            x: { grid: { display: false } }
+          }
+        }
       });
     }
   });

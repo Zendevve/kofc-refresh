@@ -775,10 +775,10 @@
 {% block header_actions %}
 <div class="forum-type-tabs">
   <button class="forum-type-tab active" data-type="council">
-    <i class="fas fa-globe"></i> All Councils
+    <i class="fas fa-globe"></i> District (Public)
   </button>
   <button class="forum-type-tab" data-type="district">
-    <i class="fas fa-lock"></i> My Council
+    <i class="fas fa-lock"></i> Council {{ user_council.id }} (Private)
   </button>
 </div>
 {% endblock %}

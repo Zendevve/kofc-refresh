@@ -1,52 +1,310 @@
-{% extends 'base.html' %}
+{% extends 'dashboard_base.html' %}
 {% load static %}
 
-{% block title %}
-Knights of Columbus - Add Manual Donation
+{% block title %}Add Manual Donation - Knights of Columbus{% endblock %}
+{% block page_title %}Add Manual Donation{% endblock %}
+
+{% block breadcrumbs %}
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item">Donations</span>
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item current">Manual Entry</span>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  .donation-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  @media (max-width: 1024px) {
+    .donation-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .impact-card {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+    border-radius: 16px;
+    padding: 2rem;
+    color: white;
+    box-shadow: 0 10px 25px rgba(124, 45, 18, 0.3);
+  }
+
+  .impact-card h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    display: flex;
+    color: #fbbf24;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .impact-card p {
+    opacity: 0.92;
+    line-height: 1.7;
+    margin-bottom: 1.8rem;
+    font-size: 1rem;
+  }
+
+  .trust-features {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+  }
+
+  .feature-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.18);
+    color: #fbbf24;
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+  }
+
+  .feature-text {
+    font-weight: 600;
+    font-size: 0.98rem;
+  }
+
+  .form-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2.2rem;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  }
+
+  .form-header {
+    text-align: center;
+    margin-bottom: 1.8rem;
+  }
+
+  .form-header h3 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 0.5rem;
+  }
+
+  .form-header p {
+    color: #6b7280;
+    font-size: 0.95rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.1rem;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+  }
+
+  label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    font-size: 0.95rem;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: #f9fafb;
+    transition: all 0.2s;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: #2563eb;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+
+  .checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 1.5rem 0;
+    font-size: 0.95rem;
+    color: #4b5563;
+  }
+
+  .checkbox-group input[type="checkbox"] {
+    width: auto;
+    accent-color: #2563eb;
+  }
+
+  .btn-submit {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1.02rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-top: 0.5rem;
+  }
+
+  .btn-submit:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  }
+
+  .back-link {
+    display: block;
+    text-align: center;
+    margin-top: 1.5rem;
+    color: #6b7280;
+    font-size: 0.9rem;
+    text-decoration: none;
+  }
+
+  .back-link:hover {
+    color: #2563eb;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/donations-style.css' %}?v={% now 'U' %}">
-<div class="background" style='background: url("{% static 'images/donation-bg.jpg' %}") no-repeat center/cover;'>
-    <h1>Add Manual Donation</h1>
-    <p>Enter details for donations made offline (e.g., cash, donation).</p>
+<div class="donation-layout">
+  <!-- LEFT: Impact Card -->
+  <div class="impact-card">
+    <h2>Record Offline Donations</h2>
+    <p>
+      For cash, checks, or in-kind donations received during council meetings, events, or direct giving.
+      These donations are permanently recorded on our transparent blockchain ledger.
+    </p>
+
+    <div class="trust-features">
+        <div class="feature-item">
+          <div class="feature"><i class="fas fa-hand-holding-heart"></i></div>
+          <div class="feature-text">Honors All Forms of Giving</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature"><i class="fas fa-shield-alt"></i></div>
+          <div class="feature-text">Secure & Immutable Record</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature"><i class="fas fa-link"></i></div>
+          <div class="feature-text">Added to Public Blockchain Ledger</div>
+        </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Manual Donation Form -->
+  <div class="form-card">
+    <div class="form-header">
+      <h3>Add Manual Donation</h3>
+      <p>Admin & Officer Access Only</p>
+    </div>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} mb-4 p-3 rounded mb-4 text-sm">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+
+      <div id="personal-info">
+        <div class="form-row">
+          <div class="form-group">
+            <label>{{ form.first_name.label }}</label>
+            {{ form.first_name }}
+            {{ form.first_name.errors }}
+          </div>
+          <div class="form-group">
+            <label>{{ form.last_name.label }}</label>
+            {{ form.last_name }}
+            {{ form.last_name.errors }}
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>{{ form.middle_initial.label }} (Optional)</label>
+            {{ form.middle_initial }}
+          </div>
+          <div class="form-group">
+            <label>{{ form.email.label }} (Optional)</label>
+            {{ form.email }}
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>{{ form.amount.label }}</label>
+          {{ form.amount }}
+          {{ form.amount.errors }}
+        </div>
+        <div class="form-group">
+          <label>{{ form.donation_date.label }}</label>
+          {{ form.donation_date }}
+          {{ form.donation_date.errors }}
+        </div>
+      </div>
+
+      <div class="checkbox-group">
+        {{ form.donate_anonymously }}
+        <label for="{{ form.donate_anonymously.id_for_label }}" style="cursor: pointer; margin:0; font-weight:500;">
+          Donate Anonymously (name hidden from public ledger)
+        </label>
+      </div>
+
+      <button type="submit" class="btn-submit">
+        Add to Blockchain Ledger
+      </button>
+    </form>
+
+    <a href="{% url 'donations' %}" class="back-link">
+      Back to Donations
+    </a>
+  </div>
 </div>
-<div class="container">
-    <section class="donation-form">
-        <h2>Manual Donation Input</h2>
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div id="personal-info" style="display: block;">
-                <p>{{ form.first_name.label_tag }} {{ form.first_name }} {{ form.first_name.errors }}</p>
-                <p>{{ form.middle_initial.label_tag }} {{ form.middle_initial }} {{ form.middle_initial.errors }}</p>
-                <p>{{ form.last_name.label_tag }} {{ form.last_name }} {{ form.last_name.errors }}</p>
-                <p>{{ form.email.label_tag }} {{ form.email }} {{ form.email.errors }}</p>
-            </div>
-            <p>{{ form.amount.label_tag }} {{ form.amount }} {{ form.amount.errors }}</p>
-            <p>{{ form.donation_date.label_tag }} {{ form.donation_date }} {{ form.donation_date.errors }}</p>
-            <p>{{ form.donate_anonymously.label_tag }} {{ form.donate_anonymously }} {{ form.donate_anonymously.errors }}</p>
-            <!-- Removed signature field -->
-            <button type="submit" class="btn btn-primary">Submit Donation</button>
-        </form>
-        <a href="{% url 'donations' %}">Back to Donations</a>
-    </section>
-</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const anonymousCheckbox = document.querySelector('#id_donate_anonymously');
-    const personalInfoDiv = document.querySelector('#personal-info'); // Fixed selector
+  const checkbox = document.getElementById('id_donate_anonymously');
+  const personalInfo = document.getElementById('personal-info');
 
-    function togglePersonalInfo() {
-        personalInfoDiv.style.display = anonymousCheckbox.checked ? 'none' : 'block';
-    }
+  function togglePersonalInfo() {
+    personalInfo.style.display = checkbox.checked ? 'none' : 'block';
+  }
 
-    anonymousCheckbox.addEventListener('change', togglePersonalInfo);
-    togglePersonalInfo(); // Initial state
+  checkbox.addEventListener('change', togglePersonalInfo);
+  togglePersonalInfo(); // Initial check
 });
 </script>
 {% endblock %}

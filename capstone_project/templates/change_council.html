@@ -1,184 +1,268 @@
-{% extends 'base.html' %}
+{% extends 'dashboard_base.html' %}
 {% load static %}
-{% block title %}
-Knights of Columbus - Change Council
+
+{% block title %}Change Council - Knights of Columbus{% endblock %}
+
+{% block page_title %}Change Council Assignment{% endblock %}
+{% block breadcrumbs %}
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item">Members</span>
+<span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+<span class="breadcrumb-item current">Change Council</span>
+{% endblock %}
+
+{% block header_actions %}
+{% if request.user.role == 'admin' %}
+<a href="{% url 'member_list' %}" class="btn btn--ghost">
+  <i class="fas fa-arrow-left"></i>
+  <span>Back to Members</span>
+</a>
+{% else %}
+<a href="{% url 'council_members' %}" class="btn btn--ghost">
+  <i class="fas fa-arrow-left"></i>
+  <span>Back to Council</span>
+</a>
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  .form-card {
+    background: white;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--neutral-200);
+    overflow: hidden;
+  }
+
+  .form-card-body {
+    padding: var(--space-6);
+  }
+
+  .form-section {
+    margin-bottom: var(--space-8);
+  }
+
+  .form-section:last-child {
+    margin-bottom: 0;
+  }
+
+  .form-section-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-900);
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--neutral-200);
+  }
+
+  .form-section-title i {
+    color: var(--primary-600);
+  }
+
+  .member-info-display {
+    display: flex;
+    gap: var(--space-4);
+    align-items: flex-start;
+    padding: var(--space-4);
+    background: var(--neutral-50);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--neutral-200);
+  }
+
+  .member-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .member-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .member-avatar i {
+    font-size: 2rem;
+    color: white;
+  }
+
+  .member-details {
+    flex: 1;
+  }
+
+  .member-name {
+    margin: 0 0 var(--space-3) 0;
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    color: var(--neutral-900);
+  }
+
+  .member-info-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+    font-size: var(--text-sm);
+  }
+
+  .member-info-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .info-label {
+    font-weight: var(--font-medium);
+    color: var(--neutral-600);
+    min-width: 100px;
+  }
+
+  .info-value {
+    color: var(--neutral-900);
+    font-weight: var(--font-medium);
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    margin-bottom: var(--space-4);
+  }
+
+  .form-group:last-child {
+    margin-bottom: 0;
+  }
+
+  .form-label {
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--neutral-700);
+  }
+
+  .form-label--required::after {
+    content: ' *';
+    color: var(--error-500);
+  }
+
+  .form-select {
+    padding: var(--space-3);
+    border: 1px solid var(--neutral-300);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-sm);
+    transition: all var(--transition-fast);
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+  }
+
+  .form-select:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  }
+
+  .form-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    padding: var(--space-5) var(--space-6);
+    background: var(--neutral-50);
+    border-top: 1px solid var(--neutral-200);
+  }
+
+  @media (max-width: 768px) {
+    .member-info-display {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .member-info-row {
+      justify-content: center;
+    }
+
+    .form-footer {
+      flex-direction: column;
+    }
+
+    .form-footer .btn {
+      width: 100%;
+    }
+  }
+</style>
 {% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/dashboard_shared.css' %}?v={% now 'U' %}">
+<form method="post" class="form-card">
+  {% csrf_token %}
 
-<div class="dashboard-container">
-    <div class="content-card">
-        <div class="dashboard-header">
-            <h1>Change Council Assignment</h1>
-            <div>
-                {% if request.user.role == 'admin' %}
-                <a href="{% url 'member_list' %}" class="dashboard-btn secondary back-btn">
-                    <i class="fas fa-arrow-left"></i> Back to Member List
-                </a>
-                {% else %}
-                <a href="{% url 'council_members' %}" class="dashboard-btn secondary back-btn">
-                    <i class="fas fa-arrow-left"></i> Back to Council Members
-                </a>
-                {% endif %}
-            </div>
+  <div class="form-card-body">
+    <!-- Member Info -->
+    <div class="form-section">
+      <h3 class="form-section-title"><i class="fas fa-user-circle"></i> Member Information</h3>
+      <div class="member-info-display">
+        <div class="member-avatar">
+          {% if user_to_change.profile_picture %}
+            <img src="{{ user_to_change.profile_picture.url }}" alt="Profile Picture">
+          {% else %}
+            <i class="fas fa-user"></i>
+          {% endif %}
         </div>
-
-        <div class="user-info-card">
-            <div class="user-header">
-                <div class="user-avatar">
-                    {% if user_to_change.profile_picture %}
-                        <img src="{{ user_to_change.profile_picture.url }}" alt="Profile Picture">
-                    {% else %}
-                        <i class="fas fa-user"></i>
-                    {% endif %}
-                </div>
-                <div class="user-details">
-                    <h2>{{ user_to_change.first_name }} {{ user_to_change.last_name }}</h2>
-                    <p class="role-badge role-{{ user_to_change.role }}" style="color: white;">{{ user_to_change.get_role_display }}</p>
-                    <p>Current Council: <strong>{{ user_to_change.council.name }}</strong></p>
-                </div>
-            </div>
+        <div class="member-details">
+          <h4 class="member-name">{{ user_to_change.first_name }} {{ user_to_change.last_name }}</h4>
+          <div class="member-info-row">
+            <span class="info-label">Role:</span>
+            <span class="info-value">
+              {% if user_to_change.role == 'admin' %}District Director
+              {% elif user_to_change.role == 'officer' %}Council Officer
+              {% else %}Member{% endif %}
+            </span>
+          </div>
+          <div class="member-info-row">
+            <span class="info-label">Current Council:</span>
+            <span class="info-value">{{ user_to_change.council.name|default:"Not Assigned" }}</span>
+          </div>
         </div>
-
-        <div class="form-container">
-            <form method="post" class="styled-form">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="council">Select New Council:</label>
-                    <select id="council" name="council" class="styled-select" required>
-                        <option value="" disabled selected>Choose a council</option>
-                        {% for council in councils %}
-                            <option value="{{ council.id }}" {% if council == user_to_change.council %}selected{% endif %}>
-                                {{ council.name }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="dashboard-btn">Change Council</button>
-                    {% if request.user.role == 'admin' %}
-                    <a href="{% url 'member_list' %}" class="dashboard-btn secondary">Cancel</a>
-                    {% else %}
-                    <a href="{% url 'council_members' %}" class="dashboard-btn secondary">Cancel</a>
-                    {% endif %}
-                </div>
-            </form>
-        </div>
+      </div>
     </div>
-</div>
 
-<style>
-    .messages-container {
-        margin-bottom: 1.5rem;
-    }
-    
-    .message {
-        padding: 1rem;
-        border-radius: var(--border-radius);
-        margin-bottom: 0.5rem;
-    }
-    
-    .message.success {
-        background-color: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
-    }
-    
-    .message.error {
-        background-color: #f8d7da;
-        color: #721c24;
-        border: 1px solid #f5c6cb;
-    }
-    
-    .user-info-card {
-        background-color: white;
-        border-radius: var(--border-radius);
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    }
-    
-    .user-header {
-        display: flex;
-        align-items: center;
-        gap: 1.5rem;
-    }
-    
-    .user-avatar {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        background-color: #f0f0f0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-    }
-    
-    .user-avatar i {
-        font-size: 2.5rem;
-        color: #0D3471;
-    }
-    
-    .user-avatar img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-    
-    .user-details h2 {
-        margin: 0 0 0.5rem 0;
-        color: var(--heading-color);
-    }
-    
-    .form-container {
-        background-color: white;
-        border-radius: var(--border-radius);
-        padding: 1.5rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    }
-    
-    .styled-form {
-        max-width: 600px;
-        margin: 0 auto;
-    }
-    
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-    
-    .form-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 500;
-        color: var(--heading-color);
-    }
-    
-    .styled-select {
-        width: 100%;
-        padding: 0.75rem;
-        border: 1px solid rgba(13, 52, 113, 0.2);
-        border-radius: var(--border-radius);
-        font-size: 1rem;
-        background-color: white;
-    }
-    
-    .form-actions {
-        display: flex;
-        gap: 1rem;
-        justify-content: flex-start;
-    }
-    
-    @media (max-width: 768px) {
-        .user-header {
-            flex-direction: column;
-            text-align: center;
-        }
-        
-        .form-actions {
-            flex-direction: column;
-        }
-    }
-</style>
-{% endblock %} 
+    <!-- Council Selection -->
+    <div class="form-section">
+      <h3 class="form-section-title"><i class="fas fa-building"></i> New Council Assignment</h3>
+      <div class="form-group">
+        <label for="council" class="form-label form-label--required">Select Council</label>
+        <select id="council" name="council" class="form-select" required>
+          <option value="" disabled selected>Choose a council</option>
+          {% for council in councils %}
+            <option value="{{ council.id }}" {% if council == user_to_change.council %}disabled{% endif %}>
+              {{ council.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-footer">
+    {% if request.user.role == 'admin' %}
+    <a href="{% url 'member_list' %}" class="btn btn--ghost">Cancel</a>
+    {% else %}
+    <a href="{% url 'council_members' %}" class="btn btn--ghost">Cancel</a>
+    {% endif %}
+    <button type="submit" class="btn btn--primary">
+      <i class="fas fa-check"></i>
+      Confirm Change
+    </button>
+  </div>
+</form>
+{% endblock %}

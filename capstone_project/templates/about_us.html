@@ -6,8 +6,158 @@
 {% block content %}
 <style>
   /* ============================================
-   SHARED DESIGN SYSTEM (Matches Homepage)
-   ============================================ */
+    ANIMATION KEYFRAMES (Reused from Councils Page)
+    ============================================ */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideInFromBottom {
+    from {
+      transform: translateY(50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideInFromTop {
+    from {
+      transform: translateY(-50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideInFromLeft {
+    from {
+      transform: translateX(-50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideInFromRight {
+    from {
+      transform: translateX(50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes scaleIn {
+    from {
+      transform: scale(0.9);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+  
+  @keyframes glow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 30px rgba(251, 191, 36, 0.6);
+    }
+  }
+  
+  @keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+  }
+  
+  @keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  @keyframes rotateSlow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+  
+  @keyframes cardHover {
+    0% { transform: translateY(0) rotateX(0) rotateY(0); }
+    50% { transform: translateY(-8px) rotateX(2deg) rotateY(2deg); }
+    100% { transform: translateY(-8px) rotateX(0) rotateY(0); }
+  }
+  
+  @keyframes ripple {
+    0% {
+      transform: scale(0);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+
+  /* ============================================
+    ANIMATION UTILITY CLASSES
+    ============================================ */
+  .animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  
+  .animate-on-scroll.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .animate-delay-100 { transition-delay: 0.1s; animation-delay: 0.1s; }
+  .animate-delay-200 { transition-delay: 0.2s; animation-delay: 0.2s; }
+  .animate-delay-300 { transition-delay: 0.3s; animation-delay: 0.3s; }
+  .animate-delay-400 { transition-delay: 0.4s; animation-delay: 0.4s; }
+  .animate-delay-500 { transition-delay: 0.5s; animation-delay: 0.5s; }
+  
+  .animate-fade-in { animation: fadeIn 1s ease-out; }
+  .animate-slide-up { animation: slideInFromBottom 0.8s ease-out; }
+  .animate-slide-down { animation: slideInFromTop 0.8s ease-out; }
+  .animate-slide-left { animation: slideInFromLeft 0.8s ease-out; }
+  .animate-slide-right { animation: slideInFromRight 0.8s ease-out; }
+  .animate-scale { animation: scaleIn 0.6s ease-out; }
+  .animate-float { animation: float 3s ease-in-out infinite; }
+  .animate-pulse { animation: pulse 2s infinite; }
+  .animate-glow { animation: glow 2s ease-in-out infinite; }
+
+  /* ============================================
+    SHARED DESIGN SYSTEM WITH ANIMATIONS
+    ============================================ */
   * {
     box-sizing: border-box;
     margin: 0;
@@ -16,24 +166,25 @@
 
   .about-page {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: #fff;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     color: #1a1a2e;
     overflow-x: hidden;
+    animation: fadeIn 1.5s ease-out;
   }
 
   .container {
-    max-width: 1100px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 0 24px;
   }
 
   /* ============================================
-   HERO SECTION - Full Width Image
-   ============================================ */
+    HERO SECTION - Enhanced with Animations
+    ============================================ */
   .about-hero {
     position: relative;
     padding: 140px 0 120px;
-    background: url('{% static "images/about-us.jpg" %}') no-repeat center/cover;
+    background: url('{% static "images/about-us.jpg" %}') no-repeat center center/cover;
     color: #fff;
     text-align: center;
     overflow: hidden;
@@ -41,9 +192,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    animation: fadeIn 1s ease-out;
   }
 
-  /* Overlay for readability */
+  /* Enhanced overlay with gradient animation */
   .about-hero::before {
     content: '';
     position: absolute;
@@ -53,64 +205,162 @@
     bottom: 0;
     background: linear-gradient(135deg, rgba(13, 52, 113, 0.9) 0%, rgba(10, 42, 94, 0.8) 100%);
     z-index: 1;
+    animation: fadeIn 1.5s ease-out;
+  }
+
+  /* Shimmer effect overlay - SLOWER (6s) */
+  .about-hero::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+    animation: shimmer 6s infinite linear;
+    z-index: 2;
   }
 
   .about-hero-content {
     position: relative;
-    z-index: 2;
+    z-index: 3;
     max-width: 800px;
     margin: 0 auto;
+    animation: slideInFromBottom 1s ease-out 0.3s both;
   }
 
   .section-badge {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 6px 16px;
-    background: rgba(255, 255, 255, 0.15);
+    gap: 8px;
+    padding: 8px 20px;
+    background: linear-gradient(45deg, rgba(251, 191, 36, 0.2), rgba(251, 191, 36, 0.3));
     color: #fbbf24;
-    font-size: 13px;
+    font-size: 0.875rem;
     font-weight: 600;
-    border-radius: 99px;
+    border-radius: 50px;
     margin-bottom: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(251, 191, 36, 0.3);
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    animation: slideInFromTop 0.8s ease-out 0.5s both, float 3s ease-in-out 1.5s infinite;
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .section-badge i {
+    animation: pulse 2s infinite;
+  }
+
+  .section-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: 0.5s;
+  }
+
+  .section-badge:hover::before {
+    left: 100%;
   }
 
   .about-hero h1 {
     font-size: clamp(36px, 5vw, 64px);
-    font-weight: 700;
+    font-weight: 800;
     margin-bottom: 24px;
     line-height: 1.1;
     letter-spacing: -0.02em;
-    color: #ffffff;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(45deg, #fff, #fbbf24, #fff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-size: 200% auto;
+    animation: gradientMove 3s ease-in-out infinite, slideInFromBottom 0.8s ease-out 0.7s both;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    animation-delay: 1s;
   }
 
   .about-hero p {
-    font-size: 20px;
+    font-size: 1.25rem;
     line-height: 1.6;
     color: rgba(255, 255, 255, 0.95);
     margin-bottom: 0;
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
+    animation: slideInFromBottom 0.8s ease-out 0.9s both;
+    backdrop-filter: blur(5px);
+    padding: 24px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+  }
+
+  .about-hero p::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #0D3471, #fbbf24, #0D3471);
+    border-radius: 18px;
+    z-index: -1;
+    opacity: 0.3;
+    animation: glow 2s ease-in-out infinite;
   }
 
   /* ============================================
-   HISTORY & FOUNDER (Two Column)
-   ============================================ */
+    HISTORY & FOUNDER - Enhanced with Animations
+    ============================================ */
   .history-section {
+    position: relative;
     padding: 100px 0;
-    background: #fff;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    margin-top: -40px;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .history-section::before {
+    content: '';
+    position: absolute;
+    top: -61px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 120px;
+    background-size: contain;
+    z-index: 10;
+    padding: 15px;
+    border-radius: 8px;
+    animation: float 3s ease-in-out infinite, scaleIn 0.6s ease-out;
+  }
+
+  .history-section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(13, 52, 113, 0.05) 50%, transparent 70%);
+    animation: shimmer 8s infinite linear; /* SLOWER (8s) */
+    z-index: 0;
   }
 
   .history-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 64px;
+    gap: 80px;
     align-items: center;
+    position: relative;
+    z-index: 2;
   }
 
   @media (max-width: 900px) {
@@ -120,80 +370,200 @@
     }
   }
 
+  .history-text {
+    animation: slideInFromLeft 0.8s ease-out 1.2s both;
+  }
+
   .history-text h2 {
-    font-size: 32px;
-    font-weight: 700;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 800;
     color: #0f172a;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+    position: relative;
+    display: inline-block;
+  }
+
+  .history-text h2::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, #0D3471, #fbbf24);
+    border-radius: 2px;
+    animation: slideInFromLeft 0.8s ease-out 1.4s both;
   }
 
   .history-text p {
-    font-size: 16px;
+    font-size: 1.125rem;
     line-height: 1.7;
-    color: #64748b;
+    color: #475569;
     margin-bottom: 24px;
+    opacity: 0;
+    transform: translateX(-20px);
+    animation: slideInFromLeft 0.8s ease-out forwards;
   }
 
+  .history-text p:nth-child(2) { animation-delay: 1.6s; }
+  .history-text p:nth-child(3) { animation-delay: 1.8s; }
+
+  /* FOUNDER CARD - FIXED: Always visible */
   .founder-card {
-    background: #f8fafc;
-    border-radius: 16px;
-    padding: 40px;
+    background: white;
+    border-radius: 24px;
+    padding: 48px;
     border: 1px solid #e2e8f0;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: slideInFromRight 0.8s ease-out 1.2s both, scaleIn 0.6s ease-out 1.2s both;
+    position: relative;
+    overflow: hidden;
+    opacity: 1 !important; /* FORCE VISIBILITY */
+    visibility: visible !important;
+  }
+
+  .founder-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #0D3471, #fbbf24, #0D3471);
+    background-size: 200% 100%;
+    animation: gradientMove 3s ease-in-out infinite;
+    transform-origin: left;
+  }
+
+  .founder-card:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 30px 60px rgba(13, 52, 113, 0.15);
+    border-color: #fbbf24;
+    animation: cardHover 0.6s ease-out forwards;
   }
 
   .founder-card h3 {
-    font-size: 20px;
-    font-weight: 600;
+    font-size: 1.75rem;
+    font-weight: 700;
     color: #0D3471;
-    margin-bottom: 12px;
-  }
-
-  .founder-quote {
-    font-style: italic;
-    color: #475569;
-    font-size: 18px;
-    line-height: 1.6;
-    margin-bottom: 20px;
-  }
-
-  .founder-citation {
+    margin-bottom: 24px;
     display: flex;
     align-items: center;
     gap: 12px;
   }
 
-  .founder-citation img {
-    width: 48px;
-    height: 48px;
+  .founder-card h3::before {
+    content: '';
+    width: 32px;
+    height: 4px;
+    background: linear-gradient(90deg, #0D3471, #fbbf24);
+    border-radius: 2px;
+  }
+
+  .founder-quote {
+    font-style: italic;
+    color: #475569;
+    font-size: 1.25rem;
+    line-height: 1.6;
+    margin-bottom: 32px;
+    padding-left: 24px;
+    border-left: 4px solid #fbbf24;
+    position: relative;
+    animation: fadeIn 1s ease-out 1.4s both;
+  }
+
+  .founder-quote::before {
+    content: '"';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    font-size: 4rem;
+    color: rgba(251, 191, 36, 0.2);
+    font-family: Georgia, serif;
+  }
+
+  .founder-citation {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 24px;
+    animation: fadeIn 1s ease-out 1.6s both;
+  }
+
+  .founder-img-placeholder {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #0D3471, #1e40af);
     border-radius: 50%;
-    object-fit: cover;
-    background: #cbd5e1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    border: 3px solid white;
+    box-shadow: 0 8px 20px rgba(13, 52, 113, 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .founder-card:hover .founder-img-placeholder {
+    transform: scale(1.1) rotate(10deg);
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
   }
 
   .founder-info strong {
     display: block;
     color: #0f172a;
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 4px;
   }
 
   .founder-info span {
-    font-size: 13px;
+    font-size: 0.875rem;
     color: #64748b;
+    font-weight: 500;
+  }
+
+  .founder-card p {
+    font-size: 0.875rem;
+    color: #64748b;
+    line-height: 1.6;
+    padding: 16px;
+    background: rgba(13, 52, 113, 0.05);
+    border-radius: 8px;
+    animation: fadeIn 1s ease-out 1.8s both;
+    border-left: 3px solid #0D3471;
   }
 
   /* ============================================
-   MISSION & VISION (Value Cards)
-   ============================================ */
+    MISSION & VISION - Enhanced with Animations
+    ============================================ */
   .mv-section {
-    padding: 100px 0;
-    background: #f8fafc;
+    position: relative;
+    padding: 120px 0;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    overflow: hidden;
+  }
+
+  .mv-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(251, 191, 36, 0.05) 50%, transparent 70%);
+    animation: shimmer 5s infinite linear;
+    z-index: 0;
   }
 
   .mv-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 32px;
+    gap: 48px;
+    position: relative;
+    z-index: 1;
   }
 
   @media (max-width: 768px) {
@@ -202,56 +572,135 @@
     }
   }
 
+  /* MV CARD - FIXED: Proper visibility handling */
   .mv-card {
-    background: #fff;
-    padding: 48px 32px;
-    border-radius: 12px;
+    background: white;
+    padding: 56px 40px;
+    border-radius: 24px;
     border: 1px solid #e2e8f0;
-    transition: all 0.25s ease;
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
     text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+    opacity: 0;
+    transform: translateY(30px);
+    animation: slideInFromBottom 0.8s ease-out forwards;
+  }
+
+  .mv-card:nth-child(1) { animation-delay: 0.2s; }
+  .mv-card:nth-child(2) { animation-delay: 0.4s; }
+
+  .mv-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .mv-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #0D3471, #fbbf24, #0D3471);
+    background-size: 200% 100%;
+    animation: gradientMove 3s ease-in-out infinite;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease;
   }
 
   .mv-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-    border-color: #0D3471;
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 30px 60px rgba(13, 52, 113, 0.15);
+    border-color: #fbbf24;
+    animation: cardHover 0.6s ease-out forwards;
+  }
+
+  /* Ensure card stays visible on hover */
+  .mv-card:hover {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  .mv-card:hover::before {
+    transform: scaleX(1);
   }
 
   .mv-icon {
-    width: 64px;
-    height: 64px;
+    width: 80px;
+    height: 80px;
     background: linear-gradient(135deg, #0D3471 0%, #1e4a8e 100%);
-    border-radius: 16px;
+    border-radius: 20px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 24px;
+    margin-bottom: 32px;
     color: #fff;
-    font-size: 24px;
+    font-size: 32px;
+    transition: all 0.5s ease;
+    box-shadow: 0 12px 24px rgba(13, 52, 113, 0.3);
+  }
+
+  .mv-card:hover .mv-icon {
+    transform: scale(1.1) rotate(10deg);
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
   }
 
   .mv-card h3 {
-    font-size: 24px;
-    font-weight: 700;
+    font-size: 1.75rem;
+    font-weight: 800;
     color: #0f172a;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
+    position: relative;
+    display: inline-block;
+  }
+
+  .mv-card h3::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #0D3471, #fbbf24);
+    transition: width 0.3s ease;
+  }
+
+  .mv-card:hover h3::after {
+    width: 60%;
   }
 
   .mv-card p {
-    font-size: 16px;
+    font-size: 1.125rem;
     color: #64748b;
-    line-height: 1.6;
+    line-height: 1.7;
+    margin-top: 16px;
   }
 
   /* ============================================
-   FAITH 'N ACTION (Feature Highlight)
-   ============================================ */
+    FAITH 'N ACTION - Enhanced with Animations
+    ============================================ */
   .fna-section {
-    padding: 100px 0;
-    background: #0f172a;
-    color: #fff;
     position: relative;
+    padding: 120px 0;
+    background: linear-gradient(135deg, #0f172a 0%, #0b1120 100%);
+    color: #fff;
     overflow: hidden;
+  }
+
+  .fna-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.05) 50%, transparent 70%);
+    animation: shimmer 4s infinite linear;
+    z-index: 1;
   }
 
   .fna-section::after {
@@ -272,75 +721,237 @@
     position: relative;
     z-index: 2;
     padding: 0 24px;
+    animation: scaleIn 0.8s ease-out 0.5s both;
   }
 
   .fna-logo {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto 32px;
-    background: #fff;
-    border-radius: 20px;
-    padding: 10px;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 40px;
+    background: linear-gradient(135deg, #030d4e 0%, #0D3471 100%);
+    border-radius: 24px;
+    border: 3px solid rgba(251, 191, 36, 0.5);
+    padding: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
+    animation: float 3s ease-in-out infinite, scaleIn 0.6s ease-out 0.7s both;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* SLOWER SHIMMER EFFECT (6s) */
+  .fna-logo::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(251, 191, 36, 0.2) 50%, transparent 70%);
+    animation: shimmer 6s infinite linear; /* SLOWER (6s) */
   }
 
   .fna-logo img {
     max-width: 100%;
     height: auto;
+    transition: transform 0.5s ease;
+    position: relative;
+    z-index: 1;
+  }
+
+  .fna-logo:hover img {
+    transform: scale(1.1) rotate(5deg);
   }
 
   .fna-title {
-    font-size: clamp(32px, 4vw, 42px);
-    font-weight: 700;
-    margin-bottom: 20px;
+    font-size: clamp(32px, 4vw, 48px);
+    font-weight: 800;
+    margin-bottom: 16px;
     color: #fff;
+    animation: slideInFromBottom 0.8s ease-out 0.9s both;
+    background: linear-gradient(45deg, #fff, #fbbf24, #fff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-size: 200% auto;
+    animation: gradientMove 3s ease-in-out infinite, slideInFromBottom 0.8s ease-out 0.9s both;
   }
 
   .fna-tagline {
-    font-size: 18px;
+    font-size: 1.25rem;
     color: #fbbf24;
     font-weight: 600;
-    margin-bottom: 32px;
+    margin-bottom: 40px;
     font-style: italic;
+    animation: slideInFromBottom 0.8s ease-out 1.1s both;
+    padding: 16px;
+    background: rgba(251, 191, 36, 0.1);
+    border-radius: 12px;
+    display: inline-block;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    position: relative;
+  }
+
+  .fna-tagline::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #fbbf24, #0D3471, #fbbf24);
+    border-radius: 14px;
+    z-index: -1;
+    opacity: 0.3;
+    animation: glow 2s ease-in-out infinite;
   }
 
   .fna-desc {
-    font-size: 16px;
+    font-size: 1.125rem;
     line-height: 1.8;
     color: #cbd5e1;
-    margin-bottom: 40px;
+    margin-bottom: 48px;
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
+    animation: slideInFromBottom 0.8s ease-out 1.3s both;
+    padding: 24px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .fna-features {
     display: flex;
     justify-content: center;
-    gap: 12px;
+    gap: 16px;
     flex-wrap: wrap;
+    animation: slideInFromBottom 0.8s ease-out 1.5s both;
   }
 
   .fna-tag {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 8px 16px;
-    border-radius: 99px;
-    font-size: 13px;
+    background: linear-gradient(135deg, rgba(13, 52, 113, 0.3), rgba(251, 191, 36, 0.2));
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-size: 0.875rem;
     color: #e2e8f0;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    font-weight: 600;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+
+  .fna-tag:hover {
+    transform: translateY(-4px) scale(1.05);
+    background: linear-gradient(135deg, rgba(13, 52, 113, 0.5), rgba(251, 191, 36, 0.3));
+    border-color: #fbbf24;
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   }
 
   /* ============================================
-   FOOTER
-   ============================================ */
+    FOOTER - Enhanced with Animation
+    ============================================ */
   .simple-footer {
-    padding: 32px 24px;
-    background: #0b1120;
+    padding: 40px 24px;
+    background: linear-gradient(135deg, #0b1120 0%, #030d4e 100%);
     text-align: center;
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.875rem;
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 1s ease-out 1.7s both;
+  }
+
+  .simple-footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(251, 191, 36, 0.05) 50%, transparent 70%);
+    animation: shimmer 6s infinite linear;
+  }
+
+  .simple-footer p {
+    position: relative;
+    z-index: 1;
+    font-weight: 500;
+  }
+
+  /* ============================================
+    RESPONSIVE DESIGN WITH ANIMATIONS
+    ============================================ */
+  @media (max-width: 1024px) {
+    .history-grid,
+    .mv-grid {
+      gap: 48px;
+    }
+    
+    .founder-card,
+    .mv-card {
+      padding: 40px 32px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .about-hero {
+      min-height: 400px;
+      padding: 100px 0 80px;
+    }
+    
+    .about-hero h1 {
+      font-size: 2.5rem;
+    }
+    
+    .about-hero p {
+      font-size: 1.125rem;
+      padding: 20px;
+    }
+    
+    .history-section {
+      padding: 80px 0 100px;
+    }
+    
+    .mv-section,
+    .fna-section {
+      padding: 80px 0;
+    }
+    
+    .mv-card,
+    .founder-card {
+      padding: 32px 24px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .about-hero h1 {
+      font-size: 2rem;
+    }
+    
+    .section-badge {
+      font-size: 0.75rem;
+      padding: 6px 16px;
+    }
+    
+    .fna-tag {
+      padding: 8px 16px;
+      font-size: 0.75rem;
+    }
+  }
+
+  /* ============================================
+    SCROLL ANIMATIONS
+    ============================================ */
+  @media (prefers-reduced-motion: no-preference) {
+    .history-grid,
+    .mv-grid,
+    .fna-container {
+      scroll-behavior: smooth;
+    }
   }
 </style>
 
@@ -362,7 +973,7 @@
       <div class="history-grid">
         <!-- History Column -->
         <div class="history-text">
-          <div class="section-badge" style="background: #eff6ff; color: #0D3471; border: none;">Our Story</div>
+          <div class="section-badge" style="background: rgba(13, 52, 113, 0.1); color: #0D3471; border: 1px solid rgba(13, 52, 113, 0.2);">Our Story</div>
           <h2>Building on a Vision</h2>
           <p>Founded in 1882 by Blessed Michael McGivney in New Haven, Connecticut, the Knights of Columbus was created
             to provide financial support to Catholic families, particularly widows and orphans.</p>
@@ -378,18 +989,16 @@
             "We were created to offer mutual aid and ensure that families would be cared for in times of need."
           </div>
           <div class="founder-citation">
-            <div class="founder-img-placeholder"
-              style="width:48px; height:48px; background:#0D3471; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white;">
-              <i class="fas fa-cross"></i></div>
+            <div class="founder-img-placeholder">
+              <i class="fas fa-cross"></i>
+            </div>
             <div class="founder-info">
               <strong>Blessed Michael McGivney</strong>
               <span>Parish Priest & Founder</span>
             </div>
           </div>
-          <p style="margin-top:20px; font-size:14px; color:#64748b; line-height:1.6;">
-            Seeing the struggles of Catholic immigrant families in the late 19th century, Fr. McGivney's vision
-            continues to inspire our work today.
-          </p>
+          <p>Seeing the struggles of Catholic immigrant families in the late 19th century, Fr. McGivney's vision
+            continues to inspire our work today.</p>
         </div>
       </div>
     </div>
@@ -447,4 +1056,133 @@
     <p>&copy; 2025 Knights of Columbus — Diocese of Lucena. All rights reserved.</p>
   </footer>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Scroll animation for elements
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Add visible class to MV cards
+          if (entry.target.classList.contains('mv-card')) {
+            entry.target.classList.add('visible');
+          }
+          
+          // Add visible class to animate-on-scroll elements
+          if (entry.target.classList.contains('animate-on-scroll')) {
+            entry.target.classList.add('visible');
+          }
+          
+          // Handle history text paragraphs
+          if (entry.target.classList.contains('history-text')) {
+            const paragraphs = entry.target.querySelectorAll('p');
+            paragraphs.forEach((p, index) => {
+              p.style.animationPlayState = 'running';
+            });
+          }
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    });
+
+    // Observe all MV cards
+    document.querySelectorAll('.mv-card').forEach(el => observer.observe(el));
+    
+    // Observe all animated elements
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+    
+    // Founder card is already visible by CSS, but ensure it's interactive
+    const founderCard = document.querySelector('.founder-card');
+    if (founderCard) {
+      founderCard.addEventListener('mouseenter', () => {
+        founderCard.style.zIndex = '10';
+      });
+      
+      founderCard.addEventListener('mouseleave', () => {
+        founderCard.style.zIndex = '2';
+      });
+    }
+
+    // Mission/Vision cards hover effects
+    const mvCards = document.querySelectorAll('.mv-card');
+    mvCards.forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        card.style.zIndex = '10';
+      });
+      
+      card.addEventListener('mouseleave', () => {
+        card.style.zIndex = '1';
+      });
+    });
+
+    // Add ripple effect to interactive elements
+    const interactiveElements = document.querySelectorAll('.mv-card, .founder-card, .fna-tag');
+    interactiveElements.forEach(el => {
+      el.addEventListener('click', function(e) {
+        const ripple = document.createElement('span');
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+        
+        ripple.style.cssText = `
+          position: absolute;
+          border-radius: 50%;
+          background: rgba(251, 191, 36, 0.4);
+          transform: scale(0);
+          animation: ripple 0.6s linear;
+          width: ${size}px;
+          height: ${size}px;
+          top: ${y}px;
+          left: ${x}px;
+          pointer-events: none;
+          z-index: 1;
+        `;
+        
+        this.appendChild(ripple);
+        
+        setTimeout(() => {
+          ripple.remove();
+        }, 600);
+      });
+    });
+
+    // Parallax effect for hero section
+    window.addEventListener('scroll', () => {
+      const heroSection = document.querySelector('.about-hero');
+      if (heroSection) {
+        const scrolled = window.pageYOffset;
+        const rate = scrolled * -0.3;
+        heroSection.style.transform = `translateY(${rate}px)`;
+      }
+    });
+
+    // Add subtle floating animation to badges
+    const badges = document.querySelectorAll('.section-badge');
+    badges.forEach(badge => {
+      badge.style.animationDelay = `${Math.random() * 2}s`;
+    });
+
+    // Initialize animations for elements already in view
+    setTimeout(() => {
+      // Check if MV cards are already in view
+      const mvCards = document.querySelectorAll('.mv-card');
+      mvCards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        const isInView = (
+          rect.top >= 0 &&
+          rect.left >= 0 &&
+          rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+          rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
+        
+        if (isInView) {
+          card.classList.add('visible');
+        }
+      });
+    }, 100);
+  });
+</script>
 {% endblock %}
