@@ -498,6 +498,164 @@ a:hover {
   color: var(--neutral-600);
 }
 
+/* === ALERTS/TOASTS === */
+/* === ALERTS/TOASTS - MODERNIZED === */
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: white;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--neutral-200);
+  border-left: 4px solid;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  box-shadow: var(--shadow-sm);
+  animation: slideInRight var(--transition-slow) var(--ease-out);
+  position: relative;
+  margin-bottom: var(--space-3);
+}
+
+.alert i {
+  font-size: var(--text-lg);
+  margin-top: 1px;
+}
+
+.alert-success {
+  border-left-color: var(--success-500);
+  color: var(--neutral-900);
+}
+
+.alert-success i {
+  color: var(--success-600);
+}
+
+.alert-error,
+.alert-danger {
+  border-left-color: var(--error-500);
+  color: var(--neutral-900);
+}
+
+.alert-error i,
+.alert-danger i {
+  color: var(--error-600);
+}
+
+.alert-warning {
+  border-left-color: var(--warning-500);
+  color: var(--neutral-900);
+}
+
+.alert-warning i {
+  color: var(--warning-600);
+}
+
+.alert-info {
+  border-left-color: var(--info-500);
+  color: var(--neutral-900);
+}
+
+.alert-info i {
+  color: var(--info-600);
+}
+
+/* Toast container for fixed positioning */
+.toast-container {
+  position: fixed;
+  top: var(--space-6);
+  right: var(--space-6);
+  z-index: var(--z-tooltip);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 400px;
+}
+
+.toast-container .alert {
+  box-shadow: var(--shadow-lg);
+  margin-bottom: 0;
+}
+
+/* === MODALS === */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-base);
+}
+
+.modal-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal {
+  background: white;
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-2xl);
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  transform: scale(0.95) translateY(20px);
+  transition: transform var(--transition-base);
+}
+
+.modal-backdrop.active .modal {
+  transform: scale(1) translateY(0);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-5) var(--space-6);
+  border-bottom: 1px solid var(--neutral-200);
+}
+
+.modal-header h2 {
+  font-size: var(--text-xl);
+  margin: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: var(--text-xl);
+  color: var(--neutral-400);
+  cursor: pointer;
+  padding: var(--space-2);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+}
+
+.modal-close:hover {
+  background: var(--neutral-100);
+  color: var(--neutral-600);
+}
+
+.modal-body {
+  padding: var(--space-6);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--neutral-200);
+  background: var(--neutral-50);
+  border-radius: 0 0 var(--radius-2xl) var(--radius-2xl);
+}
+
 /* === STAT CARDS === */
 .stat-card {
   display: flex;
@@ -712,6 +870,12 @@ a:hover {
 .sidebar-user-role {
   font-size: 10px;
   color: rgba(255, 255, 255, 0.6);
+}
+
+/* Override ghost button hover in sidebar context */
+.sidebar-user .btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
 }
 
 .main-content {

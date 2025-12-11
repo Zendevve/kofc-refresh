@@ -496,15 +496,6 @@
 {% endblock %}
 
 {% block content %}
-{% if messages %}
-  {% for message in messages %}
-    <div class="alert alert-{{ message.tags }}">
-      <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %}"></i>
-      {{ message }}
-    </div>
-  {% endfor %}
-{% endif %}
-
 <div class="recruitment-container">
   <!-- Add Recruitment Form -->
   <div class="form-card">

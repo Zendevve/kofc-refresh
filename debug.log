@@ -20845,3 +20845,3303 @@ DEBUG 2025-12-11 07:34:58,538 views Rendered form HTML: <p>
       
     
   </p>
+DEBUG 2025-12-11 08:30:27,560 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 08:30:27,575 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 08:30:29,669 views Fetching blockchain data
+INFO 2025-12-11 08:30:29,675 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-11 08:30:32,423 views Fetching blockchain data
+INFO 2025-12-11 08:30:32,429 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-11 08:34:26,622 views Events data: [{'council__name': 'Council 18035', 'count': 4, 'council_name': 'Council 18035'}, {'council__name': 'Council 3469', 'count': 14, 'council_name': 'Council 3469'}, {'council__name': 'Council 4321', 'count': 5, 'council_name': 'Council 4321'}, {'council__name': 'Council 6789', 'count': 10, 'council_name': 'Council 6789'}, {'council__name': 'Test Council', 'count': 2, 'council_name': 'Test Council'}]
+DEBUG 2025-12-11 08:34:26,644 views Donations data: [{'month': 'December', 'total': 4807.0}, {'month': 'April', 'total': 6939.0}, {'month': 'August', 'total': 14325.0}, {'month': 'December', 'total': 2637.0}, {'month': 'February', 'total': 8312.0}, {'month': 'January', 'total': 2789.0}, {'month': 'July', 'total': 10422.0}, {'month': 'June', 'total': 12658.0}, {'month': 'March', 'total': 2105.0}, {'month': 'May', 'total': 25304.0}, {'month': 'November', 'total': 17797.0}, {'month': 'October', 'total': 21655.0}, {'month': 'September', 'total': 14973.0}]
+DEBUG 2025-12-11 08:34:26,657 views Members/officers data: [{'council_name': 'Council 18035', 'members': 7.0, 'officers': 1}, {'council_name': 'Council 3469', 'members': 3.0, 'officers': 2}, {'council_name': 'Council 4321', 'members': 3.0, 'officers': 1}, {'council_name': 'Council 6789', 'members': 1.0, 'officers': 5}, {'council_name': 'Test Council', 'members': 0.0, 'officers': 1}]
+DEBUG 2025-12-11 08:34:26,664 views Event types data: [{'category': 'Assembly Meeting', 'count': 2}, {'category': 'Council Meeting', 'count': 3}, {'category': 'Exemplification', 'count': 2}, {'category': 'Meeting', 'count': 5}, {'category': 'Seminar', 'count': 8}, {'category': 'Service Program', 'count': 20}, {'category': 'Trip', 'count': 3}]
+DEBUG 2025-12-11 08:34:26,670 views Donation sources data: [{'payment_method': 'gcash', 'amount': 120682.0}, {'payment_method': 'manual', 'amount': 24041.0}]
+DEBUG 2025-12-11 08:34:26,678 views Active members: 10, Total members: 14
+DEBUG 2025-12-11 08:34:26,679 views Member activity data: [{'category': 'Active Members', 'count': 10}, {'category': 'Inactive Members', 'count': 4}]
+DEBUG 2025-12-11 08:34:26,685 views Summary stats: {'total_events': 43.0, 'total_donations': 144723.0, 'total_members': 14.0, 'total_officers': 10.0, 'avg_donation': 2334.24193548387}
+DEBUG 2025-12-11 08:35:38,958 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 08:35:38,964 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 15:06:01,872 views Fetching blockchain data
+INFO 2025-12-11 15:06:01,878 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-11 16:13:57,263 views Fetching blockchain data
+INFO 2025-12-11 16:13:57,345 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-11 16:14:49,451 views Fetching blockchain data
+INFO 2025-12-11 16:14:49,458 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-11 16:15:30,101 views Fetching blockchain data
+INFO 2025-12-11 16:15:30,134 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-11 16:16:41,214 views Fetching blockchain data
+INFO 2025-12-11 16:16:41,217 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-11 16:17:02,971 views Fetching blockchain data
+INFO 2025-12-11 16:17:02,977 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+ERROR 2025-12-11 16:17:06,593 views Error generating receipt: type object 'datetime.timezone' has no attribute 'now'
+DEBUG 2025-12-11 16:17:06,608 views Fetching blockchain data
+INFO 2025-12-11 16:17:06,612 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+ERROR 2025-12-11 16:17:08,924 views Error generating receipt: type object 'datetime.timezone' has no attribute 'now'
+DEBUG 2025-12-11 16:17:09,026 views Fetching blockchain data
+INFO 2025-12-11 16:17:09,041 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-11 16:17:26,496 views Fetching blockchain data
+INFO 2025-12-11 16:17:26,563 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+ERROR 2025-12-11 16:18:43,031 views Error generating receipt: type object 'datetime.timezone' has no attribute 'now'
+DEBUG 2025-12-11 16:18:43,354 views Fetching blockchain data
+INFO 2025-12-11 16:18:43,644 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-11 16:20:14,221 views Fetching blockchain data
+INFO 2025-12-11 16:20:14,229 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-11 16:20:20,873 views Fetching blockchain data
+INFO 2025-12-11 16:20:20,946 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+ERROR 2025-12-11 16:21:09,375 views Error generating receipt: type object 'datetime.timezone' has no attribute 'now'
+DEBUG 2025-12-11 16:21:09,409 views Fetching blockchain data
+INFO 2025-12-11 16:21:09,414 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+ERROR 2025-12-11 16:21:12,013 views Error generating receipt: type object 'datetime.timezone' has no attribute 'now'
+DEBUG 2025-12-11 16:21:12,031 views Fetching blockchain data
+INFO 2025-12-11 16:21:12,034 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+ERROR 2025-12-11 16:21:14,004 views Error generating receipt: type object 'datetime.timezone' has no attribute 'now'
+DEBUG 2025-12-11 16:21:14,018 views Fetching blockchain data
+INFO 2025-12-11 16:21:14,022 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+ERROR 2025-12-11 16:21:27,889 views Error generating receipt: type object 'datetime.timezone' has no attribute 'now'
+DEBUG 2025-12-11 16:21:27,907 views Fetching blockchain data
+INFO 2025-12-11 16:21:27,912 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-11 16:21:57,610 views Fetching blockchain data
+INFO 2025-12-11 16:21:57,616 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+ERROR 2025-12-11 16:21:59,665 views Error generating receipt: type object 'datetime.timezone' has no attribute 'now'
+DEBUG 2025-12-11 16:21:59,683 views Fetching blockchain data
+INFO 2025-12-11 16:21:59,689 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-11 16:23:48,336 views Fetching blockchain data
+INFO 2025-12-11 16:23:48,359 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-11 16:29:01,684 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:29:01,726 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:29:09,090 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:29:09,096 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:31:08,631 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:31:08,658 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:33:45,544 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:33:45,552 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:34:00,764 views show_manual_link: False, User: AnonymousUser, Role: N/A
+DEBUG 2025-12-11 16:34:00,772 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:36:06,611 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:36:06,623 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:36:16,465 views show_manual_link: False, User: AnonymousUser, Role: N/A
+DEBUG 2025-12-11 16:36:16,471 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:36:40,436 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:36:40,440 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:39:50,293 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:39:50,344 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:39:57,688 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:39:57,732 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:40:06,825 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:40:06,933 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:41:48,221 views Events data: [{'council__name': 'Council 18035', 'count': 4, 'council_name': 'Council 18035'}, {'council__name': 'Council 3469', 'count': 14, 'council_name': 'Council 3469'}, {'council__name': 'Council 4321', 'count': 5, 'council_name': 'Council 4321'}, {'council__name': 'Council 6789', 'count': 10, 'council_name': 'Council 6789'}, {'council__name': 'Test Council', 'count': 2, 'council_name': 'Test Council'}]
+DEBUG 2025-12-11 16:41:48,249 views Donations data: [{'month': 'December', 'total': 4807.0}, {'month': 'April', 'total': 6939.0}, {'month': 'August', 'total': 14325.0}, {'month': 'December', 'total': 2637.0}, {'month': 'February', 'total': 8312.0}, {'month': 'January', 'total': 2789.0}, {'month': 'July', 'total': 10422.0}, {'month': 'June', 'total': 12658.0}, {'month': 'March', 'total': 2105.0}, {'month': 'May', 'total': 25304.0}, {'month': 'November', 'total': 17797.0}, {'month': 'October', 'total': 21655.0}, {'month': 'September', 'total': 14973.0}]
+DEBUG 2025-12-11 16:41:48,266 views Members/officers data: [{'council_name': 'Council 18035', 'members': 7.0, 'officers': 1}, {'council_name': 'Council 3469', 'members': 3.0, 'officers': 2}, {'council_name': 'Council 4321', 'members': 3.0, 'officers': 1}, {'council_name': 'Council 6789', 'members': 1.0, 'officers': 5}, {'council_name': 'Test Council', 'members': 0.0, 'officers': 1}]
+DEBUG 2025-12-11 16:41:48,270 views Event types data: [{'category': 'Assembly Meeting', 'count': 2}, {'category': 'Council Meeting', 'count': 3}, {'category': 'Exemplification', 'count': 2}, {'category': 'Meeting', 'count': 5}, {'category': 'Seminar', 'count': 8}, {'category': 'Service Program', 'count': 20}, {'category': 'Trip', 'count': 3}]
+DEBUG 2025-12-11 16:41:48,273 views Donation sources data: [{'payment_method': 'gcash', 'amount': 120682.0}, {'payment_method': 'manual', 'amount': 24041.0}]
+DEBUG 2025-12-11 16:41:48,278 views Active members: 10, Total members: 14
+DEBUG 2025-12-11 16:41:48,279 views Member activity data: [{'category': 'Active Members', 'count': 10}, {'category': 'Inactive Members', 'count': 4}]
+DEBUG 2025-12-11 16:41:48,286 views Summary stats: {'total_events': 43.0, 'total_donations': 144723.0, 'total_members': 14.0, 'total_officers': 10.0, 'avg_donation': 2334.24193548387}
+DEBUG 2025-12-11 16:41:50,335 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:41:50,405 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:41:53,876 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:41:53,969 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:42:04,990 views Fetching blockchain data
+INFO 2025-12-11 16:42:05,034 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-11 16:42:14,491 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:42:14,495 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:42:17,465 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:42:17,481 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:42:18,846 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:42:18,851 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:43:51,924 views Fetching blockchain data
+INFO 2025-12-11 16:43:51,975 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-11 16:46:22,715 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:46:22,840 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:46:26,154 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:46:26,163 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:47:31,785 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:47:31,792 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:49:47,612 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:49:47,630 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:49:51,055 views Fetching blockchain data
+INFO 2025-12-11 16:49:51,068 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-11 16:49:51,286 views Fetching blockchain data
+INFO 2025-12-11 16:49:51,353 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-11 16:49:52,918 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:49:52,984 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:50:10,721 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:50:10,726 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:50:17,217 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:50:17,220 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:51:52,245 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:51:52,366 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:51:56,823 views Fetching blockchain data
+INFO 2025-12-11 16:51:56,828 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-11 16:51:58,381 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:51:58,386 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:57:41,564 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:57:41,600 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:58:01,613 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:58:01,790 views Form fields: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" value="qewsdadsads" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" value="d" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" value="adsadsada" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" value="sdasdas@gmail.com" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  <ul class="errorlist" id="id_amount_error"><li>Ensure that there are no more than 10 digits in total.</li></ul>
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" value="3123412432423" step="0.01" required aria-invalid="true" aria-describedby="id_amount_error" id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>, Payment method: manual
+DEBUG 2025-12-11 16:58:01,835 views Form errors: <ul class="errorlist"><li>amount<ul class="errorlist" id="id_amount_error"><li>Ensure that there are no more than 10 digits in total.</li></ul></li></ul>
+DEBUG 2025-12-11 16:58:13,293 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:58:13,310 views Form fields: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" value="23123213" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" value="3" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" value="21312321" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" value="arnelguia@dropjar.com" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  <ul class="errorlist" id="id_amount_error"><li>Ensure that there are no more than 8 digits before the decimal point.</li></ul>
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" value="3213213213" step="0.01" required aria-invalid="true" aria-describedby="id_amount_error" id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-09" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-09" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>, Payment method: gcash
+DEBUG 2025-12-11 16:58:13,331 views Form errors: <ul class="errorlist"><li>amount<ul class="errorlist" id="id_amount_error"><li>Ensure that there are no more than 8 digits before the decimal point.</li></ul></li></ul>
+DEBUG 2025-12-11 16:58:23,927 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:58:24,006 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 16:58:25,757 views Fetching blockchain data
+INFO 2025-12-11 16:58:25,766 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-11 16:58:28,204 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 16:58:28,238 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 17:00:55,992 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 17:00:56,008 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 17:00:58,240 views Fetching blockchain data
+INFO 2025-12-11 17:00:58,288 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-11 17:01:02,677 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 17:01:02,685 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 17:05:07,480 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 17:05:07,497 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 17:07:15,875 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 17:07:15,894 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 17:07:30,163 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 17:07:30,168 views Form fields: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" value="rwrdwerew" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" value="r" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" value="rwerwe" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" value="arnelguia@dropjar.com" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" value="5555" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>, Payment method: manual
+INFO 2025-12-11 17:07:30,177 views Manual donation created: ID=102, Amount=5555, Status=pending_manual
+DEBUG 2025-12-11 17:07:30,196 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 17:07:30,200 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 17:07:52,064 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 17:07:52,069 views Form fields: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" value="Jamaica" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" value="d" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" value="Guinto" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" value="arnelguia@dropjar.com" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" value="6678" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>, Payment method: manual
+INFO 2025-12-11 17:07:52,080 views Manual donation created: ID=103, Amount=6678, Status=pending_manual
+DEBUG 2025-12-11 17:07:52,097 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 17:07:52,102 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 17:08:11,741 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 17:08:11,749 views Form fields: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" value="Clark" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" value="M" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" value="Bandola" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" value="adminaccount@vomoto.com" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" value="4444" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>, Payment method: gcash
+INFO 2025-12-11 17:08:11,762 views GCash donation created: ID=104, Email=adminaccount@vomoto.com, Amount=4444
+DEBUG 2025-12-11 17:08:11,765 views Initiating GCash payment for donation ID=104, Amount=4444
+ERROR 2025-12-11 17:08:11,766 views PayMongo secret key not configured in settings
+DEBUG 2025-12-11 17:08:11,792 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 17:08:11,798 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 17:08:25,214 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 17:08:25,216 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 17:08:25,218 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 17:08:25,220 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 17:08:25,222 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 17:08:54,768 views show_manual_link: False, User: AnonymousUser, Role: N/A
+DEBUG 2025-12-11 17:08:54,775 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 17:12:52,269 views show_manual_link: False, User: AnonymousUser, Role: N/A
+DEBUG 2025-12-11 17:12:52,287 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 17:14:25,238 views Fetching blockchain data
+INFO 2025-12-11 17:14:25,242 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-11 17:27:10,412 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 17:27:10,422 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 17:27:31,393 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 17:27:31,397 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 17:27:33,679 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 17:27:33,682 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 17:27:33,684 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 17:27:33,689 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 17:27:33,692 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 17:27:35,262 views Fetching blockchain data
+INFO 2025-12-11 17:27:35,266 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-11 17:27:47,131 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 17:27:47,137 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 17:27:50,236 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 17:27:50,242 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 17:27:50,932 views Fetching blockchain data
+INFO 2025-12-11 17:27:50,940 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-11 17:27:52,606 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 17:27:52,612 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 17:27:55,456 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 17:27:55,463 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 17:28:02,352 views show_manual_link: False, User: AnonymousUser, Role: N/A
+DEBUG 2025-12-11 17:28:02,357 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 17:45:04,179 views show_manual_link: False, User: AnonymousUser, Role: N/A
+DEBUG 2025-12-11 17:45:04,183 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 17:46:49,769 views show_manual_link: False, User: AnonymousUser, Role: N/A
+DEBUG 2025-12-11 17:46:49,870 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 17:47:31,672 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 17:47:31,675 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 17:47:34,532 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 17:47:34,534 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 17:47:34,536 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 17:47:34,537 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 17:47:34,539 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 17:47:37,202 views Fetching blockchain data
+INFO 2025-12-11 17:47:37,206 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-11 17:53:18,115 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 17:53:18,193 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 18:19:38,018 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 18:19:38,050 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 18:21:04,035 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 18:21:04,111 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 18:54:27,181 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 18:54:27,208 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 19:16:55,943 views show_manual_link: True, User: Mr_Admin, Role: admin
+DEBUG 2025-12-11 19:16:55,959 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>
+DEBUG 2025-12-11 19:17:00,396 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:17:00,422 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:17:00,487 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:17:00,551 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:17:00,682 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:17:38,954 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:17:38,960 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:17:38,964 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:17:38,968 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:17:38,971 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:17:38,975 views Updated review_manual_donations view applied - May 28, 19:26 PST fix
+DEBUG 2025-12-11 19:17:39,002 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:17:39,007 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:17:39,012 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:17:39,015 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:17:39,018 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:18:00,806 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:18:00,809 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:18:00,813 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:18:00,815 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:18:00,817 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:18:00,817 views Updated review_manual_donations view applied - May 28, 19:26 PST fix
+DEBUG 2025-12-11 19:18:00,835 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:18:00,839 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:18:00,841 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:18:00,843 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:18:00,844 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:23:19,541 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:23:19,563 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:23:19,585 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:23:19,646 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:23:19,696 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:11,475 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:24:11,479 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:11,482 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:11,485 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:11,489 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:11,490 views Updated review_manual_donations view applied - May 28, 19:26 PST fix
+DEBUG 2025-12-11 19:24:11,513 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:24:11,518 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:11,522 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:11,524 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:11,527 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:13,529 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:24:13,533 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:13,538 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:13,542 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:13,545 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:13,545 views Updated review_manual_donations view applied - May 28, 19:26 PST fix
+DEBUG 2025-12-11 19:24:13,570 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:24:13,576 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:13,579 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:13,582 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:13,584 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:14,450 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:24:14,459 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:14,463 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:14,466 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:14,472 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:14,473 views Updated review_manual_donations view applied - May 28, 19:26 PST fix
+DEBUG 2025-12-11 19:24:14,497 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:24:14,501 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:14,506 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:14,508 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:14,510 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:15,262 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:24:15,266 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:15,272 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:15,276 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:15,284 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:15,284 views Updated review_manual_donations view applied - May 28, 19:26 PST fix
+DEBUG 2025-12-11 19:24:15,314 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:24:15,318 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:15,323 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:15,325 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:15,328 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:16,078 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:24:16,085 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:16,094 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:16,098 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:16,106 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:16,111 views Updated review_manual_donations view applied - May 28, 19:26 PST fix
+DEBUG 2025-12-11 19:24:16,138 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:24:16,142 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:16,144 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:16,147 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:16,150 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:16,861 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:24:16,866 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:16,871 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:16,876 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:16,878 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:16,880 views Updated review_manual_donations view applied - May 28, 19:26 PST fix
+DEBUG 2025-12-11 19:24:16,928 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:24:16,934 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:16,939 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:16,942 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:16,946 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:17,030 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:24:17,035 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:17,039 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:17,043 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:17,046 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:17,046 views Updated review_manual_donations view applied - May 28, 19:26 PST fix
+DEBUG 2025-12-11 19:24:17,110 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:24:17,115 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:17,118 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:17,121 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:17,125 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:17,877 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:24:17,881 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:17,884 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:17,887 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:17,891 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:17,892 views Updated review_manual_donations view applied - May 28, 19:26 PST fix
+DEBUG 2025-12-11 19:24:17,915 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:24:17,919 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:17,923 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:17,926 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:17,928 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:19,307 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:24:19,311 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:19,314 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:19,317 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:19,321 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:19,322 views Updated review_manual_donations view applied - May 28, 19:26 PST fix
+DEBUG 2025-12-11 19:24:19,346 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:24:19,350 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:19,354 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:19,358 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:19,361 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:21,308 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:24:21,312 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:21,315 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:21,318 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:21,323 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:21,323 views Updated review_manual_donations view applied - May 28, 19:26 PST fix
+DEBUG 2025-12-11 19:24:21,348 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:24:21,352 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:21,358 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:21,361 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:21,363 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:22,127 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:24:22,133 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:22,137 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:22,143 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:22,146 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:22,148 views Updated review_manual_donations view applied - May 28, 19:26 PST fix
+DEBUG 2025-12-11 19:24:22,175 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:24:22,181 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:22,184 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:22,187 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:22,190 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:22,933 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:24:22,940 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:22,944 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:22,953 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:22,957 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:22,958 views Updated review_manual_donations view applied - May 28, 19:26 PST fix
+DEBUG 2025-12-11 19:24:22,988 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:24:22,994 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:22,997 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:23,000 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:23,004 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:26,049 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:24:26,056 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:26,059 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:26,062 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:26,064 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:26,065 views Updated review_manual_donations view applied - May 28, 19:26 PST fix
+DEBUG 2025-12-11 19:24:26,090 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:24:26,094 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:26,097 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:26,099 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:24:26,101 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:25:37,939 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:25:37,943 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:25:37,947 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:25:37,950 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:25:37,953 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:25:37,954 views Updated review_manual_donations view applied - May 28, 19:26 PST fix
+DEBUG 2025-12-11 19:25:37,982 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:25:37,989 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:25:37,992 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:25:37,995 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:25:37,997 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:25:50,807 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:25:50,815 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:25:50,821 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:25:50,823 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:25:50,825 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:25:50,826 views Updated review_manual_donations view applied - May 28, 19:26 PST fix
+DEBUG 2025-12-11 19:25:50,852 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:25:50,856 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:25:50,859 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:25:50,861 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:25:50,864 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:25:55,123 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:25:55,126 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:25:55,130 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:25:55,134 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:25:55,137 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:25:55,138 views Updated review_manual_donations view applied - May 28, 19:26 PST fix
+DEBUG 2025-12-11 19:25:55,163 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:25:55,168 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:25:55,171 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:25:55,173 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:25:55,175 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:26:17,556 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:26:17,558 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:26:17,561 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:26:17,564 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:26:17,569 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:26:19,395 views Fetching blockchain data
+INFO 2025-12-11 19:26:19,404 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-11 19:26:24,329 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:26:24,335 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:26:24,338 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:26:24,340 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:26:24,343 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:27:49,274 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:27:49,280 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:27:49,282 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:27:49,285 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:27:49,288 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:27:53,297 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:27:53,303 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:27:53,306 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:27:53,309 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:27:53,313 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:28:57,577 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:28:57,581 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:28:57,584 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:28:57,589 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:28:57,593 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:29:06,205 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:29:06,211 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:29:06,214 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:29:06,217 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:29:06,220 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:29:06,221 views Updated review_manual_donations view applied - May 28, 19:26 PST fix
+DEBUG 2025-12-11 19:29:06,249 views User Mr_Admin (role=admin, council=Council 3469): Found 4 pending manual donations
+DEBUG 2025-12-11 19:29:06,252 views Donation ID=36, Transaction=MANUAL-a6a9667a, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:29:06,255 views Donation ID=48, Transaction=KC-777fd9a3, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:29:06,260 views Donation ID=102, Transaction=KC-0de830cf, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:29:06,263 views Donation ID=103, Transaction=KC-3fda6b79, Submitted by=Mr_Admin, Council=Council 3469
+DEBUG 2025-12-11 19:30:18,925 views User hoppay (role=officer, council=Council 6789): Found 0 pending manual donations
+DEBUG 2025-12-11 19:30:23,192 views Fetching blockchain data
+INFO 2025-12-11 19:30:23,235 views Blockchain data retrieved: 10 blocks, 0 pending transactions
+DEBUG 2025-12-11 19:30:25,991 views User hoppay (role=officer, council=Council 6789): Found 0 pending manual donations
+DEBUG 2025-12-11 19:30:28,671 views show_manual_link: True, User: hoppay, Role: officer
+DEBUG 2025-12-11 19:30:28,727 views Rendered form HTML: <p>
+    <label for="id_first_name">First name:</label>
+    <input type="text" name="first_name" maxlength="100" required id="id_first_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_middle_initial">Middle initial:</label>
+    <input type="text" name="middle_initial" maxlength="10" id="id_middle_initial">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_last_name">Last name:</label>
+    <input type="text" name="last_name" maxlength="100" required id="id_last_name">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" required id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_amount">Amount:</label>
+    <input type="number" name="amount" step="0.01" required id="id_amount">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_donation_date">Donation date:</label>
+    <input type="date" name="donation_date" value="2025-12-11" required id="id_donation_date"><input type="hidden" name="initial-donation_date" value="2025-12-11" id="initial-id_donation_date">
+    
+    
+      
+    
+  </p>

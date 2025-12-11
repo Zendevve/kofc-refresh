@@ -348,15 +348,6 @@
 <form method="post" enctype="multipart/form-data" id="profileForm">
   {% csrf_token %}
 
-  {% if messages %}
-    {% for message in messages %}
-    <div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}success{% endif %}">
-      <i class="fas fa-{% if 'error' in message.tags %}exclamation-circle{% else %}check-circle{% endif %}"></i>
-      {{ message }}
-    </div>
-    {% endfor %}
-  {% endif %}
-
   <div class="profile-layout">
     <!-- Sidebar -->
     <div class="profile-sidebar">

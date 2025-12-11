@@ -18,210 +18,10 @@ Knights of Columbus - Edit Event
             </div>
         </div>
 
-        <form method="post" class="event-form">
-            {% csrf_token %}
-
-            <div class="form-row">
-                <div class="form-group full-width">
-                    <label for="name">Name of Event</label>
-                    <input type="text" id="name" name="name" value="{{ event.name }}" required class="form-input">
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group full-width">
-                    <label for="description">Event Details</label>
-                    <textarea id="description" name="description" rows="4" required class="form-textarea">{{ event.description }}</textarea>
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="category">Category</label>
-                    <select id="category" name="category" required class="form-select" onchange="loadSubcategories()">
-                        <option value="" disabled>Select a category</option>
-                        <option value="Exemplification" {% if event.category == 'Exemplification' %}selected{% endif %}>Exemplification</option>
-                        <option value="Service Program" {% if event.category == 'Service Program' %}selected{% endif %}>Service Program</option>
-                        <option value="Council Meeting" {% if event.category == 'Council Meeting' %}selected{% endif %}>Council Meeting</option>
-                        <option value="Assembly Meeting" {% if event.category == 'Assembly Meeting' %}selected{% endif %}>Assembly Meeting</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="subcategory">Subcategory</label>
-                    <select id="subcategory" name="subcategory" class="form-select" disabled>
-                        <option value="" disabled selected>Select a subcategory</option>
-                    </select>
-                    <span class="warning" id="subcategory_warning"></span>
-                </div>
-            </div>
-
-            <div class="form-section">
-                <h3 class="section-title">Event Location</h3>
-                
-                <div class="form-row">
-                    <div class="form-group full-width">
-                        <label for="street">Street Address</label>
-                        <input type="text" id="street" name="street" value="{{ event.street }}" required class="form-input">
-                    </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="province">Province</label>
-                        <input type="text" id="province" name="province" value="{{ event.province }}" required class="form-input">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="city">City/Municipality</label>
-                        <input type="text" id="city" name="city" value="{{ event.city }}" required class="form-input">
-                    </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="barangay">Barangay</label>
-                        <input type="text" id="barangay" name="barangay" value="{{ event.barangay }}" required class="form-input">
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-section">
-                <h3 class="section-title">Event Schedule</h3>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="date_from">Start Date</label>
-                        <input type="date" id="date_from" name="date_from" value="{{ event.date_from|date:'Y-m-d' }}" required class="form-input">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="date_until">End Date</label>
-                        <input type="date" id="date_until" name="date_until" value="{% if event.date_until %}{{ event.date_until|date:'Y-m-d' }}{% endif %}" class="form-input">
-                    </div>
-                </div>
-            </div>
-
-            {% if user.role == 'admin' %}
-            <div class="form-section">
-                <h3 class="section-title">Event Configuration</h3>
-                
-                <div class="form-row">
-                    <div class="form-group full-width">
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="is_global" name="is_global" class="form-checkbox" {% if event.is_global %}checked{% endif %}>
-                            <label for="is_global" class="checkbox-label">Global Event (applies to all councils)</label>
-                        </div>
-                        <p class="helper-text">If checked, this event will be visible to all councils.</p>
-                    </div>
-                </div>
-
-                <div id="council-select-container" class="form-row" {% if event.is_global %}style="display: none;"{% endif %}>
-                    <div class="form-group">
-                        <label for="council">Select Council</label>
-                        <select id="council" name="council_id" {% if not event.is_global %}required{% endif %} class="form-select">
-                            <option value="" disabled>Select a council</option>
-                            {% for council in councils %}
-                            <option value="{{ council.id }}" {% if event.council.id == council.id %}selected{% endif %}>{{ council.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-
-            <div class="form-submit">
-                <button type="submit" class="add-event-btn">
-                    <i class="fas fa-save"></i>
-                    Update Event
-                </button>
-            </div>
-        </form>
+        {% include 'partials/_edit_event_form.html' %}
     </div>
-</div>
+</div>{% endblock %}
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Date validation
-    const dateFromInput = document.getElementById('date_from');
-    const dateUntilInput = document.getElementById('date_until');
-    
-    dateFromInput.addEventListener('change', function() {
-        dateUntilInput.min = dateFromInput.value;
-        if (dateUntilInput.value && dateUntilInput.value < dateFromInput.value) {
-            dateUntilInput.value = dateFromInput.value;
-        }
-    });
-    dateUntilInput.min = dateFromInput.value;
-
-    const globalCheckbox = document.getElementById('is_global');
-    const councilContainer = document.getElementById('council-select-container');
-    const councilSelect = document.getElementById('council');
-    
-    if (globalCheckbox) {
-        globalCheckbox.addEventListener('change', function() {
-            if (this.checked) {
-                councilContainer.style.display = 'none';
-                councilSelect.required = false;
-            } else {
-                councilContainer.style.display = 'block';
-                councilSelect.required = true;
-            }
-        });
-    }
-
-    loadSubcategories();
-});
-
-const categoryData = {
-    "Exemplification": {
-        "subcategories": ["1st", "2nd", "3rd", "4th"]
-    },
-    "Service Program": {
-        "subcategories": ["Faith", "Family", "Life", "Community"]
-    },
-    "Council Meeting": {
-        "subcategories": []
-    },
-    "Assembly Meeting": {
-        "subcategories": ["Renewal of Obligation", "Meeting"]
-    }
-};
-
-function loadSubcategories() {
-    const categorySelect = document.getElementById('category');
-    const subcategorySelect = document.getElementById('subcategory');
-    
-    subcategorySelect.innerHTML = '<option value="" disabled selected>Select a subcategory</option>';
-    subcategorySelect.disabled = true;
-    
-    const selectedCategory = categorySelect.value;
-    
-    if (selectedCategory && categoryData[selectedCategory]) {
-        const subcategories = categoryData[selectedCategory].subcategories;
-        
-        if (subcategories.length > 0) {
-            subcategorySelect.disabled = false;
-            
-            subcategories.forEach(subcategory => {
-                const option = document.createElement('option');
-                option.value = subcategory;
-                option.textContent = subcategory;
-                if (subcategory === '{{ event.subcategory }}') {
-                    option.selected = true;
-                }
-                subcategorySelect.appendChild(option);
-            });
-        } else {
-            const option = document.createElement('option');
-            option.value = 'N/A';
-            option.textContent = 'N/A';
-            option.selected = true;
-            subcategorySelect.appendChild(option);
-            subcategorySelect.disabled = false;
-        }
-    }
-}
-</script>
 
 <style>
     /* Enhanced Form Styling */
@@ -434,7 +234,8 @@ function loadSubcategories() {
     .add-event-btn:hover {
         transform: translateY(-3px);
         box-shadow: 0 8px 24px rgba(13, 52, 113, 0.4);
-        background-color: var(--accent-color);
+        background-color: var(--primary-800);
+        color: white;
     }
 
     .add-event-btn:active {
@@ -446,7 +247,7 @@ function loadSubcategories() {
     .add-event-btn i {
         font-size: 1.2rem;
         transition: transform var(--transition-speed) ease;
-        
+
     }
 
     .add-event-btn:hover i {

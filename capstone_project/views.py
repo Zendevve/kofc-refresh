@@ -1555,6 +1555,14 @@ def edit_event(request, event_id):
     # For GET request, prepare the form
     councils = Council.objects.all() if request.user.role == 'admin' else None
 
+    # Check if AJAX request - render partial
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return render(request, 'partials/_edit_event_form.html', {
+            'event': event,
+            'councils': councils,
+            'is_admin': request.user.role == 'admin'
+        })
+
     # Pass the event and councils to the template
     return render(request, 'edit_event.html', {
         'event': event,
@@ -1751,19 +1759,49 @@ def donations(request):
     show_manual_link = request.user.is_authenticated and request.user.role in ['admin', 'officer']
     logger.debug(f"show_manual_link: {show_manual_link}, User: {request.user}, Role: {getattr(request.user, 'role', 'N/A')}")
     if request.method == 'POST':
+        payment_method = request.POST.get('payment_method', 'gcash')
         form = DonationForm(request.POST, request.FILES)
-        logger.debug(f"Form fields: {form.as_p()}")
+        logger.debug(f"Form fields: {form.as_p()}, Payment method: {payment_method}")
         if form.is_valid():
             donation = form.save(commit=False)
             donation.submitted_by = request.user if request.user.is_authenticated else None
-            donation.transaction_id = f"GCASH-{uuid.uuid4().hex[:8]}"
-            donation.payment_method = 'gcash'
-            donation.status = 'pending'
-            donation.signature = ''
             donation.donation_date = date.today()
-            donation.save()
-            logger.info(f"GCash donation created: ID={donation.id}, Email={donation.email}, Amount={donation.amount}")
-            return initiate_gcash_payment(request, donation)
+
+            if payment_method == 'manual':
+                # Manual donation flow - requires login and council
+                if not request.user.is_authenticated:
+                    messages.error(request, 'You must be logged in to submit manual donations.')
+                    return redirect('donations')
+                if not request.user.council:
+                    messages.error(request, 'You must be assigned to a council to submit a manual donation.')
+                    return redirect('donations')
+
+                donation.transaction_id = f"KC-{uuid.uuid4().hex[:8]}"
+                donation.payment_method = 'manual'
+                donation.status = 'pending_manual'
+                donation.council = request.user.council
+                donation.signature = ''
+
+                # Handle anonymous donation
+                if request.POST.get('donate_anonymously'):
+                    donation.first_name = "Anonymous"
+                    donation.middle_initial = ""
+                    donation.last_name = ""
+                    donation.email = ""
+
+                donation.save()
+                logger.info(f"Manual donation created: ID={donation.id}, Amount={donation.amount}, Status={donation.status}")
+                messages.success(request, 'Manual donation submitted for review.')
+                return redirect('donations')
+            else:
+                # GCash payment flow
+                donation.transaction_id = f"GCASH-{uuid.uuid4().hex[:8]}"
+                donation.payment_method = 'gcash'
+                donation.status = 'pending'
+                donation.signature = ''
+                donation.save()
+                logger.info(f"GCash donation created: ID={donation.id}, Email={donation.email}, Amount={donation.amount}")
+                return initiate_gcash_payment(request, donation)
         else:
             logger.debug(f"Form errors: {form.errors}")
             messages.error(request, 'Please correct the errors in the form.')
@@ -1817,7 +1855,7 @@ def manual_donation(request):
 # @permission_required('capstone_project.review_manual_donations', raise_exception=True)
 def review_manual_donations(request):
     if request.user.role == 'admin':
-        pending_donations = Donation.objects.filter(status='pending_manual')
+        pending_donations = Donation.objects.filter(status='pending_manual').exclude(submitted_by=request.user)
     else:  # Officer
         pending_donations = Donation.objects.filter(status='pending_manual').filter(
             submitted_by__council=request.user.council
@@ -2171,8 +2209,15 @@ def get_blockchain_data(request):
 
         # Process chain
         for block in chain:
+            # Convert timestamp string to datetime object for template date filter
+            if isinstance(block.get('timestamp'), str):
+                try:
+                    block['timestamp'] = datetime.fromisoformat(block['timestamp'].replace('Z', '+00:00'))
+                except (ValueError, AttributeError):
+                    block['timestamp'] = None
             for tx in block['transactions']:
                 process_transaction(tx)
+
 
         # Process pending transactions
         for tx in pending_transactions:
@@ -2180,7 +2225,7 @@ def get_blockchain_data(request):
 
         logger.info(f"Blockchain data retrieved: {len(chain)} blocks, {len(pending_transactions)} pending transactions")
         return render(request, 'blockchain.html', {
-            'chain': chain,
+            'chain': chain[::-1],  # Reverse order: newest blocks first
             'pending_transactions': pending_transactions,
             'is_privileged': is_privileged
         })
@@ -2219,22 +2264,119 @@ def request_receipt(request, transaction_id):
 
 @login_required
 def download_receipt(request, transaction_id):
-    """Allow admins/officers to download a receipt"""
+    """Generate and download a PDF receipt for a donation"""
     if request.user.role not in ['admin', 'officer']:
         messages.error(request, "You do not have permission to download receipts.")
         return redirect('blockchain')
 
     try:
+        from io import BytesIO
+        from reportlab.lib.pagesizes import letter
+        from reportlab.lib.colors import HexColor
+        from reportlab.pdfgen import canvas
+
         donation = get_object_or_404(Donation, transaction_id=transaction_id)
-        if donation.receipt:
-            return FileResponse(donation.receipt.open(), as_attachment=True, filename=f"Receipt-{transaction_id}.jpg")
-        else:
-            messages.error(request, "No receipt available for this transaction.")
-            return redirect('blockchain')
+
+        # Create PDF buffer
+        buffer = BytesIO()
+        p = canvas.Canvas(buffer, pagesize=letter)
+        width, height = letter
+
+        # Colors
+        primary_color = HexColor('#1e40af')
+        accent_color = HexColor('#dc2626')
+        text_color = HexColor('#1f2937')
+        light_gray = HexColor('#6b7280')
+
+        # Header
+        p.setFillColor(primary_color)
+        p.rect(0, height - 120, width, 120, fill=True, stroke=False)
+
+        # Title
+        p.setFillColor(HexColor('#ffffff'))
+        p.setFont("Helvetica-Bold", 24)
+        p.drawCentredString(width/2, height - 50, "KNIGHTS OF COLUMBUS")
+        p.setFont("Helvetica", 14)
+        p.drawCentredString(width/2, height - 75, "Official Donation Receipt")
+
+        # Transaction ID box
+        p.setFillColor(accent_color)
+        p.roundRect(width/2 - 120, height - 110, 240, 28, 5, fill=True, stroke=False)
+        p.setFillColor(HexColor('#ffffff'))
+        p.setFont("Helvetica-Bold", 11)
+        p.drawCentredString(width/2, height - 100, f"Transaction: {transaction_id}")
+
+        # Main content
+        y_pos = height - 180
+        left_margin = 72
+
+        # Donor Information
+        p.setFillColor(text_color)
+        p.setFont("Helvetica-Bold", 14)
+        p.drawString(left_margin, y_pos, "Donor Information")
+        y_pos -= 5
+        p.setStrokeColor(primary_color)
+        p.setLineWidth(2)
+        p.line(left_margin, y_pos, left_margin + 150, y_pos)
+        y_pos -= 25
+
+        p.setFont("Helvetica", 11)
+        donor_name = f"{donation.first_name} {donation.middle_initial}. {donation.last_name}".strip() if donation.first_name != "Anonymous" else "Anonymous Donor"
+        p.drawString(left_margin, y_pos, f"Name: {donor_name}")
+        y_pos -= 20
+        p.drawString(left_margin, y_pos, f"Email: {donation.email if donation.email else 'Not provided'}")
+        y_pos -= 40
+
+        # Donation Details
+        p.setFont("Helvetica-Bold", 14)
+        p.drawString(left_margin, y_pos, "Donation Details")
+        y_pos -= 5
+        p.line(left_margin, y_pos, left_margin + 150, y_pos)
+        y_pos -= 25
+
+        p.setFont("Helvetica", 11)
+        p.drawString(left_margin, y_pos, f"Date: {donation.donation_date.strftime('%B %d, %Y') if donation.donation_date else 'N/A'}")
+        y_pos -= 20
+        p.drawString(left_margin, y_pos, f"Payment Method: {donation.get_payment_method_display()}")
+        y_pos -= 20
+        p.drawString(left_margin, y_pos, f"Status: {donation.get_status_display()}")
+        y_pos -= 40
+
+        # Amount Box
+        p.setFillColor(HexColor('#f0fdf4'))
+        p.setStrokeColor(HexColor('#16a34a'))
+        p.setLineWidth(2)
+        p.roundRect(left_margin, y_pos - 50, width - 2*left_margin, 60, 10, fill=True, stroke=True)
+
+        p.setFillColor(light_gray)
+        p.setFont("Helvetica", 12)
+        p.drawCentredString(width/2, y_pos - 10, "Amount Donated")
+
+        p.setFillColor(HexColor('#16a34a'))
+        p.setFont("Helvetica-Bold", 28)
+        p.drawCentredString(width/2, y_pos - 40, f"PHP {donation.amount:,.2f}")
+
+        # Footer
+        p.setFillColor(light_gray)
+        p.setFont("Helvetica", 9)
+        p.drawCentredString(width/2, 80, "This receipt is generated electronically and is valid without signature.")
+        p.drawCentredString(width/2, 65, "For questions, please contact your local Knights of Columbus council.")
+        p.drawCentredString(width/2, 50, f"Generated on: {datetime.now().strftime('%B %d, %Y at %I:%M %p')}")
+
+        p.setFont("Helvetica-Oblique", 8)
+        p.drawCentredString(width/2, 35, "This donation is recorded on our immutable blockchain ledger for transparency.")
+
+        p.showPage()
+        p.save()
+
+        buffer.seek(0)
+        return FileResponse(buffer, as_attachment=True, filename=f"Receipt-{transaction_id}.pdf", content_type='application/pdf')
+
     except Exception as e:
-        logger.error(f"Error downloading receipt: {str(e)}")
-        messages.error(request, "Error retrieving receipt file.")
+        logger.error(f"Error generating receipt: {str(e)}")
+        messages.error(request, "Error generating receipt file.")
         return redirect('blockchain')
+
 
 @login_required
 def send_receipt(request, transaction_id):

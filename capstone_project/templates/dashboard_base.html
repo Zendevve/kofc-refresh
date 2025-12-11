@@ -248,12 +248,19 @@
       </header>
 
       <!-- Notification container -->
-      <div id="notification-container" class="notification-container">
+      <!-- Notification container -->
+      <div class="toast-container">
         {% if messages %}
         {% for message in messages %}
-        <div class="notification {% if message.tags %}{{ message.tags }}{% endif %}">
-          <span class="notification-message">{{ message }}</span>
-          <button class="notification-close"><i class="fas fa-times"></i></button>
+        <div class="alert alert-{{ message.tags }}">
+          {% if 'success' in message.tags %}<i class="fas fa-check-circle"></i>{% endif %}
+          {% if 'error' in message.tags %}<i class="fas fa-exclamation-circle"></i>{% endif %}
+          {% if 'warning' in message.tags %}<i class="fas fa-exclamation-triangle"></i>{% endif %}
+          {% if 'info' in message.tags %}<i class="fas fa-info-circle"></i>{% endif %}
+          <span>{{ message }}</span>
+          <button type="button" onclick="this.parentElement.remove()" style="margin-left: auto; background: none; border: none; color: inherit; opacity: 0.6; cursor: pointer; padding: 0 4px; font-size: 1.1rem;">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
         {% endfor %}
         {% endif %}
@@ -362,6 +369,8 @@
       border: 2px solid white;
     }
   </style>
+
+  {% block modals %}{% endblock %}
 
   {% block extra_js %}{% endblock %}
 </body>

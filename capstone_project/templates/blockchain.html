@@ -196,12 +196,6 @@
 {% endblock %}
 
 {% block content %}
-{% if messages %}
-{% for message in messages %}
-<div class="alert alert-{{ message.tags }}">{{ message }}</div>
-{% endfor %}
-{% endif %}
-
 <div class="stats-row">
   <div class="stat-card">
     <div class="stat-icon blocks"><i class="fas fa-cubes"></i></div>
