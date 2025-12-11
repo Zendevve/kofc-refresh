@@ -1,1 +1,0 @@
-default_app_config = 'capstone_project.apps.CapstoneProjectConfig'  
